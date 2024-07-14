@@ -1,0 +1,38 @@
+#+TITLE: Clockradio app
+
+* Setting up development environment
+I've followed Flutter site's [[https://docs.flutter.dev/get-started/install][Getting Started]] section, and I've used [[https://vscodium.com/][VSCodium]] as the IDE as it has good Dart/Flutter support out of the box.
+
+* Clockradio
+
+The =pubspec.yaml= for Clockradio has a font asset to avoid using Gstatic CDN, other assets, and =flutter_svg= dependency added. So, pretty straightforward.
+#+transclude: [[file:pubspec.yaml]]  :src yaml
+
+=analysis_options.yaml= has some =strong-mode= options enabled to make Dart act more sensible.
+#+transclude: [[file:analysis_options.yaml]]  :src yaml
+
+=main.dart= and =app.dart= follow the basic skeleton template. Although I've left Material theme in use, the clock view does not follow it. The router is as follows.
+#+transclude: [[file:lib/src/app.dart::onGenerateRoute]]  :src dart :end "); // MaterialApp"
+
+The clock face should have same physical size regardless of screen DPI. Height is 1.0" by default (3.5:1 aspect ratio -> 3.5" x 1" WxH). A media query gives us the device DPI ratio relative to the standard 96 desktop DPI.
+
+** User sees front page (clock view)
+The front page consists of =ClockView= and its model-controller =Clock=.
+#+transclude: [[file:lib/src/clock/clock_view.dart]]  :src dart :end "void _refreshClock()"
+
+=ClockView= has a timer running to update =Clock= each minute on the point.
+#+transclude: [[file:lib/src/clock/clock_view.dart::void _refreshClock()]]  :src dart :end "@override"
+
+=Clock= is built to be an immutable class that can tell current time and what elements in the segmented display are currently lit.
+#+transclude: [[file:lib/src/clock/clock.dart]]  :src dart
+
+Each of the elements in the =Map= references to an SVG file, to a total of 30 drivable elements (barring future AM/PM elements). Individual SVGs were derived from breaking apart the following vector image.
+[[file:documentation_7seg_final.svg]]
+
+The elements were artesanally drawn, using my personal (now dead) clock radio as an inspiration.
+
+Every time =Clock= is reinitialized, a =Center=:ed =Stack= of SVG elements is redrawn with the =ValueNotifier= triggering.
+
+#+transclude: [[file:lib/src/clock/clock_view.dart::ValueNotifier]] :lines 1-1 :src dart
+
+#+transclude: [[file:lib/src/clock/clock_view.dart::@override]]  :src dart :end "} // Widget"
