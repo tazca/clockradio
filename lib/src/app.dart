@@ -3,7 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'clock/clock_view.dart';
-import 'clock/clock.dart';
+import 'clock/ledclock.dart';
+import 'clock/solarclock.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 
@@ -70,7 +71,7 @@ class ClockRadio extends StatelessWidget {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   default:                    
-                    return ClockView(clock: ValueNotifier(Clock.now()), 
+                    return ClockView(clock: ValueNotifier(LedClock.now()), 
                                      clockHeight: MediaQuery.of(context).devicePixelRatio * 96 * 1.0,);
                 }
               },
