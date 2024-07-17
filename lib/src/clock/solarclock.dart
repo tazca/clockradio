@@ -30,7 +30,7 @@ class SolarClock extends Clock {
     return CustomPaint(
       painter: SolarGraphic(nthDayOfYear, hours, minutes, tzOffset.inMinutes,
           userLatitude, userLongitude),
-      size: Size(clockHeight * 2, clockHeight * 2),
+      size: Size(clockHeight * 1.5, clockHeight * 1.5),
     );
   }
 }
@@ -84,9 +84,8 @@ class SolarGraphic extends CustomPainter {
 
     double earthRadius = size.height * 0.3;
     double earthMargin = size.height * 0.2;
-
     double sunRadius = size.height * 0.05;
-    ;
+
     // The user dot we add at the end (to have it Z-ordered front) will
     // be in static place, so let's draw time-sensitive bits
     // (sun, day-night split) rotated, and then rotate back for the dot.
@@ -95,7 +94,7 @@ class SolarGraphic extends CustomPainter {
     canvas.translate(-size.width * 0.5, -size.height * 0.5);
     // Sun
     canvas.drawCircle(
-      Offset(earthMargin + earthRadius, sunRadius),
+      Offset(earthMargin + earthRadius, sunRadius + sunRadius * 0.15),
       sunRadius,
       Paint()
         ..color = Colors.white
@@ -139,12 +138,11 @@ class SolarGraphic extends CustomPainter {
     );
 
     // Now, let's rotate Earth & sun to correct time before adding user dot
-
     canvas.translate(size.width * 0.5, size.height * 0.5);
     canvas.rotate(-sunRadians);
     canvas.translate(-size.width * 0.5, -size.height * 0.5);
 
-    // User
+    // User dot
     canvas.drawCircle(
       Offset(earthMargin + earthRadius, earthMargin + earthRadius * userDot),
       size.width * 0.015,
@@ -152,18 +150,6 @@ class SolarGraphic extends CustomPainter {
         ..color = Colors.amber
         ..style = PaintingStyle.fill,
     );
-    /*
-    const RadialGradient gradient = RadialGradient(
-      center: Alignment(0.7, -0.6),
-      radius: 0.2,
-      colors: <Color>[Color(0xFFFFFF00), Color(0xFF0099FF)],
-      stops: <double>[0.4, 1.0],
-    );
-    canvas.drawRect(
-      rect,
-      Paint()..shader = gradient.createShader(rect),
-    );
-    */
   }
 
   // Class is immutable & remade for every redraw
