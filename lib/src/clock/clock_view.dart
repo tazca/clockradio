@@ -28,11 +28,11 @@ class ClockView extends StatelessWidget {
     }
     final int secs = DateTime.now().second;
     Timer(Duration(seconds: 60 - secs), _refreshClock);
-    final int refreshTime = 
-      (DateTime.now().millisecond - startRefresh < 0) 
+    final int refreshTime = (DateTime.now().millisecond - startRefresh < 0)
         ? DateTime.now().millisecond + 1000 - startRefresh
         : DateTime.now().millisecond - startRefresh;
-    print('${clock.value.hours}.${clock.value.minutes}: Finished refreshing ${clock.value} in $refreshTime ms at $clockHeight dpi');
+    print(
+        '${clock.value.hours}.${clock.value.minutes}: Finished refreshing ${clock.value} in $refreshTime ms at $clockHeight dpi');
   }
 
   @override
@@ -42,22 +42,21 @@ class ClockView extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Center(
         child: ListenableBuilder(
-          listenable: clock,
-          builder: (BuildContext context, Widget? child) {
-            return GestureDetector(
-              onTap: () {
-                if (clock.value is LedClock) {
-                  clock.value = SolarClock.now(old: clock.value);
-                } else if (clock.value is SolarClock) {
-                  clock.value = LedClock.now(old: clock.value);
-                } else {
-                  clock.value = SolarClock.now(old: clock.value);
-                }
-              },
-              child: clock.value.makeWidget(clockHeight),
-            );
-          }
-        ),
+            listenable: clock,
+            builder: (BuildContext context, Widget? child) {
+              return GestureDetector(
+                onTap: () {
+                  if (clock.value is LedClock) {
+                    clock.value = SolarClock.now(old: clock.value);
+                  } else if (clock.value is SolarClock) {
+                    clock.value = LedClock.now(old: clock.value);
+                  } else {
+                    clock.value = SolarClock.now(old: clock.value);
+                  }
+                },
+                child: clock.value.makeWidget(context),
+              );
+            }),
       ),
     );
   } // Widget

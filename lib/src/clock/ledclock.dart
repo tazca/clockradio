@@ -24,7 +24,8 @@ class LedClock extends Clock {
   }
 
   @override
-  Widget makeWidget(double clockHeight) {
+  Widget makeWidget(BuildContext context) {
+    final double clockHeight = MediaQuery.of(context).devicePixelRatio * 96 * 1.0;
     return Stack(
       children: <Widget>[
         for (String led in _activeLeds)

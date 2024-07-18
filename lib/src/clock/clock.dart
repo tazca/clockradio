@@ -17,7 +17,7 @@ class Clock {
     );
   }
 
-  Widget makeWidget(double clockHeight) {
+  Widget makeWidget(BuildContext context) {
     return Text("$hours : $minutes");
   }
 }

@@ -30,16 +30,24 @@ class SolarClock extends Clock {
         .difference(DateTime(DateTime.now().year, 1, 1, 0, 0))
         .inDays;
     // Refresh once per 1° or 4 minutes (24h * 15 = 360).
-    return SolarClock(hrs, mins, old?.alarmH ?? alarmH,
-        old?.alarmM ?? alarmM, tz, daysSinceJan1 + 1, 61.5, 23.75);
+    return SolarClock(hrs, mins, old?.alarmH ?? alarmH, old?.alarmM ?? alarmM,
+        tz, daysSinceJan1 + 1, 61.5, 23.75);
   }
 
   @override
-  Widget makeWidget(double clockHeight) {
+  Widget makeWidget(BuildContext context) {
+    // Clockface is a square (for now)
+    final double maximumSize = min(
+        MediaQuery.sizeOf(context).height, MediaQuery.sizeOf(context).width);
+    final double optimumSize =
+        MediaQuery.of(context).devicePixelRatio * 96 * 2.5;
+    final double clockSize =
+        (maximumSize > optimumSize) ? optimumSize : maximumSize;
+
     return CustomPaint(
       painter: SolarGraphic(nthDayOfYear, hours, minutes, alarmH, alarmM,
           tzOffset.inMinutes, userLatitude, userLongitude),
-      size: Size(clockHeight * 1.5, clockHeight * 1.5),
+      size: Size(clockSize, clockSize),
     );
   }
 }
