@@ -7,28 +7,31 @@ import 'clock.dart';
 @immutable
 class LedClock extends Clock {
   const LedClock(
-    super.refreshEveryNSeconds,
     super.hours,
     super.minutes,
+    super.alarmH,
+    super.alarmM,
     this._ledDisplay,
   );
 
   final Map<String, bool> _ledDisplay;
 
-  factory LedClock.now() {
+  factory LedClock.now({Clock? old, int? alarmH, int? alarmM}) {
     final int hrs = DateTime.now().hour;
     final int mins = DateTime.now().minute;
-    return LedClock(60, hrs, mins, _powerLedElements(hrs, mins));
+    return LedClock(hrs, mins, old?.alarmH ?? alarmH, old?.alarmM ?? alarmM,
+        _powerLedElements(hrs, mins, old?.alarmH ?? alarmH, old?.alarmM ?? alarmM));
   }
 
   @override
   Widget makeWidget(double clockHeight) {
     return Stack(
-              children: <Widget>[
-                for (String led in _activeLeds) 
-                  SvgPicture.asset('assets/images/led_segments/$led.svg', height: clockHeight),
-              ],
-            );
+      children: <Widget>[
+        for (String led in _activeLeds)
+          SvgPicture.asset('assets/images/led_segments/$led.svg',
+              height: clockHeight),
+      ],
+    );
   }
 
   List<String> get _activeLeds {
@@ -42,7 +45,12 @@ class LedClock extends Clock {
   }
 }
 
-Map<String, bool> _powerLedElements(int hours, int minutes) {
+Map<String, bool> _powerLedElements(
+  int hours,
+  int minutes,
+  int? alarmH,
+  int? alarmM,
+) {
   final Map<String, List<bool>> typography = {
     '0': [true, true, true, true, true, true, false],
     '1': [false, true, true, false, false, false, false],
@@ -70,7 +78,7 @@ Map<String, bool> _powerLedElements(int hours, int minutes) {
   List<bool> leds4 = typography[digit4] ?? elementOff;
 
   return {
-    'alarm': false,
+    'alarm': alarmH != null && alarmM != null,
     'dots': true,
     '1a': leds1[0],
     '1b': leds1[1],

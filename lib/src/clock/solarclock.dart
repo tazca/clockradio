@@ -6,15 +6,23 @@ import 'clock.dart';
 
 @immutable
 class SolarClock extends Clock {
-  const SolarClock(super.refreshEveryNSeconds, super.hours, super.minutes,
-      this.tzOffset, this.nthDayOfYear, this.userLatitude, this.userLongitude);
+  const SolarClock(
+    super.hours,
+    super.minutes,
+    super.alarmH,
+    super.alarmM,
+    this.tzOffset,
+    this.nthDayOfYear,
+    this.userLatitude,
+    this.userLongitude,
+  );
 
   final Duration tzOffset;
   final int nthDayOfYear;
   final double userLatitude;
   final double userLongitude;
 
-  factory SolarClock.now() {
+  factory SolarClock.now({Clock? old, int? alarmH, int? alarmM}) {
     final int hrs = DateTime.now().hour;
     final int mins = DateTime.now().minute;
     final Duration tz = DateTime.now().timeZoneOffset;
@@ -22,14 +30,15 @@ class SolarClock extends Clock {
         .difference(DateTime(DateTime.now().year, 1, 1, 0, 0))
         .inDays;
     // Refresh once per 1° or 4 minutes (24h * 15 = 360).
-    return SolarClock(240, hrs, mins, tz, daysSinceJan1 + 1, 61.5, 23.75);
+    return SolarClock(hrs, mins, old?.alarmH ?? alarmH,
+        old?.alarmM ?? alarmM, tz, daysSinceJan1 + 1, 61.5, 23.75);
   }
 
   @override
   Widget makeWidget(double clockHeight) {
     return CustomPaint(
-      painter: SolarGraphic(nthDayOfYear, hours, minutes, tzOffset.inMinutes,
-          userLatitude, userLongitude),
+      painter: SolarGraphic(nthDayOfYear, hours, minutes, alarmH, alarmM,
+          tzOffset.inMinutes, userLatitude, userLongitude),
       size: Size(clockHeight * 1.5, clockHeight * 1.5),
     );
   }
@@ -41,6 +50,8 @@ class SolarGraphic extends CustomPainter {
     this._nthDayOfYear,
     this._hours,
     this._mins,
+    this._alarmH,
+    this._alarmM,
     this._tzOffsetM,
     this._userLongitude,
     this._userLatitude,
@@ -49,6 +60,8 @@ class SolarGraphic extends CustomPainter {
   final int _nthDayOfYear;
   final int _hours;
   final int _mins;
+  final int? _alarmH;
+  final int? _alarmM;
   // Timezone offsets can be half-hours too.
   final int _tzOffsetM;
   final double _userLatitude;
@@ -66,12 +79,23 @@ class SolarGraphic extends CustomPainter {
     final int sNoonOffsetM = ((sNoonOffset - sNoonOffsetH) * 60).round();
 
     // Sun angle relative to solar noon. At 12.35 local time, -60 minutes + 10 minutes = -50min.
-    final int hoursToSolarMinutes =
-        ((_hours - (_tzOffsetM ~/ 60)) - (12 + sNoonOffsetH)) * 60;
-    final int minutesToSolarMinutes =
-        (_mins - (_tzOffsetM % 60)) - (0 + sNoonOffsetM);
+    int hoursToSolarMinutes(int h) {
+      return ((h - (_tzOffsetM ~/ 60)) - (12 + sNoonOffsetH)) * 60;
+    }
+
+    int minutesToSolarMinutes(int m) {
+      return (m - (_tzOffsetM % 60)) - (0 + sNoonOffsetM);
+    }
+
     final double sunRadians =
-        (hoursToSolarMinutes + minutesToSolarMinutes) / (12 * 60) * pi;
+        (hoursToSolarMinutes(_hours) + minutesToSolarMinutes(_mins)) /
+            (12 * 60) *
+            pi;
+    final double? alarmRadians = (_alarmH != null && _alarmM != null)
+        ? (hoursToSolarMinutes(_alarmH) + minutesToSolarMinutes(_alarmM)) /
+            (12 * 60) *
+            pi
+        : null;
 
     // Sun declination uses a well-known approximation, and day-night line & user dot are
     // relative to earth radius.
@@ -88,10 +112,30 @@ class SolarGraphic extends CustomPainter {
 
     // The user dot we add at the end (to have it Z-ordered front) will
     // be in static place, so let's draw time-sensitive bits
-    // (sun, day-night split) rotated, and then rotate back for the dot.
-    canvas.translate(size.width * 0.5, size.height * 0.5);
-    canvas.rotate(sunRadians);
-    canvas.translate(-size.width * 0.5, -size.height * 0.5);
+    // (hollow sun (alarm), sun, day-night split) rotated, and then rotate back for the dot.
+    if (alarmRadians != null) {
+      canvas.translate(size.width * 0.5, size.height * 0.5);
+      canvas.rotate(alarmRadians);
+      canvas.translate(-size.width * 0.5, -size.height * 0.5);
+
+      canvas.drawCircle(
+        Offset(earthMargin + earthRadius, sunRadius + sunRadius * 0.15),
+        sunRadius,
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke,
+      );
+
+      // avoid doing two sets of translation-rotations:
+      canvas.translate(size.width * 0.5, size.height * 0.5);
+      canvas.rotate(-alarmRadians + sunRadians);
+      canvas.translate(-size.width * 0.5, -size.height * 0.5);
+    } else {
+      canvas.translate(size.width * 0.5, size.height * 0.5);
+      canvas.rotate(sunRadians);
+      canvas.translate(-size.width * 0.5, -size.height * 0.5);
+    }
+
     // Sun
     canvas.drawCircle(
       Offset(earthMargin + earthRadius, sunRadius + sunRadius * 0.15),
@@ -110,6 +154,8 @@ class SolarGraphic extends CustomPainter {
         ..style = PaintingStyle.stroke,
     );
 
+    const Color daySideColor = Color.fromARGB(255, 180, 180, 180);
+
     // Day side from which southernSolsticeRect is substituted from
     // or northernSolsticeRect added to
     final Rect daySideRect = Offset(earthMargin, earthMargin) &
@@ -120,13 +166,13 @@ class SolarGraphic extends CustomPainter {
       pi,
       true,
       Paint()
-        ..color = Colors.white
+        ..color = daySideColor
         ..style = PaintingStyle.fill,
     );
 
     final double ellipseHalfHeight = earthRadius * dayNightRatio;
     final Color ellipseColor =
-        (sunDeclination >= 0.0) ? Colors.white : Colors.black;
+        (sunDeclination >= 0.0) ? daySideColor : Colors.black;
     final Rect ellipseRect =
         Offset(earthMargin, earthMargin + (earthRadius - ellipseHalfHeight)) &
             Size(earthRadius * 2, ellipseHalfHeight * 2);
@@ -147,14 +193,15 @@ class SolarGraphic extends CustomPainter {
       Offset(earthMargin + earthRadius, earthMargin + earthRadius * userDot),
       size.width * 0.015,
       Paint()
-        ..color = Colors.amber
+        ..color = Colors.yellow
         ..style = PaintingStyle.fill,
     );
   }
 
-  // Class is immutable & remade for every redraw
+  // Although SolarGraphic is immutable & remade with every new SolarClock,
+  // canvas is still only repainted if shouldRepaint is true.
   @override
   bool shouldRepaint(SolarGraphic oldDelegate) {
-    return false;
+    return oldDelegate._mins != _mins;
   }
 }
