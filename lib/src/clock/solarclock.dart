@@ -6,16 +6,17 @@ import 'clock.dart';
 
 @immutable
 class SolarClock extends Clock {
-  const SolarClock(
-    super.hours,
-    super.minutes,
+  const SolarClock({
+    super.key,
+    required super.hours,
+    required super.minutes,
     super.alarmH,
     super.alarmM,
-    this.tzOffset,
-    this.nthDayOfYear,
-    this.userLatitude,
-    this.userLongitude,
-  );
+    required this.tzOffset,
+    required this.nthDayOfYear,
+    required this.userLatitude,
+    required this.userLongitude,
+  });
 
   final Duration tzOffset;
   final int nthDayOfYear;
@@ -29,13 +30,20 @@ class SolarClock extends Clock {
     final daysSinceJan1 = DateTime.now()
         .difference(DateTime(DateTime.now().year, 1, 1, 0, 0))
         .inDays;
-    // Refresh once per 1° or 4 minutes (24h * 15 = 360).
-    return SolarClock(hrs, mins, old?.alarmH ?? alarmH, old?.alarmM ?? alarmM,
-        tz, daysSinceJan1 + 1, 61.5, 23.75);
+
+    return SolarClock(
+      hours: hrs, 
+      minutes: mins, 
+      alarmH: old?.alarmH ?? alarmH, 
+      alarmM: old?.alarmM ?? alarmM,
+      tzOffset: tz, 
+      nthDayOfYear: daysSinceJan1 + 1,
+      userLatitude: 61.5, 
+      userLongitude: 23.75,);
   }
 
   @override
-  Widget makeWidget(BuildContext context) {
+  Widget build(BuildContext context) {
     // Clockface is a square (for now)
     final double maximumSize = min(
         MediaQuery.sizeOf(context).height, MediaQuery.sizeOf(context).width);

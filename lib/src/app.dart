@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'clock/clock_view.dart';
 import 'clock/clock.dart';
+import 'radio/radio_controller.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 
@@ -11,9 +12,11 @@ import 'settings/settings_view.dart';
 class ClockRadio extends StatelessWidget {
   const ClockRadio({
     super.key,
+    required this.radioController,
     required this.settingsController,
   });
 
+  final RadioController radioController;
   final SettingsController settingsController;
 
   @override
@@ -73,8 +76,8 @@ class ClockRadio extends StatelessWidget {
                     return ClockView(
                       clock:
                           ValueNotifier(Clock.now(alarmH: 7, alarmM: 30)),
-                      clockHeight:
-                          MediaQuery.of(context).devicePixelRatio * 96 * 1.0,
+                      radio:
+                          radioController,
                     );
                 }
               },

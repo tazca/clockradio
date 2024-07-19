@@ -16,6 +16,9 @@ dependencies:
     sdk: flutter
   # SVG rendering
   flutter_svg: any
+  # Audio
+  media_kit: any
+  media_kit_libs_audio: any
 
 dev_dependencies:
   flutter_test:

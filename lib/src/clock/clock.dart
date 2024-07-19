@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 @immutable
-class Clock {
-  const Clock(this.hours, this.minutes, this.alarmH, this.alarmM);
+class Clock extends StatelessWidget {
+  const Clock({super.key, required this.hours, required this.minutes, this.alarmH, this.alarmM});
   final int hours;
   final int minutes;
   final int? alarmH;
@@ -10,14 +10,15 @@ class Clock {
 
   factory Clock.now({Clock? old, int? alarmH, int? alarmM}) {
     return Clock(
-      DateTime.now().hour,
-      DateTime.now().minute,
-      old?.alarmH ?? alarmH,
-      old?.alarmM ?? alarmM,
+      hours: DateTime.now().hour,
+      minutes: DateTime.now().minute,
+      alarmH: old?.alarmH ?? alarmH,
+      alarmM: old?.alarmM ?? alarmM,
     );
   }
 
-  Widget makeWidget(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Text("$hours : $minutes");
   }
 }

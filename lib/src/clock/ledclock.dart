@@ -6,25 +6,30 @@ import 'clock.dart';
 
 @immutable
 class LedClock extends Clock {
-  const LedClock(
-    super.hours,
-    super.minutes,
+  const LedClock({
+    super.key,
+    required super.hours,
+    required super.minutes,
     super.alarmH,
     super.alarmM,
-    this._ledDisplay,
-  );
+    required this.ledDisplay,
+  });
 
-  final Map<String, bool> _ledDisplay;
+  final Map<String, bool> ledDisplay;
 
   factory LedClock.now({Clock? old, int? alarmH, int? alarmM}) {
     final int hrs = DateTime.now().hour;
     final int mins = DateTime.now().minute;
-    return LedClock(hrs, mins, old?.alarmH ?? alarmH, old?.alarmM ?? alarmM,
-        _powerLedElements(hrs, mins, old?.alarmH ?? alarmH, old?.alarmM ?? alarmM));
+    return LedClock(
+      hours: hrs,
+      minutes: mins, 
+      alarmH: old?.alarmH ?? alarmH, 
+      alarmM: old?.alarmM ?? alarmM,
+      ledDisplay: _powerLedElements(hrs, mins, old?.alarmH ?? alarmH, old?.alarmM ?? alarmM),);
   }
 
   @override
-  Widget makeWidget(BuildContext context) {
+  Widget build(BuildContext context) {
     final double clockHeight = MediaQuery.of(context).devicePixelRatio * 96 * 1.0;
     return Stack(
       children: <Widget>[
@@ -37,8 +42,8 @@ class LedClock extends Clock {
 
   List<String> get _activeLeds {
     List<String> active = [];
-    for (String led in _ledDisplay.keys) {
-      if (_ledDisplay[led] ?? false) {
+    for (String led in ledDisplay.keys) {
+      if (ledDisplay[led] ?? false) {
         active.add(led);
       }
     }
