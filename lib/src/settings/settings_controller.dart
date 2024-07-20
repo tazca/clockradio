@@ -20,6 +20,7 @@ class SettingsController with ChangeNotifier {
   late ThemeMode _themeMode;
 
   late String _radioStation;
+  late List<String> _radioStations;
   late ClockFace _clockFace;
   
   // Set & load alarm from settings for now
@@ -29,6 +30,7 @@ class SettingsController with ChangeNotifier {
   // Allow Widgets to read the user's preferred ThemeMode.
   ThemeMode get themeMode => _themeMode;
   String get radioStation => _radioStation;
+  List<String> get radioStations => _radioStations;
   ClockFace get clockFace => _clockFace;
   int? get alarmH => _alarmH; 
   int? get alarmM => _alarmM; 
@@ -39,6 +41,7 @@ class SettingsController with ChangeNotifier {
   Future<void> loadSettings() async {
     _themeMode = await _settingsService.themeMode();
     _radioStation = await _settingsService.radioStation();
+    _radioStations = await _settingsService.radioStations();
     _clockFace = await _settingsService.clockFace();
     _alarmH = await _settingsService.alarmH();
     _alarmM = await _settingsService.alarmM();
@@ -74,6 +77,16 @@ class SettingsController with ChangeNotifier {
     await _settingsService.updateRadioStation(newRadioStation);
   }
 
+  Future<void> addRadioStation(String? newRadioStation) async {
+    if (newRadioStation == null) return;
+    if (newRadioStation == _radioStation) return;
+
+    _radioStation = newRadioStation;
+    await _settingsService.addRadioStation(newRadioStation);
+    _radioStations = await _settingsService.radioStations();
+    notifyListeners();
+  }
+
   Future<void> updateClockFace(ClockFace? newClockFace) async {
     if (newClockFace == null) return;
     if (newClockFace == _clockFace) return;
@@ -85,13 +98,14 @@ class SettingsController with ChangeNotifier {
 
   Future<void> updateAlarmH(int? newAlarmH) async {
     if (newAlarmH == _alarmH) return;
-
+    if (newAlarmH != null && (newAlarmH < 0 || newAlarmH > 23)) return;
     _alarmH = newAlarmH;
     notifyListeners();
     await _settingsService.updateAlarmH(newAlarmH);
   }
   Future<void> updateAlarmM(int? newAlarmM) async {
     if (newAlarmM == _alarmM) return;
+    if (newAlarmM != null && (newAlarmM < 0 || newAlarmM > 59)) return;
 
     _alarmM = newAlarmM;
     notifyListeners();

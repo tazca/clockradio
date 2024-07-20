@@ -29,6 +29,39 @@ class SettingsService {
     await prefs.setString('radioStation', path);
   }
 
+  Future<List<String>> radioStations() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String>? paths = prefs.getStringList('radioStations');
+    if (paths == null) {
+      addRadioStation("assets/sounds/ping.mp3");
+      addRadioStation("https://radio.plaza.one/opus");
+      addRadioStation(
+          "https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8");
+      return [
+        "assets/sounds/ping.mp3",
+        "https://radio.plaza.one/opus",
+        "https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8",
+      ];
+    } else {
+      return paths;
+    }
+  }
+
+  Future<void> addRadioStation(String path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String>? paths = prefs.getStringList('radioStations');
+    if (paths == null) {
+      await prefs.setStringList('radioStations', [path]);
+    } else {
+      if (paths.contains(path)) {
+        return;
+      } else {
+        paths.add(path);
+        await prefs.setStringList('radioStations', paths);
+      }
+    }
+  }
+
   Future<ClockFace> clockFace() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? face = prefs.getString('clockFace');

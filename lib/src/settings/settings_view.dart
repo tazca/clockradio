@@ -21,78 +21,89 @@ class SettingsView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).devicePixelRatio * 96 * 2.5),
-          child: ListView(
-            shrinkWrap: true,
-            children: <Widget>[
-              DropdownButton<ClockFace>(
-                // Read the selected themeMode from the controller
-                value: controller.clockFace,
-                // Call the updateThemeMode method any time the user selects a theme.
-                onChanged: controller.updateClockFace,
-                items: const [
-                  DropdownMenuItem(
-                    value: ClockFace.led,
-                    child: Text('LED face'),
-                  ),
-                  DropdownMenuItem(
-                    value: ClockFace.solar,
-                    child: Text('Solar face'),
-                  ),
-                ],
-              ),
-              DropdownButton<String>(
-                  value: controller.radioStation,
-                  onChanged: controller.updateRadioStation,
-                  items: const [
-                    DropdownMenuItem(
-                      value: "assets/sounds/ping.mp3",
-                      child: Text('Ping'),
+      body: ConstrainedBox(
+        constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).devicePixelRatio * 96 * 3.0),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ListenableBuilder(
+              listenable: controller,
+              builder: (BuildContext context, Widget? child) {
+                return ListView(
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    DropdownButton<ClockFace>(
+                      // Read the selected themeMode from the controller
+                      value: controller.clockFace,
+                      // Call the updateThemeMode method any time the user selects a theme.
+                      onChanged: controller.updateClockFace,
+                      items: const [
+                        DropdownMenuItem(
+                          value: ClockFace.led,
+                          child: Text('LED face'),
+                        ),
+                        DropdownMenuItem(
+                          value: ClockFace.solar,
+                          child: Text('Solar face'),
+                        ),
+                      ],
                     ),
-                    DropdownMenuItem(
-                      value: "https://radio.plaza.one/opus",
-                      child: Text('Nightwave plaza'),
+                    DropdownButton<String>(
+                      value: controller.radioStation,
+                      onChanged: controller.updateRadioStation,
+                      isExpanded: true,
+                      items: controller.radioStations
+                          .map<DropdownMenuItem<String>>(
+                        (String station) {
+                          return DropdownMenuItem(
+                            value: station,
+                            child: Text(station),
+                          );
+                        },
+                      ).toList(),
                     ),
-                    DropdownMenuItem(
-                      value:
-                          "https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8",
-                      child: Text('YLE Suomi Tampere'),
+                    TextField(onSubmitted: (String? value) {
+                      if (value == null || value == '') {
+                        return;
+                      } else {
+                        controller.addRadioStation(value);
+                      }
+                    }),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextFormField(
+                            initialValue: controller.alarmH?.toString() ?? '',
+                            onChanged: (String value) {
+                              if (value == '') {
+                                controller.updateAlarmH(null);
+                              } else {
+                                controller.updateAlarmH(int.parse(value));
+                              }
+                            },
+                          ),
+                        ),
+                        const Text(':'),
+                        Expanded(
+                          child: TextFormField(
+                            initialValue: controller.alarmM?.toString() ?? '',
+                            onChanged: (String value) {
+                              if (value == '') {
+                                controller.updateAlarmM(null);
+                              } else {
+                                controller.updateAlarmM(int.parse(value));
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                  ]),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextFormField(
-                      initialValue: controller.alarmH.toString(),
-                      onChanged: (String value) {
-                        if (value == '') {
-                          controller.updateAlarmH(null);
-                        } else {
-                          controller.updateAlarmH(int.parse(value));
-                        }
-                      },
-                    ),
-                  ),
-                  const Text(':'),
-                  Expanded(
-                    child: TextFormField(
-                      initialValue: controller.alarmM.toString(),
-                      onChanged: (String value) {
-                        if (value == '') {
-                          controller.updateAlarmM(null);
-                        } else {
-                          controller.updateAlarmM(int.parse(value));
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

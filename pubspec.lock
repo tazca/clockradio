@@ -224,10 +224,11 @@ packages:
   media_kit:
     dependency: "direct main"
     description:
-      name: media_kit
-      sha256: "3289062540e3b8b9746e5c50d95bd78a9289826b7227e253dff806d002b9e67a"
-      url: "https://pub.dev"
-    source: hosted
+      path: media_kit
+      ref: main
+      resolved-ref: ff00dae2b9bb6e66cdf15a7ecc1f99d0b7d6e3b4
+      url: "https://github.com/media-kit/media-kit"
+    source: git
     version: "1.1.10+1"
   media_kit_libs_android_audio:
     dependency: transitive
@@ -240,10 +241,11 @@ packages:
   media_kit_libs_audio:
     dependency: "direct main"
     description:
-      name: media_kit_libs_audio
-      sha256: f3f91df69848005363b3ae0ef7971a90edbd80a9365195684ef26c9a6ac8833f
-      url: "https://pub.dev"
-    source: hosted
+      path: "libs/universal/media_kit_libs_audio"
+      ref: main
+      resolved-ref: ff00dae2b9bb6e66cdf15a7ecc1f99d0b7d6e3b4
+      url: "https://github.com/media-kit/media-kit"
+    source: git
     version: "1.0.4"
   media_kit_libs_ios_audio:
     dependency: transitive
