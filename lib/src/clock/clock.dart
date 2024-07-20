@@ -22,3 +22,8 @@ class Clock extends StatelessWidget {
     return Text("$hours : $minutes");
   }
 }
+
+enum ClockFace {
+  led,
+  solar
+}

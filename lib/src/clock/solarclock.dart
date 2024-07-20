@@ -32,14 +32,15 @@ class SolarClock extends Clock {
         .inDays;
 
     return SolarClock(
-      hours: hrs, 
-      minutes: mins, 
-      alarmH: old?.alarmH ?? alarmH, 
+      hours: hrs,
+      minutes: mins,
+      alarmH: old?.alarmH ?? alarmH,
       alarmM: old?.alarmM ?? alarmM,
-      tzOffset: tz, 
+      tzOffset: tz,
       nthDayOfYear: daysSinceJan1 + 1,
-      userLatitude: 61.5, 
-      userLongitude: 23.75,);
+      userLatitude: 61.5,
+      userLongitude: 23.75,
+    );
   }
 
   @override
@@ -218,6 +219,8 @@ class SolarGraphic extends CustomPainter {
   // canvas is still only repainted if shouldRepaint is true.
   @override
   bool shouldRepaint(SolarGraphic oldDelegate) {
-    return oldDelegate._mins != _mins;
+    return oldDelegate._mins != _mins ||
+        oldDelegate._alarmH != _alarmH ||
+        oldDelegate._alarmM != _alarmM;
   }
 }

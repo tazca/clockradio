@@ -19,6 +19,7 @@ dependencies:
   # Audio
   media_kit: any
   media_kit_libs_audio: any
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
@@ -36,6 +37,7 @@ flutter:
     # Add assets from the images directory to the application.
     - assets/images/
     - assets/images/led_segments/
+    - assets/sounds/
 
   fonts:
     - family: Roboto

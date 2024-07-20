@@ -3,20 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_libs_audio/media_kit_libs_audio.dart';
 
+import '../settings/settings_controller.dart';
+
 import 'radio_service.dart';
 
 class RadioController with ChangeNotifier {
-  RadioController(this._radioService);
+  RadioController(this._radioService, this._settingsController);
 
-  // Make SettingsService a private variable so it is not used directly.
   final RadioService _radioService;
+  final SettingsController _settingsController;
 
-  void muzak() {
-    _radioService.selectStream('https://radio.plaza.one/opus');
-    _radioService.play();
-  }
-  void suomi() {
-    _radioService.selectStream('https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8');
+  void play() {
+    _radioService.selectStream(_settingsController.radioStation);
     _radioService.play();
   }
   void stop() {
@@ -26,4 +24,5 @@ class RadioController with ChangeNotifier {
   bool isPlaying() {
     return _radioService.isPlaying();
   }
+
 }

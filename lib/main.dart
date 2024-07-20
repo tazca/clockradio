@@ -20,7 +20,7 @@ void main() async {
   await settingsController.loadSettings();
 
   MediaKit.ensureInitialized();
-  final radioController = RadioController(RadioService.create());
+  final radioController = RadioController(RadioService.create(), settingsController);
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the
   // SettingsView.

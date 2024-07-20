@@ -1,9 +1,12 @@
+import 'package:clockradio/src/clock/ledclock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'clock/clock_view.dart';
 import 'clock/clock.dart';
+import 'clock/ledclock.dart';
+import 'clock/solarclock.dart';
 import 'radio/radio_controller.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
@@ -59,10 +62,10 @@ class ClockRadio extends StatelessWidget {
           // Define a light and dark color theme. Then, read the user's
           // preferred ThemeMode (light, dark, or system default) from the
           // SettingsController to display the correct theme.
-          theme: ThemeData(),
+          //theme: ThemeData(),
           darkTheme: ThemeData.dark(),
-          themeMode: settingsController.themeMode,
-
+          //themeMode: settingsController.themeMode,
+          themeMode: ThemeMode.dark,
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
           onGenerateRoute: (RouteSettings routeSettings) {
@@ -73,11 +76,23 @@ class ClockRadio extends StatelessWidget {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   default:
+                    final ClockFace face = settingsController.clockFace;
+                    late final Clock clock;
+                    switch (face) {
+                      case ClockFace.led:
+                        clock = LedClock.now(
+                          alarmH: settingsController.alarmH,
+                          alarmM: settingsController.alarmM,
+                        );
+                      case ClockFace.solar:
+                        clock = SolarClock.now(
+                          alarmH: settingsController.alarmH,
+                          alarmM: settingsController.alarmM,
+                        );
+                    }
                     return ClockView(
-                      clock:
-                          ValueNotifier(Clock.now(alarmH: 7, alarmM: 30)),
-                      radio:
-                          radioController,
+                      clock: ValueNotifier(clock),
+                      radio: radioController,
                     );
                 }
               },

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../clock/clock.dart' show ClockFace;
 
 /// A service that stores and retrieves user settings.
 ///
@@ -13,5 +16,62 @@ class SettingsService {
   Future<void> updateThemeMode(ThemeMode theme) async {
     // Use the shared_preferences package to persist settings locally or the
     // http package to persist settings over the network.
+  }
+
+  Future<String> radioStation() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? path = prefs.getString('radioStation');
+    return path ?? "assets/sounds/ping.mp3";
+  }
+
+  Future<void> updateRadioStation(String path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('radioStation', path);
+  }
+
+  Future<ClockFace> clockFace() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? face = prefs.getString('clockFace');
+    switch (face) {
+      case 'led':
+        return ClockFace.led;
+      case 'solar':
+        return ClockFace.solar;
+      default:
+        return ClockFace.solar;
+    }
+  }
+
+  Future<void> updateClockFace(ClockFace face) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('clockFace', face.name);
+  }
+
+  Future<int?> alarmH() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('alarmH');
+  }
+
+  Future<void> updateAlarmH(int? alarmH) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (alarmH == null) {
+      await prefs.remove('alarmH');
+    } else {
+      await prefs.setInt('alarmH', alarmH);
+    }
+  }
+
+  Future<int?> alarmM() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('alarmM');
+  }
+
+  Future<void> updateAlarmM(int? alarmM) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (alarmM == null) {
+      await prefs.remove('alarmM');
+    } else {
+      await prefs.setInt('alarmM', alarmM);
+    }
   }
 }

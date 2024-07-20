@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../clock/clock.dart' show ClockFace;
+
 import 'settings_controller.dart';
 
 /// Displays the various settings that can be customized by the user.
@@ -19,31 +21,79 @@ class SettingsView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        // Glue the SettingsController to the theme selection DropdownButton.
-        //
-        // When a user selects a theme from the dropdown list, the
-        // SettingsController is updated, which rebuilds the MaterialApp.
-        child: DropdownButton<ThemeMode>(
-          // Read the selected themeMode from the controller
-          value: controller.themeMode,
-          // Call the updateThemeMode method any time the user selects a theme.
-          onChanged: controller.updateThemeMode,
-          items: const [
-            DropdownMenuItem(
-              value: ThemeMode.system,
-              child: Text('System Theme'),
-            ),
-            DropdownMenuItem(
-              value: ThemeMode.light,
-              child: Text('Light Theme'),
-            ),
-            DropdownMenuItem(
-              value: ThemeMode.dark,
-              child: Text('Dark Theme'),
-            )
-          ],
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).devicePixelRatio * 96 * 2.5),
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              DropdownButton<ClockFace>(
+                // Read the selected themeMode from the controller
+                value: controller.clockFace,
+                // Call the updateThemeMode method any time the user selects a theme.
+                onChanged: controller.updateClockFace,
+                items: const [
+                  DropdownMenuItem(
+                    value: ClockFace.led,
+                    child: Text('LED face'),
+                  ),
+                  DropdownMenuItem(
+                    value: ClockFace.solar,
+                    child: Text('Solar face'),
+                  ),
+                ],
+              ),
+              DropdownButton<String>(
+                  value: controller.radioStation,
+                  onChanged: controller.updateRadioStation,
+                  items: const [
+                    DropdownMenuItem(
+                      value: "assets/sounds/ping.mp3",
+                      child: Text('Ping'),
+                    ),
+                    DropdownMenuItem(
+                      value: "https://radio.plaza.one/opus",
+                      child: Text('Nightwave plaza'),
+                    ),
+                    DropdownMenuItem(
+                      value:
+                          "https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8",
+                      child: Text('YLE Suomi Tampere'),
+                    ),
+                  ]),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextFormField(
+                      initialValue: controller.alarmH.toString(),
+                      onChanged: (String value) {
+                        if (value == '') {
+                          controller.updateAlarmH(null);
+                        } else {
+                          controller.updateAlarmH(int.parse(value));
+                        }
+                      },
+                    ),
+                  ),
+                  const Text(':'),
+                  Expanded(
+                    child: TextFormField(
+                      initialValue: controller.alarmM.toString(),
+                      onChanged: (String value) {
+                        if (value == '') {
+                          controller.updateAlarmM(null);
+                        } else {
+                          controller.updateAlarmM(int.parse(value));
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

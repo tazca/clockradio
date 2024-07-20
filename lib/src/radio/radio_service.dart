@@ -5,6 +5,10 @@ import 'package:media_kit_libs_audio/media_kit_libs_audio.dart';
 
 class RadioService {
   RadioService(this._player);
+
+  // Player sort of is already a Service, so a RadioService abstraction 
+  // is largely redundant, but maybe it pays off later, e.g. when 
+  // switching media library.
   final Player _player;
 
   factory RadioService.create() {
@@ -18,6 +22,7 @@ class RadioService {
     player.stream.rate.listen((e) => print('rate: $e'));
     player.stream.pitch.listen((e) => print('pitch: $e'));
     player.stream.buffering.listen((e) => print('buffering: $e'));
+
     return RadioService(player);
   }
 
@@ -25,11 +30,14 @@ class RadioService {
     print('Selecting $path');
     final playable = Media(path);
     await _player.open(playable, play: false);
+    await _player.setPlaylistMode(PlaylistMode.loop);
   }
+
   Future<void> play() async {
     print('Pressing play');
     await _player.play();
   }
+
   Future<void> stop() async {
     print('Pressing stop');
     await _player.stop();
