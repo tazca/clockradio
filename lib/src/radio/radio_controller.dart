@@ -14,6 +14,9 @@ class RadioController with ChangeNotifier {
   final SettingsController _settingsController;
 
   void play() {
+    if (_radioService.isPlaying()) {
+      stop();
+    }
     _radioService.selectStream(_settingsController.radioStation);
     _radioService.play();
   }

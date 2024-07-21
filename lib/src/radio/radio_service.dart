@@ -27,19 +27,15 @@ class RadioService {
   }
 
   Future<void> selectStream(String path) async {
-    print('Selecting $path');
-    final playable = Media(path);
-    await _player.open(playable, play: false);
+    await _player.open(Media(path), play: false);
     await _player.setPlaylistMode(PlaylistMode.loop);
   }
 
   Future<void> play() async {
-    print('Pressing play');
     await _player.play();
   }
 
   Future<void> stop() async {
-    print('Pressing stop');
     await _player.stop();
   }  
 

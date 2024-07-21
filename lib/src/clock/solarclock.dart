@@ -23,19 +23,20 @@ class SolarClock extends Clock {
   final double userLatitude;
   final double userLongitude;
 
-  factory SolarClock.now({Clock? old, int? alarmH, int? alarmM}) {
+  factory SolarClock.now({int? alarmH, int? alarmM}) {
     final int hrs = DateTime.now().hour;
     final int mins = DateTime.now().minute;
     final Duration tz = DateTime.now().timeZoneOffset;
     final daysSinceJan1 = DateTime.now()
         .difference(DateTime(DateTime.now().year, 1, 1, 0, 0))
         .inDays;
+    print("SolarClock is built");
 
     return SolarClock(
       hours: hrs,
       minutes: mins,
-      alarmH: old?.alarmH ?? alarmH,
-      alarmM: old?.alarmM ?? alarmM,
+      alarmH: alarmH,
+      alarmM: alarmM,
       tzOffset: tz,
       nthDayOfYear: daysSinceJan1 + 1,
       userLatitude: 61.5,

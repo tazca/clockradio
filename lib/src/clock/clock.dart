@@ -21,6 +21,10 @@ class Clock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text("$hours : $minutes");
   }
+
+  bool get isAlarmRinging {
+    return alarmH == hours && alarmM == minutes;
+  }
 }
 
 enum ClockFace {

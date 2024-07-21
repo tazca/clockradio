@@ -17,15 +17,15 @@ class LedClock extends Clock {
 
   final Map<String, bool> ledDisplay;
 
-  factory LedClock.now({Clock? old, int? alarmH, int? alarmM}) {
+  factory LedClock.now({int? alarmH, int? alarmM}) {
     final int hrs = DateTime.now().hour;
     final int mins = DateTime.now().minute;
     return LedClock(
       hours: hrs,
       minutes: mins, 
-      alarmH: old?.alarmH ?? alarmH, 
-      alarmM: old?.alarmM ?? alarmM,
-      ledDisplay: _powerLedElements(hrs, mins, old?.alarmH ?? alarmH, old?.alarmM ?? alarmM),);
+      alarmH: alarmH, 
+      alarmM: alarmM,
+      ledDisplay: _powerLedElements(hrs, mins, alarmH, alarmM),);
   }
 
   @override
