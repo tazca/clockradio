@@ -48,19 +48,19 @@ class ClockRadio extends StatelessWidget {
   }
 
   void _refreshClock() {
-    final int startRefresh = DateTime.now().millisecond;
-    if (clock.value is LedClock) {
-      clock.value = LedClock.now(
+    final int startRefresh = DateTime.now().millisecond;    
+    final ClockFace face = settingsController.clockFace;
+    switch (face) {
+      case ClockFace.led:
+        clock.value = LedClock.now(
           alarmH: settingsController.alarmH,
-          alarmM: settingsController.alarmM);
-    } else if (clock.value is SolarClock) {
-      clock.value = SolarClock.now(
+          alarmM: settingsController.alarmM,
+        );
+      case ClockFace.solar:
+        clock.value = SolarClock.now(
           alarmH: settingsController.alarmH,
-          alarmM: settingsController.alarmM);
-    } else {
-      clock.value = SolarClock.now(
-          alarmH: settingsController.alarmH,
-          alarmM: settingsController.alarmM);
+          alarmM: settingsController.alarmM,
+        );
     }
 
     if (clock.value.isAlarmRinging) {
