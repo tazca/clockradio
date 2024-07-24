@@ -134,6 +134,21 @@ class ClockRadio extends StatelessWidget {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   default:
+                    // Temporary solution to make clock update on settings change
+                    final ClockFace face = settingsController.clockFace;
+                    switch (face) {
+                      case ClockFace.led:
+                        clock.value = LedClock.now(
+                          alarmH: settingsController.alarmH,
+                          alarmM: settingsController.alarmM,
+                        );
+                      case ClockFace.solar:
+                        clock.value = SolarClock.now(
+                          alarmH: settingsController.alarmH,
+                          alarmM: settingsController.alarmM,
+                        );
+                    }
+                    // </>
                     return ClockView(
                       clock: clock,
                       radio: radioController,
