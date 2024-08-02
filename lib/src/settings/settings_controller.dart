@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../clock/clock.dart' show ClockFace;
+import '../clock/clock_controller.dart' show ClockFace;
 
 import 'settings_service.dart';
 
@@ -12,13 +12,10 @@ import 'settings_service.dart';
 class SettingsController with ChangeNotifier {
   SettingsController(this._settingsService);
 
-  // Make SettingsService a private variable so it is not used directly.
   final SettingsService _settingsService;
 
-  // Make ThemeMode a private variable so it is not updated directly without
+  // Use getters & private variables so theyare not updated directly without
   // also persisting the changes with the SettingsService.
-  late ThemeMode _themeMode;
-
   late String _radioStation;
   late List<String> _radioStations;
   late ClockFace _clockFace;
@@ -28,18 +25,20 @@ class SettingsController with ChangeNotifier {
   late int? _alarmM;
 
   // Allow Widgets to read the user's preferred ThemeMode.
-  ThemeMode get themeMode => _themeMode;
   String get radioStation => _radioStation;
   List<String> get radioStations => _radioStations;
   ClockFace get clockFace => _clockFace;
   int? get alarmH => _alarmH; 
   int? get alarmM => _alarmM; 
 
+  factory SettingsController.create() {
+    return SettingsController(SettingsService());
+  }
+
   /// Load the user's settings from the SettingsService. It may load from a
   /// local database or the internet. The controller only knows it can load the
   /// settings from the service.
   Future<void> loadSettings() async {
-    _themeMode = await _settingsService.themeMode();
     _radioStation = await _settingsService.radioStation();
     _radioStations = await _settingsService.radioStations();
     _clockFace = await _settingsService.clockFace();
@@ -48,24 +47,6 @@ class SettingsController with ChangeNotifier {
 
     // Important! Inform listeners a change has occurred.
     notifyListeners();
-  }
-
-  /// Update and persist the ThemeMode based on the user's selection.
-  Future<void> updateThemeMode(ThemeMode? newThemeMode) async {
-    if (newThemeMode == null) return;
-
-    // Do not perform any work if new and old ThemeMode are identical
-    if (newThemeMode == _themeMode) return;
-
-    // Otherwise, store the new ThemeMode in memory
-    _themeMode = newThemeMode;
-
-    // Important! Inform listeners a change has occurred.
-    notifyListeners();
-
-    // Persist the changes to a local database or the internet using the
-    // SettingService.
-    await _settingsService.updateThemeMode(newThemeMode);
   }
 
   Future<void> updateRadioStation(String? newRadioStation) async {

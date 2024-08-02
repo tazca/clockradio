@@ -1,20 +1,19 @@
-import 'package:flutter/material.dart';
-
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_libs_audio/media_kit_libs_audio.dart';
-
 import '../settings/settings_controller.dart';
 
 import 'radio_service.dart';
 
-class RadioController with ChangeNotifier {
+class RadioController {
   RadioController(this._radioService, this._settingsController);
 
   final RadioService _radioService;
   final SettingsController _settingsController;
 
+  factory RadioController.create(SettingsController settingsController) {
+    return RadioController(RadioService.create(), settingsController);
+  }
+
   void play() {
-    if (_radioService.isPlaying()) {
+    if (isPlaying()) {
       stop();
     }
     _radioService.selectStream(_settingsController.radioStation);
@@ -22,6 +21,14 @@ class RadioController with ChangeNotifier {
   }
   void stop() {
     _radioService.stop();
+  }
+
+  void toggle() {
+    if (isPlaying()) {
+      stop();
+    } else {
+      play();
+    }
   }
 
   bool isPlaying() {

@@ -2,47 +2,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import 'clock.dart';
+import 'clock_controller.dart';
 
 @immutable
-class SolarClock extends Clock {
+class SolarClock extends StatelessWidget {
   const SolarClock({
     super.key,
-    required super.hours,
-    required super.minutes,
-    super.alarmH,
-    super.alarmM,
-    required this.tzOffset,
-    required this.nthDayOfYear,
-    required this.userLatitude,
-    required this.userLongitude,
+    required this.clock,
   });
-
-  final Duration tzOffset;
-  final int nthDayOfYear;
-  final double userLatitude;
-  final double userLongitude;
-
-  factory SolarClock.now({int? alarmH, int? alarmM}) {
-    final int hrs = DateTime.now().hour;
-    final int mins = DateTime.now().minute;
-    final Duration tz = DateTime.now().timeZoneOffset;
-    final daysSinceJan1 = DateTime.now()
-        .difference(DateTime(DateTime.now().year, 1, 1, 0, 0))
-        .inDays;
-    print("SolarClock is built");
-
-    return SolarClock(
-      hours: hrs,
-      minutes: mins,
-      alarmH: alarmH,
-      alarmM: alarmM,
-      tzOffset: tz,
-      nthDayOfYear: daysSinceJan1 + 1,
-      userLatitude: 61.5,
-      userLongitude: 23.75,
-    );
-  }
+  final ClockController clock;
 
   @override
   Widget build(BuildContext context) {
@@ -55,8 +23,8 @@ class SolarClock extends Clock {
         (maximumSize > optimumSize) ? optimumSize : maximumSize;
 
     return CustomPaint(
-      painter: SolarGraphic(nthDayOfYear, hours, minutes, alarmH, alarmM,
-          tzOffset.inMinutes, userLatitude, userLongitude),
+      painter: SolarGraphic(clock.nthDay, clock.hrs, clock.mins, clock.aH, clock.aM,
+          clock.tz.inMinutes, clock.userLat, clock.userLong),
       size: Size(clockSize, clockSize),
     );
   }

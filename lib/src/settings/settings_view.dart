@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../clock/clock.dart' show ClockFace;
+import '../clock/clock_controller.dart' show ClockFace;
 
 import 'settings_controller.dart';
 

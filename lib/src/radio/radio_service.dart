@@ -1,43 +1,28 @@
-import 'package:flutter/material.dart';
-
 import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_libs_audio/media_kit_libs_audio.dart';
 
 class RadioService {
   RadioService(this._player);
 
-  // Player sort of is already a Service, so a RadioService abstraction 
-  // is largely redundant, but maybe it pays off later, e.g. when 
-  // switching media library.
   final Player _player;
 
   factory RadioService.create() {
     final player = Player();
-    player.stream.playlist.listen((e) => print('playlist: $e'));
-    player.stream.playing.listen((e) => print('playing: $e'));
-    player.stream.completed.listen((e) => print('completed: $e'));
-    // player.stream.position.listen((e) => print('position: $e'));
-    player.stream.duration.listen((e) => print('duration: $e'));
-    player.stream.volume.listen((e) => print('volume: $e'));
-    player.stream.rate.listen((e) => print('rate: $e'));
-    player.stream.pitch.listen((e) => print('pitch: $e'));
-    player.stream.buffering.listen((e) => print('buffering: $e'));
-
+    // Add any Player debugging & setup here
     return RadioService(player);
   }
 
-  Future<void> selectStream(String path) async {
+  void selectStream(String path) async {
     await _player.open(Media(path), play: false);
     await _player.setPlaylistMode(PlaylistMode.loop);
   }
 
-  Future<void> play() async {
+  void play() async {
     await _player.play();
   }
 
-  Future<void> stop() async {
+  void stop() async {
     await _player.stop();
-  }  
+  }
 
   bool isPlaying() {
     return _player.state.playing;

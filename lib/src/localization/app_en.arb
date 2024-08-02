@@ -1,6 +1,6 @@
 {
-  "appTitle": "clockradio",
+  "appTitle": "Clock radio",
   "@appTitle": {
-    "description": "Clockradio"
+    "description": "A set of clock faces with an integrated radio"
   }
 }

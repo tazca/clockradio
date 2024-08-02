@@ -1,3 +1,4 @@
+import 'package:clockradio/src/clock/clock_controller.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,49 +6,36 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'clock.dart';
 
 @immutable
-class LedClock extends Clock {
-  const LedClock({
-    super.key,
-    required super.hours,
-    required super.minutes,
-    super.alarmH,
-    super.alarmM,
-    required this.ledDisplay,
-  });
+class LedClock extends StatelessWidget {
+  const LedClock({super.key, required this.clock});
 
-  final Map<String, bool> ledDisplay;
-
-  factory LedClock.now({int? alarmH, int? alarmM}) {
-    final int hrs = DateTime.now().hour;
-    final int mins = DateTime.now().minute;
-    return LedClock(
-      hours: hrs,
-      minutes: mins, 
-      alarmH: alarmH, 
-      alarmM: alarmM,
-      ledDisplay: _powerLedElements(hrs, mins, alarmH, alarmM),);
-  }
+  final ClockController clock;
 
   @override
   Widget build(BuildContext context) {
-    final double clockHeight = MediaQuery.of(context).devicePixelRatio * 96 * 1.0;
+    final double clockHeight =
+        MediaQuery.of(context).devicePixelRatio * 96 * 1.0;
+    final Map<String, bool> ledDisplay = _powerLedElements(
+      clock.hrs,
+      clock.mins,
+      clock.aH,
+      clock.aM,
+    );
+
+    List<String> activeLeds = [];
+    for (String led in ledDisplay.keys) {
+      if (ledDisplay[led] ?? false) {
+        activeLeds.add(led);
+      }
+    }
+
     return Stack(
       children: <Widget>[
-        for (String led in _activeLeds)
+        for (String led in activeLeds)
           SvgPicture.asset('assets/images/led_segments/$led.svg',
               height: clockHeight),
       ],
     );
-  }
-
-  List<String> get _activeLeds {
-    List<String> active = [];
-    for (String led in ledDisplay.keys) {
-      if (ledDisplay[led] ?? false) {
-        active.add(led);
-      }
-    }
-    return active;
   }
 }
 
