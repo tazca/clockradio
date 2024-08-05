@@ -1,0 +1,1059 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2024-08-05 Mon 17:35 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Clockradio app</title>
+<meta name="author" content="tazca" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Clockradio app</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgb577dc8">Setting up development environment</a></li>
+<li><a href="#orgffc8af6">Clock radio</a>
+<ul>
+<li><a href="#org8c0b55b">User opens app and sees initial UI</a>
+<ul>
+<li><a href="#org6a7186b">LED clock face</a></li>
+<li><a href="#org2de1cd0">Solar clock face</a></li>
+</ul>
+</li>
+<li><a href="#orgc7c6b00">User long presses to open settings</a></li>
+<li><a href="#org906e541">User taps to play radio</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgb577dc8" class="outline-2">
+<h2 id="orgb577dc8">Setting up development environment</h2>
+<div class="outline-text-2" id="text-orgb577dc8">
+<p>
+Follow Flutter site's <a href="https://docs.flutter.dev/get-started/install">Getting Started</a> section, and use maybe <a href="https://vscodium.com/">VSCodium</a> as the IDE as it has well integrated Dart/Flutter support with a plugin.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgffc8af6" class="outline-2">
+<h2 id="orgffc8af6">Clock radio</h2>
+<div class="outline-text-2" id="text-orgffc8af6">
+<p>
+The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-CDN loading, image and sound assets, and <code>flutter_svg</code>, <code>media_kit</code>, and <code>shared_preferences</code>  dependencies added. Current <code>pub.dev</code> release of  <code>media_kit</code> <a href="https://github.com/media-kit/media-kit/issues/595#issuecomment-2094208809">has issues building on Fedora</a> and should use <code>main</code> branch on GitHub instead.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #455A64;">name</span>: clockradio
+<span style="color: #455A64;">description</span>: <span style="color: #6C3082;">"A cross-platform clock radio app."</span>
+
+<span style="color: #795548;"># </span><span style="color: #795548;">Prevent accidental publishing to pub.dev.</span>
+<span style="color: #455A64;">publish_to</span>: <span style="color: #6C3082;">'none'</span>
+
+<span style="color: #455A64;">version</span>: 1.0.0+1
+
+<span style="color: #455A64;">environment</span>:
+  <span style="color: #455A64;">sdk</span>: <span style="color: #6C3082;">'&gt;=3.4.3 &lt;4.0.0'</span>
+
+<span style="color: #455A64;">dependencies</span>:
+  <span style="color: #455A64;">flutter</span>:
+    <span style="color: #455A64;">sdk</span>: flutter
+  <span style="color: #455A64;">flutter_localizations</span>:
+    <span style="color: #455A64;">sdk</span>: flutter
+  <span style="color: #795548;"># </span><span style="color: #795548;">SVG rendering</span>
+  <span style="color: #455A64;">flutter_svg</span>: any
+  <span style="color: #795548;"># </span><span style="color: #795548;">Audio</span>
+  <span style="color: #455A64;">media_kit</span>: any
+  <span style="color: #455A64;">media_kit_libs_audio</span>: any
+  <span style="color: #455A64;">media_kit_native_event_loop</span>: any
+  <span style="color: #795548;"># </span><span style="color: #795548;">Persist settings</span>
+  <span style="color: #455A64;">shared_preferences</span>: ^2.2.3
+
+<span style="color: #455A64;">dev_dependencies</span>:
+  <span style="color: #455A64;">flutter_test</span>:
+    <span style="color: #455A64;">sdk</span>: flutter
+
+  <span style="color: #455A64;">flutter_lints</span>: ^4.0.0
+
+<span style="color: #455A64;">dependency_overrides</span>:
+  <span style="color: #455A64;">media_kit</span>:
+    <span style="color: #455A64;">git</span>:
+      <span style="color: #455A64;">url</span>: https://github.com/media-kit/media-kit
+      <span style="color: #455A64;">path</span>: media_kit
+      <span style="color: #455A64;">ref</span>: main
+  <span style="color: #455A64;">media_kit_libs_audio</span>:
+    <span style="color: #455A64;">git</span>:
+      <span style="color: #455A64;">url</span>: https://github.com/media-kit/media-kit
+      <span style="color: #455A64;">path</span>: libs/universal/media_kit_libs_audio
+      <span style="color: #455A64;">ref</span>: main
+  <span style="color: #455A64;">media_kit_native_event_loop</span>:
+    <span style="color: #455A64;">git</span>:
+      <span style="color: #455A64;">url</span>: https://github.com/media-kit/media-kit
+      <span style="color: #455A64;">path</span>: media_kit_native_event_loop
+      <span style="color: #455A64;">ref</span>: main
+
+<span style="color: #455A64;">flutter</span>:
+  <span style="color: #455A64;">uses-material-design</span>: <span style="color: #0288D1;">true</span>
+
+  <span style="color: #795548;"># </span><span style="color: #795548;">Enable generation of localized Strings from arb files.</span>
+  <span style="color: #455A64;">generate</span>: <span style="color: #0288D1;">true</span>
+
+  <span style="color: #455A64;">assets</span>:
+    <span style="color: #795548;"># </span><span style="color: #795548;">Add assets from the images directory to the application.</span>
+    - assets/images/
+    - assets/images/led_segments/
+    - assets/sounds/
+
+  <span style="color: #455A64;">fonts</span>:
+    - <span style="color: #455A64;">family</span>: Roboto
+      <span style="color: #455A64;">fonts</span>:
+        - <span style="color: #455A64;">asset</span>: assets/fonts/Roboto-Regular.ttf
+</pre>
+</div>
+
+<p>
+<code>analysis_options.yaml</code> has some <code>strong-mode</code> options enabled to make Dart act more sensible. <code>prefer_single_quotes</code> seem very idiomatic and avoid escaping more common double quotes.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-yaml"><span style="color: #795548;"># </span><span style="color: #795548;">This file configures the analyzer, which statically analyzes Dart code to</span>
+<span style="color: #795548;"># </span><span style="color: #795548;">check for errors, warnings, and lints.</span>
+<span style="color: #795548;">#</span>
+<span style="color: #795548;"># </span><span style="color: #795548;">The issues identified by the analyzer are surfaced in the UI of Dart-enabled</span>
+<span style="color: #795548;"># </span><span style="color: #795548;">IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be</span>
+<span style="color: #795548;"># </span><span style="color: #795548;">invoked from the command line by running `flutter analyze`.</span>
+
+<span style="color: #795548;"># </span><span style="color: #795548;">The following line activates a set of recommended lints for Flutter apps,</span>
+<span style="color: #795548;"># </span><span style="color: #795548;">packages, and plugins designed to encourage good coding practices.</span>
+<span style="color: #455A64;">include</span>: package:flutter_lints/flutter.yaml
+
+<span style="color: #455A64;">linter</span>:
+  <span style="color: #795548;"># </span><span style="color: #795548;">The lint rules applied to this project can be customized in the</span>
+  <span style="color: #795548;"># </span><span style="color: #795548;">section below to disable rules from the `package:flutter_lints/flutter.yaml`</span>
+  <span style="color: #795548;"># </span><span style="color: #795548;">included above or to enable additional rules. A list of all available lints</span>
+  <span style="color: #795548;"># </span><span style="color: #795548;">and their documentation is published at https://dart.dev/lints.</span>
+  <span style="color: #795548;">#</span>
+  <span style="color: #795548;"># </span><span style="color: #795548;">Instead of disabling a lint rule for the entire project in the</span>
+  <span style="color: #795548;"># </span><span style="color: #795548;">section below, it can also be suppressed for a single line of code</span>
+  <span style="color: #795548;"># </span><span style="color: #795548;">or a specific dart file by using the `// ignore: name_of_lint` and</span>
+  <span style="color: #795548;"># </span><span style="color: #795548;">`// ignore_for_file: name_of_lint` syntax on the line or in the file</span>
+  <span style="color: #795548;"># </span><span style="color: #795548;">producing the lint.</span>
+  <span style="color: #455A64;">rules</span>:
+    <span style="color: #455A64;">prefer_single_quotes</span>: <span style="color: #0288D1;">true</span>
+
+<span style="color: #795548;"># </span><span style="color: #795548;">Additional information about this file can be found at</span>
+<span style="color: #795548;"># </span><span style="color: #795548;">https://dart.dev/guides/language/analysis-options</span>
+
+<span style="color: #455A64;">analyzer</span>:
+  <span style="color: #455A64;">strong-mode</span>:
+    <span style="color: #455A64;">implicit-casts</span>: <span style="color: #0288D1;">false</span>
+    <span style="color: #455A64;">implicit-dynamic</span>: <span style="color: #0288D1;">false</span>
+</pre>
+</div>
+
+<p>
+<code>main.dart</code> initializes program controllers (and controllers then their associated services) and finally passes the controllers to the app widget itself. Location is fixed to Tampere for the present.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
+
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:media_kit/media_kit.dart'</span>;
+
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'src/app.dart'</span>;
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'src/settings/settings_controller.dart'</span>;
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'src/radio/radio_controller.dart'</span>;
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'src/clock/clock_controller.dart'</span>;
+
+<span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">main</span>() <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">settingsController</span> = <span style="color: #3f51b5;">SettingsController</span>.create();
+  <span style="color: #bf360c;">await</span> settingsController.loadSettings();
+
+  <span style="color: #3f51b5;">MediaKit</span>.ensureInitialized();
+  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">radioController</span> = <span style="color: #3f51b5;">RadioController</span>.create(settingsController);
+
+  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">clockController</span> = <span style="color: #3f51b5;">ClockController</span>.create(
+    radioController.play,
+    settingsController,
+    <span style="color: #0288D1;">61.5</span>,
+    <span style="color: #0288D1;">23.75</span>,
+  );
+  clockController.startClock();
+
+  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">app</span> = <span style="color: #3f51b5;">ClockRadio</span>(
+    clockController: clockController,
+    radioController: radioController,
+    settingsController: settingsController,
+  );
+
+  runApp(app);
+}
+</pre>
+</div>
+
+<p>
+<code>app.dart</code> mostly follows the basic skeleton template. The <code>ClockRadio</code>  app widget rebuilds and updates controllers whenever settings change.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ListenableBuilder</span>(
+    listenable: settingsController,
+    builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>, <span style="color: #3f51b5;">Widget</span>? child) {
+      <span style="color: #795548;">// </span><span style="color: #795548;">Settings have changed:</span>
+      clockController.setAlarm(
+          settingsController.alarmH, settingsController.alarmM);
+
+</pre>
+</div>
+
+<p>
+The default dark mode theme is used. Clock faces will override this theme to achieve true blacks.
+</p>
+
+<p>
+The router is as follows.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart">          onGenerateRoute: (<span style="color: #3f51b5;">RouteSettings</span> <span style="color: #455A64;">routeSettings</span>) {
+            <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">MaterialPageRoute</span>&lt;<span style="color: #3f51b5;">void</span>&gt;(
+              settings: routeSettings,
+              builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+                <span style="color: #bf360c;">switch</span> (routeSettings.name) {
+                  <span style="color: #bf360c;">case</span> <span style="color: #3f51b5;">SettingsView</span>.routeName:
+                    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">SettingsView</span>(controller: settingsController);
+                  <span style="color: #bf360c;">default</span>:
+                    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ListenableBuilder</span>(
+                      listenable: clockController,
+                      builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>, <span style="color: #3f51b5;">Widget</span>? <span style="color: #455A64;">child</span>) {
+                        <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ClockView</span>(
+                          clock: clockController.buildClock(),
+                          radio: radioController,
+                        );
+                      },
+                    );
+                }
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org8c0b55b" class="outline-3">
+<h3 id="org8c0b55b">User opens app and sees initial UI</h3>
+<div class="outline-text-3" id="text-org8c0b55b">
+<p>
+The front page is built from <code>ClockView</code> and its child widget <code>clock</code>. To save effort per clock face, <code>ClockView</code> will catch any taps making it a universal touch interface shared by all clock faces. It will also show any introductory texts.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'dart:async'</span>;
+
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'../settings/settings_view.dart'</span>;
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'../radio/radio_controller.dart'</span>;
+
+<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">ClockView</span> <span style="color: #bf360c;">extends</span> <span style="color: #3f51b5;">StatelessWidget</span> {
+  <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">ClockView</span>({
+    <span style="color: #bf360c;">super</span>.key,
+    <span style="color: #795548;">required</span> <span style="color: #bf360c;">this</span>.clock,
+    <span style="color: #795548;">required</span> <span style="color: #bf360c;">this</span>.radio,
+  });
+
+  <span style="color: #795548;">static</span> <span style="color: #bf360c;">const</span> <span style="color: #455A64;">routeName</span> = <span style="color: #6C3082;">'/'</span>;
+
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">StatelessWidget</span> <span style="color: #455A64;">clock</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">RadioController</span> <span style="color: #455A64;">radio</span>;
+
+  <span style="color: #0288D1;">@override</span>
+  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Scaffold</span>(
+      backgroundColor: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>),
+      body: <span style="color: #3f51b5;">Center</span>(
+        child: <span style="color: #3f51b5;">GestureDetector</span>(
+          child: clock.build(context),
+          onLongPress: () {
+            <span style="color: #3f51b5;">Navigator</span>.restorablePushNamed(context, <span style="color: #3f51b5;">SettingsView</span>.routeName);
+          },
+          onTap: () {
+            radio.toggle();
+          },
+        ),
+      ),
+    );
+  } <span style="color: #795548;">// </span><span style="color: #795548;">Widget</span>
+}
+</pre>
+</div>
+
+<p>
+<code>clock</code> was built earlier in <code>app.dart</code> via <code>ClockController</code>'s <code>buildClock</code> method.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #3f51b5;">StatelessWidget</span> <span style="color: #388E3C;">buildClock</span>() {
+  <span style="color: #bf360c;">switch</span> (_settingsController.clockFace) {
+    <span style="color: #bf360c;">case</span> <span style="color: #3f51b5;">ClockFace</span>.led:
+      <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">LedClock</span>(clock: <span style="color: #bf360c;">this</span>);
+    <span style="color: #bf360c;">case</span> <span style="color: #3f51b5;">ClockFace</span>.solar:
+      <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">SolarClock</span>(clock: <span style="color: #bf360c;">this</span>);
+  }
+}
+
+</pre>
+</div>
+
+<p>
+The default clock face is <code>LedClock</code>, set in <code>SettingsService</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">ClockFace</span>&gt; <span style="color: #388E3C;">clockFace</span>() <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">String</span>? face = prefs.getString(<span style="color: #6C3082;">'clockFace'</span>);
+  <span style="color: #bf360c;">switch</span> (face) {
+    <span style="color: #bf360c;">case</span> <span style="color: #6C3082;">'led'</span>:
+      <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ClockFace</span>.led;
+    <span style="color: #bf360c;">case</span> <span style="color: #6C3082;">'solar'</span>:
+      <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ClockFace</span>.solar;
+    <span style="color: #bf360c;">default</span>:
+      <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ClockFace</span>.led;
+  }
+}
+
+</pre>
+</div>
+
+<p>
+<code>ClockController</code> has a timer running to update <code>Clock</code>  &amp; call alarm each minute on the point and notify the <code>ListenableBuilder</code> in <code>app.dart</code> widget tree.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">startClock</span>() {
+  _clock = <span style="color: #3f51b5;">Clock</span>.now(old: _clock);
+
+  <span style="color: #bf360c;">if</span> (_clock.isAlarmRinging) {
+    _alarmCallback();
+  }
+
+  <span style="color: #3f51b5;">Timer</span>(<span style="color: #3f51b5;">Duration</span>(seconds: <span style="color: #0288D1;">60</span> - <span style="color: #3f51b5;">DateTime</span>.now().second), startClock);
+  notifyListeners();
+}
+
+</pre>
+</div>
+
+<p>
+<code>Clock</code> is an immutable class telling current time, location, and associated info for implementing clock faces.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
+
+<span style="color: #0288D1;">@immutable</span>
+<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">Clock</span> {
+  <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Clock</span>(
+    <span style="color: #bf360c;">this</span>.hours,
+    <span style="color: #bf360c;">this</span>.minutes,
+    <span style="color: #bf360c;">this</span>.alarmH,
+    <span style="color: #bf360c;">this</span>.alarmM,
+    <span style="color: #bf360c;">this</span>.tzOffset,
+    <span style="color: #bf360c;">this</span>.nthDayOfYear,
+    <span style="color: #bf360c;">this</span>.userLatitude,
+    <span style="color: #bf360c;">this</span>.userLongitude,
+  );
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">hours</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">minutes</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span>? alarmH;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span>? alarmM;
+
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Duration</span> <span style="color: #455A64;">tzOffset</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">nthDayOfYear</span>;
+
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">userLatitude</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">userLongitude</span>;
+
+  <span style="color: #795548;">factory</span> <span style="color: #3f51b5;">Clock</span>.<span style="color: #388E3C;">now</span>({
+    <span style="color: #3f51b5;">Clock</span>? <span style="color: #455A64;">old</span>,
+    <span style="color: #3f51b5;">double</span>? <span style="color: #455A64;">userLatitude</span>,
+    <span style="color: #3f51b5;">double</span>? <span style="color: #455A64;">userLongitude</span>,
+    <span style="color: #3f51b5;">int</span>? <span style="color: #455A64;">alarmH</span>,
+    <span style="color: #3f51b5;">int</span>? <span style="color: #455A64;">alarmM</span>,
+  }) {
+    <span style="color: #bf360c;">final</span> <span style="color: #455A64;">daysSinceJan1</span> = <span style="color: #3f51b5;">DateTime</span>.now()
+        .difference(<span style="color: #3f51b5;">DateTime</span>(<span style="color: #3f51b5;">DateTime</span>.now().year, <span style="color: #0288D1;">1</span>, <span style="color: #0288D1;">1</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>))
+        .inDays;
+
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Clock</span>(
+      <span style="color: #3f51b5;">DateTime</span>.now().hour,
+      <span style="color: #3f51b5;">DateTime</span>.now().minute,
+      alarmH ?? old?.alarmH, <span style="color: #795548;">// </span><span style="color: #795548;">specific parameter &gt; old delegate &gt; null value</span>
+      alarmM ?? old?.alarmM,
+      <span style="color: #3f51b5;">DateTime</span>.now().timeZoneOffset,
+      daysSinceJan1 + <span style="color: #0288D1;">1</span>,
+      userLatitude ?? old?.userLatitude  ?? <span style="color: #0288D1;">0.0</span>,
+      userLongitude ?? old?.userLongitude ?? <span style="color: #0288D1;">0.0</span>,
+    );
+  }
+
+  <span style="color: #3f51b5;">bool</span> <span style="color: #795548;">get</span> <span style="color: #455A64;">isAlarmRinging</span> {
+    <span style="color: #bf360c;">return</span> alarmH == hours &amp;&amp; alarmM == minutes;
+  }
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org6a7186b" class="outline-4">
+<h4 id="org6a7186b">LED clock face</h4>
+<div class="outline-text-4" id="text-org6a7186b">
+<p>
+The LED clock face employs an array of LED segments: four 7-segment numbers, dots, and alarm elements. <code>_powerLedElements</code> encodes hours and minutes into a <code>Map</code>. Each of the elements in the <code>Map</code> references to an SVG file, to a total of 30 drivable elements (barring future AM/PM elements).
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #3f51b5;">Map</span>&lt;<span style="color: #3f51b5;">String</span>, <span style="color: #3f51b5;">bool</span>&gt; <span style="color: #388E3C;">_powerLedElements</span>(
+  <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">hours</span>,
+  <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">minutes</span>,
+  <span style="color: #3f51b5;">int</span>? <span style="color: #455A64;">alarmH</span>,
+  <span style="color: #3f51b5;">int</span>? <span style="color: #455A64;">alarmM</span>,
+) {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Map</span>&lt;<span style="color: #3f51b5;">String</span>, <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">bool</span>&gt;&gt; <span style="color: #455A64;">typography</span> = {
+    <span style="color: #6C3082;">'0'</span>: [<span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>],
+    <span style="color: #6C3082;">'1'</span>: [<span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">false</span>],
+    <span style="color: #6C3082;">'2'</span>: [<span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">true</span>],
+    <span style="color: #6C3082;">'3'</span>: [<span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">true</span>],
+    <span style="color: #6C3082;">'4'</span>: [<span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>],
+    <span style="color: #6C3082;">'5'</span>: [<span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>],
+    <span style="color: #6C3082;">'6'</span>: [<span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>],
+    <span style="color: #6C3082;">'7'</span>: [<span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">false</span>],
+    <span style="color: #6C3082;">'8'</span>: [<span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>],
+    <span style="color: #6C3082;">'9'</span>: [<span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">false</span>, <span style="color: #0288D1;">true</span>, <span style="color: #0288D1;">true</span>],
+  };
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">bool</span>&gt; <span style="color: #455A64;">elementOff</span> = <span style="color: #3f51b5;">List</span>.filled(<span style="color: #0288D1;">7</span>, <span style="color: #0288D1;">false</span>);
+
+  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">strHours</span> = hours.toString();
+  <span style="color: #3f51b5;">String</span>? digit1 = (strHours.length &gt; <span style="color: #0288D1;">1</span>) ? strHours[<span style="color: #0288D1;">0</span>] : <span style="color: #0288D1;">null</span>;
+  <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">bool</span>&gt; <span style="color: #455A64;">leds1</span> = typography[digit1] ?? elementOff;
+  <span style="color: #3f51b5;">String</span> <span style="color: #455A64;">digit2</span> = (strHours.length &gt; <span style="color: #0288D1;">1</span>) ? strHours[<span style="color: #0288D1;">1</span>] : strHours[<span style="color: #0288D1;">0</span>];
+  <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">bool</span>&gt; <span style="color: #455A64;">leds2</span> = typography[digit2] ?? elementOff;
+
+  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">strMins</span> = minutes.toString().padLeft(<span style="color: #0288D1;">2</span>, <span style="color: #6C3082;">'0'</span>);
+  <span style="color: #3f51b5;">String</span> <span style="color: #455A64;">digit3</span> = strMins[<span style="color: #0288D1;">0</span>];
+  <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">bool</span>&gt; <span style="color: #455A64;">leds3</span> = typography[digit3] ?? elementOff;
+  <span style="color: #3f51b5;">String</span> <span style="color: #455A64;">digit4</span> = strMins[<span style="color: #0288D1;">1</span>];
+  <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">bool</span>&gt; <span style="color: #455A64;">leds4</span> = typography[digit4] ?? elementOff;
+
+  <span style="color: #bf360c;">return</span> {
+    <span style="color: #6C3082;">'alarm'</span>: alarmH != <span style="color: #0288D1;">null</span> &amp;&amp; alarmM != <span style="color: #0288D1;">null</span>,
+    <span style="color: #6C3082;">'dots'</span>: <span style="color: #0288D1;">true</span>,
+    <span style="color: #6C3082;">'1a'</span>: leds1[<span style="color: #0288D1;">0</span>],
+    <span style="color: #6C3082;">'1b'</span>: leds1[<span style="color: #0288D1;">1</span>],
+    <span style="color: #6C3082;">'1c'</span>: leds1[<span style="color: #0288D1;">2</span>],
+    <span style="color: #6C3082;">'1d'</span>: leds1[<span style="color: #0288D1;">3</span>],
+    <span style="color: #6C3082;">'1e'</span>: leds1[<span style="color: #0288D1;">4</span>],
+    <span style="color: #6C3082;">'1f'</span>: leds1[<span style="color: #0288D1;">5</span>],
+    <span style="color: #6C3082;">'1g'</span>: leds1[<span style="color: #0288D1;">6</span>],
+    <span style="color: #6C3082;">'2a'</span>: leds2[<span style="color: #0288D1;">0</span>],
+    <span style="color: #6C3082;">'2b'</span>: leds2[<span style="color: #0288D1;">1</span>],
+    <span style="color: #6C3082;">'2c'</span>: leds2[<span style="color: #0288D1;">2</span>],
+    <span style="color: #6C3082;">'2d'</span>: leds2[<span style="color: #0288D1;">3</span>],
+    <span style="color: #6C3082;">'2e'</span>: leds2[<span style="color: #0288D1;">4</span>],
+    <span style="color: #6C3082;">'2f'</span>: leds2[<span style="color: #0288D1;">5</span>],
+    <span style="color: #6C3082;">'2g'</span>: leds2[<span style="color: #0288D1;">6</span>],
+    <span style="color: #6C3082;">'3a'</span>: leds3[<span style="color: #0288D1;">0</span>],
+    <span style="color: #6C3082;">'3b'</span>: leds3[<span style="color: #0288D1;">1</span>],
+    <span style="color: #6C3082;">'3c'</span>: leds3[<span style="color: #0288D1;">2</span>],
+    <span style="color: #6C3082;">'3d'</span>: leds3[<span style="color: #0288D1;">3</span>],
+    <span style="color: #6C3082;">'3e'</span>: leds3[<span style="color: #0288D1;">4</span>],
+    <span style="color: #6C3082;">'3f'</span>: leds3[<span style="color: #0288D1;">5</span>],
+    <span style="color: #6C3082;">'3g'</span>: leds3[<span style="color: #0288D1;">6</span>],
+    <span style="color: #6C3082;">'4a'</span>: leds4[<span style="color: #0288D1;">0</span>],
+    <span style="color: #6C3082;">'4b'</span>: leds4[<span style="color: #0288D1;">1</span>],
+    <span style="color: #6C3082;">'4c'</span>: leds4[<span style="color: #0288D1;">2</span>],
+    <span style="color: #6C3082;">'4d'</span>: leds4[<span style="color: #0288D1;">3</span>],
+    <span style="color: #6C3082;">'4e'</span>: leds4[<span style="color: #0288D1;">4</span>],
+    <span style="color: #6C3082;">'4f'</span>: leds4[<span style="color: #0288D1;">5</span>],
+    <span style="color: #6C3082;">'4g'</span>: leds4[<span style="color: #0288D1;">6</span>],
+  };
+}
+</pre>
+</div>
+
+<p>
+Individual SVGs were derived from breaking apart the following artesanally drawn vector image (inspired by my now-dead clock radio).
+</p>
+
+
+<div id="orgd84d7cb" class="figure">
+<p><img src="documentation_7seg_final.svg" alt="documentation_7seg_final.svg" class="org-svg" />
+</p>
+</div>
+
+<p>
+The clock face should have same physical size regardless of screen DPI. Height is 1.0" by default (3.5:1 aspect ratio -&gt; 3.5" x 1" WxH). A media query gives us the device DPI ratio relative to the standard 96 desktop DPI, as can be seen in <code>LedClock</code>'s <code>build</code> method. Same technique is used on other clock faces as well.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockHeight</span> =
+      <span style="color: #3f51b5;">MediaQuery</span>.of(context).devicePixelRatio * <span style="color: #0288D1;">96</span> * <span style="color: #0288D1;">1.0</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Map</span>&lt;<span style="color: #3f51b5;">String</span>, <span style="color: #3f51b5;">bool</span>&gt; <span style="color: #455A64;">ledDisplay</span> = _powerLedElements(
+    clock.hrs,
+    clock.mins,
+    clock.aH,
+    clock.aM,
+  );
+
+  <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">String</span>&gt; <span style="color: #455A64;">activeLeds</span> = [];
+  <span style="color: #bf360c;">for</span> (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">led</span> <span style="color: #bf360c;">in</span> ledDisplay.keys) {
+    <span style="color: #bf360c;">if</span> (ledDisplay[led] ?? <span style="color: #0288D1;">false</span>) {
+      activeLeds.add(led);
+    }
+  }
+
+  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Stack</span>(
+    children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+      <span style="color: #bf360c;">for</span> (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">led</span> <span style="color: #bf360c;">in</span> activeLeds)
+        <span style="color: #3f51b5;">SvgPicture</span>.asset(<span style="color: #6C3082;">'assets/images/led_segments/</span><span style="color: #455A64;">$led</span><span style="color: #6C3082;">.svg'</span>,
+            height: clockHeight),
+    ],
+  );
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2de1cd0" class="outline-4">
+<h4 id="org2de1cd0">Solar clock face</h4>
+<div class="outline-text-4" id="text-org2de1cd0">
+<p>
+This clock face is more technical. It does not use predrawn graphics and relies on trigonometric analysis off user's location and current date.
+</p>
+
+<p>
+Determining clock face size is more involved than with LED face. The optimum 2.5" height-width fits considerably less displays. <code>build</code> returns a <code>CustomPaint</code> with <code>SolarGraphic</code> inheriting <code>CustomPainter</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #795548;">// </span><span style="color: #795548;">Clockface is a square (for now)</span>
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">maximumSize</span> = min(
+      <span style="color: #3f51b5;">MediaQuery</span>.sizeOf(context).height, <span style="color: #3f51b5;">MediaQuery</span>.sizeOf(context).width);
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">optimumSize</span> =
+      <span style="color: #3f51b5;">MediaQuery</span>.of(context).devicePixelRatio * <span style="color: #0288D1;">96</span> * <span style="color: #0288D1;">2.5</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockSize</span> =
+      (maximumSize &gt; optimumSize) ? optimumSize : maximumSize;
+
+  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">CustomPaint</span>(
+    painter: <span style="color: #3f51b5;">SolarGraphic</span>(clock.nthDay, clock.hrs, clock.mins, clock.aH, clock.aM,
+        clock.tz.inMinutes, clock.userLat, clock.userLong),
+    size: <span style="color: #3f51b5;">Size</span>(clockSize, clockSize),
+  );
+}
+</pre>
+</div>
+
+<p>
+The graphic is derived from following data.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">SolarGraphic</span>(
+  <span style="color: #bf360c;">this</span>._nthDayOfYear,
+  <span style="color: #bf360c;">this</span>._hours,
+  <span style="color: #bf360c;">this</span>._mins,
+  <span style="color: #bf360c;">this</span>._alarmH,
+  <span style="color: #bf360c;">this</span>._alarmM,
+  <span style="color: #bf360c;">this</span>._tzOffsetM,
+  <span style="color: #bf360c;">this</span>._userLongitude,
+  <span style="color: #bf360c;">this</span>._userLatitude,
+);
+
+</pre>
+</div>
+
+<p>
+Overriding <code>paint</code> from <code>CustomPainter</code>, we start off calculating how current time relates to UTC and to solar noon. With this calculated, we know where sun currently is in radians relative to user's zenith.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">paint</span>(<span style="color: #3f51b5;">Canvas</span> <span style="color: #455A64;">canvas</span>, <span style="color: #3f51b5;">Size</span> <span style="color: #455A64;">size</span>) {
+  <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">pi</span> = <span style="color: #0288D1;">3.141592</span>;
+
+  <span style="color: #795548;">// </span><span style="color: #795548;">Assuming perfectly circular orbit, solar noon is at 12.00 UTC on 0&#176; E/W,</span>
+  <span style="color: #795548;">// </span><span style="color: #795548;">and each 15&#176; added/removed is an hour.</span>
+  <span style="color: #795548;">// </span><span style="color: #795548;">Ie. at 23.75&#176; E, sun is at 0&#176; at 10.25 UTC, so offset is minus 2 hours and plus 25 minutes.</span>
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">sNoonOffset</span> = -(_userLatitude / <span style="color: #0288D1;">15.0</span>);
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">sNoonOffsetH</span> = sNoonOffset.floor();
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">sNoonOffsetM</span> = ((sNoonOffset - sNoonOffsetH) * <span style="color: #0288D1;">60</span>).round();
+
+  <span style="color: #795548;">// </span><span style="color: #795548;">Current time relative to solar noon. At 9.35 UTC, -60 minutes + 10 minutes = -50min.</span>
+  <span style="color: #3f51b5;">int</span> <span style="color: #388E3C;">hoursToSolarMinutes</span>(<span style="color: #3f51b5;">int</span> <span style="color: #455A64;">h</span>) {
+    <span style="color: #bf360c;">return</span> ((h - (_tzOffsetM ~/ <span style="color: #0288D1;">60</span>)) - (<span style="color: #0288D1;">12</span> + sNoonOffsetH)) * <span style="color: #0288D1;">60</span>;
+  }
+
+  <span style="color: #3f51b5;">int</span> <span style="color: #388E3C;">minutesToSolarMinutes</span>(<span style="color: #3f51b5;">int</span> <span style="color: #455A64;">m</span>) {
+    <span style="color: #bf360c;">return</span> (m - (_tzOffsetM % <span style="color: #0288D1;">60</span>)) - (<span style="color: #0288D1;">0</span> + sNoonOffsetM);
+  }
+
+  <span style="color: #795548;">// </span><span style="color: #795548;">-50 min -&gt; -12.5&#176; -&gt; pi/8</span>
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">sunRadians</span> =
+      (hoursToSolarMinutes(_hours) + minutesToSolarMinutes(_mins)) /
+          (<span style="color: #0288D1;">12</span> * <span style="color: #0288D1;">60</span>) *
+          pi;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span>? alarmRadians = (_alarmH != <span style="color: #0288D1;">null</span> &amp;&amp; _alarmM != <span style="color: #0288D1;">null</span>)
+      ? (hoursToSolarMinutes(_alarmH) + minutesToSolarMinutes(_alarmM)) /
+          (<span style="color: #0288D1;">12</span> * <span style="color: #0288D1;">60</span>) *
+          pi
+      : <span style="color: #0288D1;">null</span>;
+
+</pre>
+</div>
+
+<p>
+To draw day-night separation on Earth, we need to know sun's current declination. This uses a well-known formula to approximate this. <code>daynightRatio</code> is the ratio of the distance from earth's center to day-night line and from earth's center to earth's edge. So, it varies roughly between <code>0.0</code> and <code>0.2</code>. Margins and radiuses were chosen for aesthetic purposes.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #795548;">// </span><span style="color: #795548;">Sun declination uses a well-known approximation, and day-night line &amp; user dot are</span>
+<span style="color: #795548;">// </span><span style="color: #795548;">relative to earth radius.</span>
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">sunDeclination</span> =
+    -<span style="color: #0288D1;">23.45</span> * cos((<span style="color: #0288D1;">2</span> * pi / <span style="color: #0288D1;">365</span>) * (_nthDayOfYear + <span style="color: #0288D1;">10</span>));
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">dayNightRatio</span> = sin(sunDeclination / <span style="color: #0288D1;">180</span> * pi);
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">userDot</span> = <span style="color: #0288D1;">1</span> - cos(_userLongitude / <span style="color: #0288D1;">180</span> * pi);
+
+<span style="color: #3f51b5;">double</span> <span style="color: #455A64;">earthRadius</span> = size.height * <span style="color: #0288D1;">0.3</span>;
+<span style="color: #3f51b5;">double</span> <span style="color: #455A64;">earthMargin</span> = size.height * <span style="color: #0288D1;">0.2</span>;
+<span style="color: #3f51b5;">double</span> <span style="color: #455A64;">sunRadius</span> = size.height * <span style="color: #0288D1;">0.05</span>;
+
+</pre>
+</div>
+
+<p>
+Since we're dealing with elements rotating around the midpoint, rotating the canvas makes drawing much simpler vs. starting to calculate circular geometry. If alarm is set, we start off with rotate for alarm outline, <code>drawCircle</code>, and rotate for sun. Otherwise we just rotate straight for the sun.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #bf360c;">if</span> (alarmRadians != <span style="color: #0288D1;">null</span>) {
+  canvas.translate(size.width * <span style="color: #0288D1;">0.5</span>, size.height * <span style="color: #0288D1;">0.5</span>);
+  canvas.rotate(alarmRadians);
+  canvas.translate(-size.width * <span style="color: #0288D1;">0.5</span>, -size.height * <span style="color: #0288D1;">0.5</span>);
+
+  canvas.drawCircle(
+    <span style="color: #3f51b5;">Offset</span>(earthMargin + earthRadius, sunRadius + sunRadius * <span style="color: #0288D1;">0.15</span>),
+    sunRadius,
+    <span style="color: #3f51b5;">Paint</span>()
+      ..color = <span style="color: #3f51b5;">Colors</span>.white
+      ..style = <span style="color: #3f51b5;">PaintingStyle</span>.stroke,
+  );
+
+  <span style="color: #795548;">// </span><span style="color: #795548;">avoid doing two sets of translation-rotations:</span>
+  canvas.translate(size.width * <span style="color: #0288D1;">0.5</span>, size.height * <span style="color: #0288D1;">0.5</span>);
+  canvas.rotate(-alarmRadians + sunRadians);
+  canvas.translate(-size.width * <span style="color: #0288D1;">0.5</span>, -size.height * <span style="color: #0288D1;">0.5</span>);
+} <span style="color: #bf360c;">else</span> {
+  canvas.translate(size.width * <span style="color: #0288D1;">0.5</span>, size.height * <span style="color: #0288D1;">0.5</span>);
+  canvas.rotate(sunRadians);
+  canvas.translate(-size.width * <span style="color: #0288D1;">0.5</span>, -size.height * <span style="color: #0288D1;">0.5</span>);
+}
+</pre>
+</div>
+
+<p>
+Sun is drawn filled. Earth only has an outline, so we have to draw the dayside separately.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #795548;">// </span><span style="color: #795548;">Sun</span>
+<span style="color: #455A64;">canvas</span>.drawCircle(
+  <span style="color: #3f51b5;">Offset</span>(earthMargin + earthRadius, sunRadius + sunRadius * <span style="color: #0288D1;">0.15</span>),
+  sunRadius,
+  <span style="color: #3f51b5;">Paint</span>()
+    ..color = <span style="color: #3f51b5;">Colors</span>.white
+    ..style = <span style="color: #3f51b5;">PaintingStyle</span>.fill,
+);
+
+<span style="color: #795548;">// </span><span style="color: #795548;">Earth</span>
+<span style="color: #455A64;">canvas</span>.drawCircle(
+  <span style="color: #3f51b5;">Offset</span>(earthMargin + earthRadius, earthMargin + earthRadius),
+  earthRadius,
+  <span style="color: #3f51b5;">Paint</span>()
+    ..color = <span style="color: #3f51b5;">Colors</span>.white
+    ..style = <span style="color: #3f51b5;">PaintingStyle</span>.stroke,
+);
+
+</pre>
+</div>
+
+<p>
+We start off by drawing a filled half-circle pointing towards the sun. Then we draw either a day- or night-colored half-ellipse, which covers the area from center until the day-night line according to <code>dayNightRatio</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span> <span style="color: #455A64;">daySideColor</span> = <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">180</span>, <span style="color: #0288D1;">180</span>, <span style="color: #0288D1;">180</span>);
+
+<span style="color: #795548;">// </span><span style="color: #795548;">Day side from which southernSolsticeRect is substituted from</span>
+<span style="color: #795548;">// </span><span style="color: #795548;">or northernSolsticeRect added to</span>
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Rect</span> <span style="color: #455A64;">daySideRect</span> = <span style="color: #3f51b5;">Offset</span>(earthMargin, earthMargin) &amp;
+    <span style="color: #3f51b5;">Size</span>(earthRadius * <span style="color: #0288D1;">2</span>, earthRadius * <span style="color: #0288D1;">2</span>);
+canvas.drawArc(
+  daySideRect,
+  pi,
+  pi,
+  <span style="color: #0288D1;">true</span>,
+  <span style="color: #3f51b5;">Paint</span>()
+    ..color = daySideColor
+    ..style = <span style="color: #3f51b5;">PaintingStyle</span>.fill,
+);
+
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">ellipseHalfHeight</span> = earthRadius * dayNightRatio;
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Color</span> <span style="color: #455A64;">ellipseColor</span> =
+    (sunDeclination &gt;= <span style="color: #0288D1;">0.0</span>) ? daySideColor : <span style="color: #3f51b5;">Colors</span>.black;
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Rect</span> <span style="color: #455A64;">ellipseRect</span> =
+    <span style="color: #3f51b5;">Offset</span>(earthMargin, earthMargin + (earthRadius - ellipseHalfHeight)) &amp;
+        <span style="color: #3f51b5;">Size</span>(earthRadius * <span style="color: #0288D1;">2</span>, ellipseHalfHeight * <span style="color: #0288D1;">2</span>);
+canvas.drawOval(
+  ellipseRect,
+  <span style="color: #3f51b5;">Paint</span>()
+    ..color = ellipseColor
+    ..style = <span style="color: #3f51b5;">PaintingStyle</span>.fill,
+);
+
+</pre>
+</div>
+
+<p>
+Finally we rotate the canvas to its final, original position and draw user's location on Earth.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart">  <span style="color: #795548;">// </span><span style="color: #795548;">Now, let's rotate Earth &amp; sun to correct time before adding user dot</span>
+  canvas.translate(size.width * <span style="color: #0288D1;">0.5</span>, size.height * <span style="color: #0288D1;">0.5</span>);
+  canvas.rotate(-sunRadians);
+  canvas.translate(-size.width * <span style="color: #0288D1;">0.5</span>, -size.height * <span style="color: #0288D1;">0.5</span>);
+
+  <span style="color: #795548;">// </span><span style="color: #795548;">User dot</span>
+  canvas.drawCircle(
+    <span style="color: #3f51b5;">Offset</span>(earthMargin + earthRadius, earthMargin + earthRadius * userDot),
+    size.width * <span style="color: #0288D1;">0.015</span>,
+    <span style="color: #3f51b5;">Paint</span>()
+      ..color = <span style="color: #3f51b5;">Colors</span>.yellow
+      ..style = <span style="color: #3f51b5;">PaintingStyle</span>.fill,
+  );
+}
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc7c6b00" class="outline-3">
+<h3 id="orgc7c6b00">User long presses to open settings</h3>
+<div class="outline-text-3" id="text-orgc7c6b00">
+<p>
+<code>SettingsView</code> is set to be overhauled from its current prototypal state.
+</p>
+
+<p>
+<code>SettingsController</code> is a caching front to <code>SettingsService</code> which is a front for <code>SharedPreferences</code>. They handle radio station URLs, clock faces, and set alarm time in a largely passthrough manner aside from setting some defaults.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org906e541" class="outline-3">
+<h3 id="org906e541">User taps to play radio</h3>
+<div class="outline-text-3" id="text-org906e541">
+<p>
+Tapping triggers <code>RadioController.toggle()</code>, which starts/stops the underlying <code>Player</code> from <code>media_kit</code> library. The library does all the heavy lifting.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'/src/settings/settings_controller.dart'</span>;
+
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'radio_service.dart'</span>;
+
+<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">RadioController</span> {
+  <span style="color: #3f51b5;">RadioController</span>(<span style="color: #bf360c;">this</span>._radioService, <span style="color: #bf360c;">this</span>._settingsController);
+
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">RadioService</span> <span style="color: #455A64;">_radioService</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SettingsController</span> <span style="color: #455A64;">_settingsController</span>;
+
+  <span style="color: #795548;">factory</span> <span style="color: #3f51b5;">RadioController</span>.<span style="color: #388E3C;">create</span>(<span style="color: #3f51b5;">SettingsController</span> <span style="color: #455A64;">settingsController</span>) {
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">RadioController</span>(<span style="color: #3f51b5;">RadioService</span>.create(), settingsController);
+  }
+
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">play</span>() {
+    <span style="color: #bf360c;">if</span> (isPlaying()) {
+      stop();
+    }
+    _radioService.selectStream(_settingsController.radioStation);
+    _radioService.play();
+  }
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">stop</span>() {
+    _radioService.stop();
+  }
+
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">toggle</span>() {
+    <span style="color: #bf360c;">if</span> (isPlaying()) {
+      stop();
+    } <span style="color: #bf360c;">else</span> {
+      play();
+    }
+  }
+
+  <span style="color: #3f51b5;">bool</span> <span style="color: #388E3C;">isPlaying</span>() {
+    <span style="color: #bf360c;">return</span> _radioService.isPlaying();
+  }
+
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:media_kit/media_kit.dart'</span>;
+
+<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">RadioService</span> {
+  <span style="color: #3f51b5;">RadioService</span>(<span style="color: #bf360c;">this</span>._player);
+
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Player</span> <span style="color: #455A64;">_player</span>;
+
+  <span style="color: #795548;">factory</span> <span style="color: #3f51b5;">RadioService</span>.<span style="color: #388E3C;">create</span>() {
+    <span style="color: #bf360c;">final</span> <span style="color: #455A64;">player</span> = <span style="color: #3f51b5;">Player</span>();
+    <span style="color: #795548;">// </span><span style="color: #795548;">Add any Player debugging &amp; setup here</span>
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">RadioService</span>(player);
+  }
+
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">selectStream</span>(<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">path</span>) <span style="color: #bf360c;">async</span> {
+    <span style="color: #bf360c;">await</span> _player.open(<span style="color: #3f51b5;">Media</span>(path), play: <span style="color: #0288D1;">false</span>);
+    <span style="color: #bf360c;">await</span> _player.setPlaylistMode(<span style="color: #3f51b5;">PlaylistMode</span>.loop);
+  }
+
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">play</span>() <span style="color: #bf360c;">async</span> {
+    <span style="color: #bf360c;">await</span> _player.play();
+  }
+
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">stop</span>() <span style="color: #bf360c;">async</span> {
+    <span style="color: #bf360c;">await</span> _player.stop();
+  }
+
+  <span style="color: #3f51b5;">bool</span> <span style="color: #388E3C;">isPlaying</span>() {
+    <span style="color: #bf360c;">return</span> _player.state.playing;
+  }
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: tazca</p>
+<p class="date">Created: 2024-08-05 Mon 17:35</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

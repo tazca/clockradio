@@ -1,9 +1,7 @@
-import 'package:clockradio/src/clock/clock_controller.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'clock.dart';
+import '/src/clock/clock_controller.dart';
 
 @immutable
 class LedClock extends StatelessWidget {

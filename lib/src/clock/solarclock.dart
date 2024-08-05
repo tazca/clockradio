@@ -59,38 +59,38 @@ class SolarGraphic extends CustomPainter {
 
     // Assuming perfectly circular orbit, solar noon is at 12.00 UTC on 0° E/W,
     // and each 15° added/removed is an hour.
-    // At 23.75° E, sun is at 0° at 10.25 UTC, so offset is minus 2 hours and plus 25 minutes.
+    // Ie. at 23.75° E, sun is at 0° at 10.25 UTC, so offset is minus 2 hours and plus 25 minutes.
     final double sNoonOffset = -(_userLatitude / 15.0);
     final int sNoonOffsetH = sNoonOffset.floor();
     final int sNoonOffsetM = ((sNoonOffset - sNoonOffsetH) * 60).round();
 
-    // Sun angle relative to solar noon. At 12.35 local time, -60 minutes + 10 minutes = -50min.
+    // Current time relative to solar noon. At 9.35 UTC, -60 minutes
     int hoursToSolarMinutes(int h) {
       return ((h - (_tzOffsetM ~/ 60)) - (12 + sNoonOffsetH)) * 60;
     }
-
+    // +10 minutes -> -50 minutes
     int minutesToSolarMinutes(int m) {
       return (m - (_tzOffsetM % 60)) - (0 + sNoonOffsetM);
     }
 
+    // -50 minutes -> -12.5° -> -pi/14.4
     final double sunRadians =
         (hoursToSolarMinutes(_hours) + minutesToSolarMinutes(_mins)) /
             (12 * 60) *
             pi;
+    // Same for alarm time instead of current time
     final double? alarmRadians = (_alarmH != null && _alarmM != null)
         ? (hoursToSolarMinutes(_alarmH) + minutesToSolarMinutes(_alarmM)) /
             (12 * 60) *
             pi
         : null;
 
-    // Sun declination uses a well-known approximation, and day-night line & user dot are
-    // relative to earth radius.
+    // Calculating sun declination uses a well-known approximation
+    // Day-night line & user dot are relative to earth radius.
     final double sunDeclination =
         -23.45 * cos((2 * pi / 365) * (_nthDayOfYear + 10));
     final double dayNightRatio = sin(sunDeclination / 180 * pi);
     final double userDot = 1 - cos(_userLongitude / 180 * pi);
-
-    //print("$_nthDayOfYear $sunDeclination $dayNightRatio, $userDot");
 
     double earthRadius = size.height * 0.3;
     double earthMargin = size.height * 0.2;

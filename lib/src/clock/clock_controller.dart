@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import '../settings/settings_controller.dart';
+import '/src/settings/settings_controller.dart';
 
 import 'clock.dart';
 import 'ledclock.dart';

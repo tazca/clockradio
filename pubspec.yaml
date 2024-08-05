@@ -19,6 +19,8 @@ dependencies:
   # Audio
   media_kit: any
   media_kit_libs_audio: any
+  media_kit_native_event_loop: any
+  # Persist settings
   shared_preferences: ^2.2.3
 
 dev_dependencies:
@@ -37,6 +39,11 @@ dependency_overrides:
     git:
       url: https://github.com/media-kit/media-kit
       path: libs/universal/media_kit_libs_audio
+      ref: main
+  media_kit_native_event_loop:
+    git:
+      url: https://github.com/media-kit/media-kit
+      path: media_kit_native_event_loop
       ref: main
 
 flutter:

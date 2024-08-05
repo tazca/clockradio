@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
-import '../settings/settings_view.dart';
-import '../radio/radio_controller.dart';
+import '/src/settings/settings_view.dart';
+import '/src/radio/radio_controller.dart';
 
 class ClockView extends StatelessWidget {
   const ClockView({

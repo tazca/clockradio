@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../clock/clock_controller.dart' show ClockFace;
+import '/src/clock/clock_controller.dart' show ClockFace;
 
 /// A service that stores and retrieves user settings.
 class SettingsService {
@@ -8,7 +8,7 @@ class SettingsService {
   Future<String> radioStation() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? path = prefs.getString('radioStation');
-    return path ?? "assets/sounds/ping.mp3";
+    return path ?? 'assets/sounds/ping.mp3';
   }
 
   Future<void> updateRadioStation(String path) async {
@@ -20,14 +20,14 @@ class SettingsService {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final List<String>? paths = prefs.getStringList('radioStations');
     if (paths == null) {
-      addRadioStation("assets/sounds/ping.mp3");
-      addRadioStation("https://radio.plaza.one/opus");
+      addRadioStation('assets/sounds/ping.mp3');
+      addRadioStation('https://radio.plaza.one/opus');
       addRadioStation(
-          "https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8");
+          'https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8');
       return [
-        "assets/sounds/ping.mp3",
-        "https://radio.plaza.one/opus",
-        "https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8",
+        'assets/sounds/ping.mp3',
+        'https://radio.plaza.one/opus',
+        'https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8',
       ];
     } else {
       return paths;
@@ -58,7 +58,7 @@ class SettingsService {
       case 'solar':
         return ClockFace.solar;
       default:
-        return ClockFace.solar;
+        return ClockFace.led;
     }
   }
 
