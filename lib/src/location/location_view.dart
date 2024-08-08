@@ -32,7 +32,7 @@ class LocationView extends StatelessWidget {
           body: Builder(
             builder: (BuildContext context) {
               return GestureDetector(
-                child: Image.asset('images/worldmap.png'),
+                child: Image.asset('assets/images/worldmap.png'),
                 onTapUp: (TapUpDetails details) {
                   _updateLocation(details, context.size);
                 },
