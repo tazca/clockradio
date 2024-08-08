@@ -47,6 +47,13 @@ class SettingsView extends StatelessWidget {
         TimeOfDay? setAlarm = await showTimePicker(
           initialTime: controller.alarm ?? const TimeOfDay(hour: 0, minute: 0),
           context: context,
+          builder: (BuildContext context, Widget? child) {
+            return MediaQuery(
+              data:
+                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              child: child!,
+            );
+          },
         );
         controller.updateAlarm(setAlarm);
       },
