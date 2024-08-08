@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2024-08-05 Mon 17:35 -->
+<!-- 2024-08-08 Thu 19:53 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Clockradio app</title>
@@ -201,42 +201,43 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgb577dc8">Setting up development environment</a></li>
-<li><a href="#orgffc8af6">Clock radio</a>
+<li><a href="#org98c58a5">Setting up development environment</a></li>
+<li><a href="#org5d21dd6">Clock radio</a>
 <ul>
-<li><a href="#org8c0b55b">User opens app and sees initial UI</a>
+<li><a href="#org593b0fd">User opens app and sees initial UI</a>
 <ul>
-<li><a href="#org6a7186b">LED clock face</a></li>
-<li><a href="#org2de1cd0">Solar clock face</a></li>
+<li><a href="#org08977b2">LED clock face</a></li>
+<li><a href="#org352075b">Solar clock face</a></li>
 </ul>
 </li>
-<li><a href="#orgc7c6b00">User long presses to open settings</a></li>
-<li><a href="#org906e541">User taps to play radio</a></li>
+<li><a href="#org6da9817">User swipes right to edit settings</a></li>
+<li><a href="#org2f47bf4">User swipes left to radio view</a></li>
+<li><a href="#orga7c6917">User taps to play radio</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgb577dc8" class="outline-2">
-<h2 id="orgb577dc8">Setting up development environment</h2>
-<div class="outline-text-2" id="text-orgb577dc8">
+<div id="outline-container-org98c58a5" class="outline-2">
+<h2 id="org98c58a5">Setting up development environment</h2>
+<div class="outline-text-2" id="text-org98c58a5">
 <p>
 Follow Flutter site's <a href="https://docs.flutter.dev/get-started/install">Getting Started</a> section, and use maybe <a href="https://vscodium.com/">VSCodium</a> as the IDE as it has well integrated Dart/Flutter support with a plugin.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgffc8af6" class="outline-2">
-<h2 id="orgffc8af6">Clock radio</h2>
-<div class="outline-text-2" id="text-orgffc8af6">
+<div id="outline-container-org5d21dd6" class="outline-2">
+<h2 id="org5d21dd6">Clock radio</h2>
+<div class="outline-text-2" id="text-org5d21dd6">
 <p>
 The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-CDN loading, image and sound assets, and <code>flutter_svg</code>, <code>media_kit</code>, and <code>shared_preferences</code>  dependencies added. Current <code>pub.dev</code> release of  <code>media_kit</code> <a href="https://github.com/media-kit/media-kit/issues/595#issuecomment-2094208809">has issues building on Fedora</a> and should use <code>main</code> branch on GitHub instead.
 </p>
 
 <div class="org-src-container">
 <pre class="src src-yaml"><span style="color: #455A64;">name</span>: clockradio
-<span style="color: #455A64;">description</span>: <span style="color: #6C3082;">"A cross-platform clock radio app."</span>
+<span style="color: #455A64;">description</span>: <span style="color: #6C3082;">"A new Flutter project."</span>
 
 <span style="color: #795548;"># </span><span style="color: #795548;">Prevent accidental publishing to pub.dev.</span>
 <span style="color: #455A64;">publish_to</span>: <span style="color: #6C3082;">'none'</span>
@@ -290,7 +291,6 @@ The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-
   <span style="color: #455A64;">generate</span>: <span style="color: #0288D1;">true</span>
 
   <span style="color: #455A64;">assets</span>:
-    <span style="color: #795548;"># </span><span style="color: #795548;">Add assets from the images directory to the application.</span>
     - assets/images/
     - assets/images/led_segments/
     - assets/sounds/
@@ -366,8 +366,6 @@ The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-
   <span style="color: #bf360c;">final</span> <span style="color: #455A64;">clockController</span> = <span style="color: #3f51b5;">ClockController</span>.create(
     radioController.play,
     settingsController,
-    <span style="color: #0288D1;">61.5</span>,
-    <span style="color: #0288D1;">23.75</span>,
   );
   clockController.startClock();
 
@@ -392,8 +390,9 @@ The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-
     listenable: settingsController,
     builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>, <span style="color: #3f51b5;">Widget</span>? child) {
       <span style="color: #795548;">// </span><span style="color: #795548;">Settings have changed:</span>
-      clockController.setAlarm(
-          settingsController.alarmH, settingsController.alarmM);
+      clockController.setAlarm(settingsController.alarm);
+      clockController.setLocation(
+          settingsController.latitude, settingsController.longitude);
 
 </pre>
 </div>
@@ -412,17 +411,34 @@ The router is as follows.
               settings: routeSettings,
               builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
                 <span style="color: #bf360c;">switch</span> (routeSettings.name) {
-                  <span style="color: #bf360c;">case</span> <span style="color: #3f51b5;">SettingsView</span>.routeName:
-                    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">SettingsView</span>(controller: settingsController);
+                  <span style="color: #bf360c;">case</span> <span style="color: #3f51b5;">LocationView</span>.routeName:
+                    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">LocationView</span>(settingsController: settingsController);
                   <span style="color: #bf360c;">default</span>:
-                    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ListenableBuilder</span>(
-                      listenable: clockController,
-                      builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>, <span style="color: #3f51b5;">Widget</span>? <span style="color: #455A64;">child</span>) {
-                        <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ClockView</span>(
-                          clock: clockController.buildClock(),
-                          radio: radioController,
-                        );
-                      },
+                    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Stack</span>(
+                      children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+                        <span style="color: #3f51b5;">PageView</span>(
+                          controller: <span style="color: #3f51b5;">PageController</span>(initialPage: <span style="color: #0288D1;">1</span>),
+                          children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+                            <span style="color: #3f51b5;">RadioView</span>(
+                              radio: radioController,
+                              settings: settingsController,
+                            ),
+                            <span style="color: #3f51b5;">ListenableBuilder</span>(
+                              listenable: clockController,
+                              builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>, <span style="color: #3f51b5;">Widget</span>? <span style="color: #455A64;">child</span>) {
+                                <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ClockView</span>(
+                                  clock: clockController.buildClock(),
+                                  radio: radioController,
+                                );
+                              },
+                            ),
+                            <span style="color: #3f51b5;">SettingsView</span>(
+                              controller: settingsController,
+                            ),
+                          ],
+                        ),
+                        <span style="color: #bf360c;">if</span> (settingsController.intro) <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">IntroductionView</span>(),
+                      ],
                     );
                 }
               },
@@ -433,23 +449,30 @@ The router is as follows.
     );
   }
 }
+
+<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">MouseAndTouchDragBehavior</span> <span style="color: #bf360c;">extends</span> <span style="color: #3f51b5;">MaterialScrollBehavior</span> {
+  <span style="color: #795548;">/// </span><span style="color: #795548;">Allow dragging PageView with a mouse</span>
+  <span style="color: #0288D1;">@override</span>
+  <span style="color: #3f51b5;">Set</span>&lt;<span style="color: #3f51b5;">PointerDeviceKind</span>&gt; <span style="color: #795548;">get</span> <span style="color: #455A64;">dragDevices</span> =&gt; {
+        <span style="color: #3f51b5;">PointerDeviceKind</span>.touch,
+        <span style="color: #3f51b5;">PointerDeviceKind</span>.mouse,
+      };
+}
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org8c0b55b" class="outline-3">
-<h3 id="org8c0b55b">User opens app and sees initial UI</h3>
-<div class="outline-text-3" id="text-org8c0b55b">
+<div id="outline-container-org593b0fd" class="outline-3">
+<h3 id="org593b0fd">User opens app and sees initial UI</h3>
+<div class="outline-text-3" id="text-org593b0fd">
 <p>
 The front page is built from <code>ClockView</code> and its child widget <code>clock</code>. To save effort per clock face, <code>ClockView</code> will catch any taps making it a universal touch interface shared by all clock faces. It will also show any introductory texts.
 </p>
 
 <div class="org-src-container">
 <pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
-<span style="color: #795548;">import</span> <span style="color: #6C3082;">'dart:async'</span>;
 
-<span style="color: #795548;">import</span> <span style="color: #6C3082;">'../settings/settings_view.dart'</span>;
-<span style="color: #795548;">import</span> <span style="color: #6C3082;">'../radio/radio_controller.dart'</span>;
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'/src/radio/radio_controller.dart'</span>;
 
 <span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">ClockView</span> <span style="color: #bf360c;">extends</span> <span style="color: #3f51b5;">StatelessWidget</span> {
   <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">ClockView</span>({
@@ -465,18 +488,16 @@ The front page is built from <code>ClockView</code> and its child widget <code>c
 
   <span style="color: #0288D1;">@override</span>
   <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
-
     <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Scaffold</span>(
       backgroundColor: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>),
-      body: <span style="color: #3f51b5;">Center</span>(
-        child: <span style="color: #3f51b5;">GestureDetector</span>(
+      body: <span style="color: #3f51b5;">InkWell</span>(
+        hoverColor: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>),
+        onTap: () {
+          radio.toggle();
+        },
+        borderRadius: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">BorderRadius</span>.all(<span style="color: #3f51b5;">Radius</span>.circular(<span style="color: #0288D1;">16.0</span>)),
+        child: <span style="color: #3f51b5;">Center</span>(
           child: clock.build(context),
-          onLongPress: () {
-            <span style="color: #3f51b5;">Navigator</span>.restorablePushNamed(context, <span style="color: #3f51b5;">SettingsView</span>.routeName);
-          },
-          onTap: () {
-            radio.toggle();
-          },
         ),
       ),
     );
@@ -552,19 +573,15 @@ The default clock face is <code>LedClock</code>, set in <code>SettingsService</c
 <span style="color: #0288D1;">@immutable</span>
 <span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">Clock</span> {
   <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Clock</span>(
-    <span style="color: #bf360c;">this</span>.hours,
-    <span style="color: #bf360c;">this</span>.minutes,
-    <span style="color: #bf360c;">this</span>.alarmH,
-    <span style="color: #bf360c;">this</span>.alarmM,
+    <span style="color: #bf360c;">this</span>.time,
+    <span style="color: #bf360c;">this</span>.alarm,
     <span style="color: #bf360c;">this</span>.tzOffset,
     <span style="color: #bf360c;">this</span>.nthDayOfYear,
     <span style="color: #bf360c;">this</span>.userLatitude,
     <span style="color: #bf360c;">this</span>.userLongitude,
   );
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">hours</span>;
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">minutes</span>;
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span>? alarmH;
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span>? alarmM;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">TimeOfDay</span> <span style="color: #455A64;">time</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">TimeOfDay</span>? alarm;
 
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Duration</span> <span style="color: #455A64;">tzOffset</span>;
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">nthDayOfYear</span>;
@@ -572,40 +589,42 @@ The default clock face is <code>LedClock</code>, set in <code>SettingsService</c
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">userLatitude</span>;
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">userLongitude</span>;
 
+  <span style="color: #3f51b5;">int</span> <span style="color: #795548;">get</span> <span style="color: #455A64;">hours</span> =&gt; time.hour;
+  <span style="color: #3f51b5;">int</span> <span style="color: #795548;">get</span> <span style="color: #455A64;">minutes</span> =&gt; time.minute;
+  <span style="color: #3f51b5;">int</span>? <span style="color: #795548;">get</span> <span style="color: #455A64;">alarmH</span> =&gt; alarm?.hour;
+  <span style="color: #3f51b5;">int</span>? <span style="color: #795548;">get</span> <span style="color: #455A64;">alarmM</span> =&gt; alarm?.minute;
+
   <span style="color: #795548;">factory</span> <span style="color: #3f51b5;">Clock</span>.<span style="color: #388E3C;">now</span>({
     <span style="color: #3f51b5;">Clock</span>? <span style="color: #455A64;">old</span>,
     <span style="color: #3f51b5;">double</span>? <span style="color: #455A64;">userLatitude</span>,
     <span style="color: #3f51b5;">double</span>? <span style="color: #455A64;">userLongitude</span>,
-    <span style="color: #3f51b5;">int</span>? <span style="color: #455A64;">alarmH</span>,
-    <span style="color: #3f51b5;">int</span>? <span style="color: #455A64;">alarmM</span>,
+    <span style="color: #3f51b5;">TimeOfDay</span>? <span style="color: #455A64;">alarm</span>,
   }) {
     <span style="color: #bf360c;">final</span> <span style="color: #455A64;">daysSinceJan1</span> = <span style="color: #3f51b5;">DateTime</span>.now()
         .difference(<span style="color: #3f51b5;">DateTime</span>(<span style="color: #3f51b5;">DateTime</span>.now().year, <span style="color: #0288D1;">1</span>, <span style="color: #0288D1;">1</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>))
         .inDays;
 
     <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Clock</span>(
-      <span style="color: #3f51b5;">DateTime</span>.now().hour,
-      <span style="color: #3f51b5;">DateTime</span>.now().minute,
-      alarmH ?? old?.alarmH, <span style="color: #795548;">// </span><span style="color: #795548;">specific parameter &gt; old delegate &gt; null value</span>
-      alarmM ?? old?.alarmM,
+      <span style="color: #3f51b5;">TimeOfDay</span>.now(),
+      alarm ?? old?.alarm, <span style="color: #795548;">// </span><span style="color: #795548;">specific parameter &gt; old delegate &gt; null value</span>
       <span style="color: #3f51b5;">DateTime</span>.now().timeZoneOffset,
       daysSinceJan1 + <span style="color: #0288D1;">1</span>,
-      userLatitude ?? old?.userLatitude  ?? <span style="color: #0288D1;">0.0</span>,
+      userLatitude ?? old?.userLatitude ?? <span style="color: #0288D1;">0.0</span>,
       userLongitude ?? old?.userLongitude ?? <span style="color: #0288D1;">0.0</span>,
     );
   }
 
   <span style="color: #3f51b5;">bool</span> <span style="color: #795548;">get</span> <span style="color: #455A64;">isAlarmRinging</span> {
-    <span style="color: #bf360c;">return</span> alarmH == hours &amp;&amp; alarmM == minutes;
+    <span style="color: #bf360c;">return</span> time == alarm;
   }
 }
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org6a7186b" class="outline-4">
-<h4 id="org6a7186b">LED clock face</h4>
-<div class="outline-text-4" id="text-org6a7186b">
+<div id="outline-container-org08977b2" class="outline-4">
+<h4 id="org08977b2">LED clock face</h4>
+<div class="outline-text-4" id="text-org08977b2">
 <p>
 The LED clock face employs an array of LED segments: four 7-segment numbers, dots, and alarm elements. <code>_powerLedElements</code> encodes hours and minutes into a <code>Map</code>. Each of the elements in the <code>Map</code> references to an SVG file, to a total of 30 drivable elements (barring future AM/PM elements).
 </p>
@@ -684,7 +703,7 @@ Individual SVGs were derived from breaking apart the following artesanally drawn
 </p>
 
 
-<div id="orgd84d7cb" class="figure">
+<div id="org24b0115" class="figure">
 <p><img src="documentation_7seg_final.svg" alt="documentation_7seg_final.svg" class="org-svg" />
 </p>
 </div>
@@ -694,40 +713,41 @@ The clock face should have same physical size regardless of screen DPI. Height i
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockHeight</span> =
-      <span style="color: #3f51b5;">MediaQuery</span>.of(context).devicePixelRatio * <span style="color: #0288D1;">96</span> * <span style="color: #0288D1;">1.0</span>;
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Map</span>&lt;<span style="color: #3f51b5;">String</span>, <span style="color: #3f51b5;">bool</span>&gt; <span style="color: #455A64;">ledDisplay</span> = _powerLedElements(
-    clock.hrs,
-    clock.mins,
-    clock.aH,
-    clock.aM,
-  );
+<pre class="src src-dart">  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockHeight</span> =
+        <span style="color: #3f51b5;">MediaQuery</span>.of(context).devicePixelRatio * <span style="color: #0288D1;">96</span> * <span style="color: #0288D1;">1.0</span>;
+    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Map</span>&lt;<span style="color: #3f51b5;">String</span>, <span style="color: #3f51b5;">bool</span>&gt; <span style="color: #455A64;">ledDisplay</span> = _powerLedElements(
+      clock.time.hour,
+      clock.time.minute,
+      clock.alarm?.hour,
+      clock.alarm?.minute,
+    );
 
-  <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">String</span>&gt; <span style="color: #455A64;">activeLeds</span> = [];
-  <span style="color: #bf360c;">for</span> (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">led</span> <span style="color: #bf360c;">in</span> ledDisplay.keys) {
-    <span style="color: #bf360c;">if</span> (ledDisplay[led] ?? <span style="color: #0288D1;">false</span>) {
-      activeLeds.add(led);
+    <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">String</span>&gt; <span style="color: #455A64;">activeLeds</span> = [];
+    <span style="color: #bf360c;">for</span> (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">led</span> <span style="color: #bf360c;">in</span> ledDisplay.keys) {
+      <span style="color: #bf360c;">if</span> (ledDisplay[led] ?? <span style="color: #0288D1;">false</span>) {
+        activeLeds.add(led);
+      }
     }
-  }
 
-  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Stack</span>(
-    children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
-      <span style="color: #bf360c;">for</span> (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">led</span> <span style="color: #bf360c;">in</span> activeLeds)
-        <span style="color: #3f51b5;">SvgPicture</span>.asset(<span style="color: #6C3082;">'assets/images/led_segments/</span><span style="color: #455A64;">$led</span><span style="color: #6C3082;">.svg'</span>,
-            height: clockHeight),
-    ],
-  );
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Stack</span>(
+      children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+        <span style="color: #bf360c;">for</span> (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">led</span> <span style="color: #bf360c;">in</span> activeLeds)
+          <span style="color: #3f51b5;">SvgPicture</span>.asset(<span style="color: #6C3082;">'assets/images/led_segments/</span><span style="color: #455A64;">$led</span><span style="color: #6C3082;">.svg'</span>,
+              height: clockHeight),
+      ],
+    );
+  }
 }
+
 </pre>
 </div>
 </div>
 </div>
 
-
-<div id="outline-container-org2de1cd0" class="outline-4">
-<h4 id="org2de1cd0">Solar clock face</h4>
-<div class="outline-text-4" id="text-org2de1cd0">
+<div id="outline-container-org352075b" class="outline-4">
+<h4 id="org352075b">Solar clock face</h4>
+<div class="outline-text-4" id="text-org352075b">
 <p>
 This clock face is more technical. It does not use predrawn graphics and relies on trigonometric analysis off user's location and current date.
 </p>
@@ -737,20 +757,27 @@ Determining clock face size is more involved than with LED face. The optimum 2.5
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
-  <span style="color: #795548;">// </span><span style="color: #795548;">Clockface is a square (for now)</span>
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">maximumSize</span> = min(
-      <span style="color: #3f51b5;">MediaQuery</span>.sizeOf(context).height, <span style="color: #3f51b5;">MediaQuery</span>.sizeOf(context).width);
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">optimumSize</span> =
-      <span style="color: #3f51b5;">MediaQuery</span>.of(context).devicePixelRatio * <span style="color: #0288D1;">96</span> * <span style="color: #0288D1;">2.5</span>;
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockSize</span> =
-      (maximumSize &gt; optimumSize) ? optimumSize : maximumSize;
-
-  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">CustomPaint</span>(
-    painter: <span style="color: #3f51b5;">SolarGraphic</span>(clock.nthDay, clock.hrs, clock.mins, clock.aH, clock.aM,
-        clock.tz.inMinutes, clock.userLat, clock.userLong),
-    size: <span style="color: #3f51b5;">Size</span>(clockSize, clockSize),
-  );
+<pre class="src src-dart">  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+    <span style="color: #795548;">// </span><span style="color: #795548;">Clockface is a square (for now)</span>
+    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">maximumSize</span> = min(
+        <span style="color: #3f51b5;">MediaQuery</span>.sizeOf(context).height, <span style="color: #3f51b5;">MediaQuery</span>.sizeOf(context).width);
+    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">optimumSize</span> =
+        <span style="color: #3f51b5;">MediaQuery</span>.of(context).devicePixelRatio * <span style="color: #0288D1;">96</span> * <span style="color: #0288D1;">2.5</span>;
+    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockSize</span> =
+        (maximumSize &gt; optimumSize) ? optimumSize : maximumSize;
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">CustomPaint</span>(
+      painter: <span style="color: #3f51b5;">SolarGraphic</span>(
+          clock.nthDay,
+          clock.time.hour,
+          clock.time.minute,
+          clock.alarm?.hour,
+          clock.alarm?.minute,
+          clock.tz.inMinutes,
+          clock.userLat,
+          clock.userLong,),
+      size: <span style="color: #3f51b5;">Size</span>(clockSize, clockSize),
+    );
+  }
 }
 </pre>
 </div>
@@ -767,10 +794,9 @@ The graphic is derived from following data.
   <span style="color: #bf360c;">this</span>._alarmH,
   <span style="color: #bf360c;">this</span>._alarmM,
   <span style="color: #bf360c;">this</span>._tzOffsetM,
-  <span style="color: #bf360c;">this</span>._userLongitude,
   <span style="color: #bf360c;">this</span>._userLatitude,
+  <span style="color: #bf360c;">this</span>._userLongitude,
 );
-
 </pre>
 </div>
 
@@ -781,28 +807,29 @@ Overriding <code>paint</code> from <code>CustomPainter</code>, we start off calc
 <div class="org-src-container">
 <pre class="src src-dart"><span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">paint</span>(<span style="color: #3f51b5;">Canvas</span> <span style="color: #455A64;">canvas</span>, <span style="color: #3f51b5;">Size</span> <span style="color: #455A64;">size</span>) {
   <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">pi</span> = <span style="color: #0288D1;">3.141592</span>;
-
   <span style="color: #795548;">// </span><span style="color: #795548;">Assuming perfectly circular orbit, solar noon is at 12.00 UTC on 0&#176; E/W,</span>
   <span style="color: #795548;">// </span><span style="color: #795548;">and each 15&#176; added/removed is an hour.</span>
   <span style="color: #795548;">// </span><span style="color: #795548;">Ie. at 23.75&#176; E, sun is at 0&#176; at 10.25 UTC, so offset is minus 2 hours and plus 25 minutes.</span>
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">sNoonOffset</span> = -(_userLatitude / <span style="color: #0288D1;">15.0</span>);
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">sNoonOffset</span> = -(_userLongitude / <span style="color: #0288D1;">15.0</span>);
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">sNoonOffsetH</span> = sNoonOffset.floor();
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">sNoonOffsetM</span> = ((sNoonOffset - sNoonOffsetH) * <span style="color: #0288D1;">60</span>).round();
 
-  <span style="color: #795548;">// </span><span style="color: #795548;">Current time relative to solar noon. At 9.35 UTC, -60 minutes + 10 minutes = -50min.</span>
+  <span style="color: #795548;">// </span><span style="color: #795548;">Current time relative to solar noon. At 9.35 UTC, -60 minutes</span>
   <span style="color: #3f51b5;">int</span> <span style="color: #388E3C;">hoursToSolarMinutes</span>(<span style="color: #3f51b5;">int</span> <span style="color: #455A64;">h</span>) {
     <span style="color: #bf360c;">return</span> ((h - (_tzOffsetM ~/ <span style="color: #0288D1;">60</span>)) - (<span style="color: #0288D1;">12</span> + sNoonOffsetH)) * <span style="color: #0288D1;">60</span>;
   }
 
+  <span style="color: #795548;">// </span><span style="color: #795548;">+10 minutes -&gt; -50 minutes</span>
   <span style="color: #3f51b5;">int</span> <span style="color: #388E3C;">minutesToSolarMinutes</span>(<span style="color: #3f51b5;">int</span> <span style="color: #455A64;">m</span>) {
     <span style="color: #bf360c;">return</span> (m - (_tzOffsetM % <span style="color: #0288D1;">60</span>)) - (<span style="color: #0288D1;">0</span> + sNoonOffsetM);
   }
 
-  <span style="color: #795548;">// </span><span style="color: #795548;">-50 min -&gt; -12.5&#176; -&gt; pi/8</span>
+  <span style="color: #795548;">// </span><span style="color: #795548;">-50 minutes -&gt; -12.5&#176; -&gt; -pi/14.4</span>
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">sunRadians</span> =
       (hoursToSolarMinutes(_hours) + minutesToSolarMinutes(_mins)) /
           (<span style="color: #0288D1;">12</span> * <span style="color: #0288D1;">60</span>) *
           pi;
+  <span style="color: #795548;">// </span><span style="color: #795548;">Same for alarm time instead of current time</span>
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span>? alarmRadians = (_alarmH != <span style="color: #0288D1;">null</span> &amp;&amp; _alarmM != <span style="color: #0288D1;">null</span>)
       ? (hoursToSolarMinutes(_alarmH) + minutesToSolarMinutes(_alarmM)) /
           (<span style="color: #0288D1;">12</span> * <span style="color: #0288D1;">60</span>) *
@@ -817,12 +844,12 @@ To draw day-night separation on Earth, we need to know sun's current declination
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #795548;">// </span><span style="color: #795548;">Sun declination uses a well-known approximation, and day-night line &amp; user dot are</span>
-<span style="color: #795548;">// </span><span style="color: #795548;">relative to earth radius.</span>
+<pre class="src src-dart"><span style="color: #795548;">// </span><span style="color: #795548;">Calculating sun declination uses a well-known approximation</span>
+<span style="color: #795548;">// </span><span style="color: #795548;">Day-night line &amp; user dot are relative to earth radius.</span>
 <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">sunDeclination</span> =
     -<span style="color: #0288D1;">23.45</span> * cos((<span style="color: #0288D1;">2</span> * pi / <span style="color: #0288D1;">365</span>) * (_nthDayOfYear + <span style="color: #0288D1;">10</span>));
 <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">dayNightRatio</span> = sin(sunDeclination / <span style="color: #0288D1;">180</span> * pi);
-<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">userDot</span> = <span style="color: #0288D1;">1</span> - cos(_userLongitude / <span style="color: #0288D1;">180</span> * pi);
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">userDot</span> = <span style="color: #0288D1;">1</span> - cos(_userLatitude / <span style="color: #0288D1;">180</span> * pi);
 
 <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">earthRadius</span> = size.height * <span style="color: #0288D1;">0.3</span>;
 <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">earthMargin</span> = size.height * <span style="color: #0288D1;">0.2</span>;
@@ -858,6 +885,7 @@ Since we're dealing with elements rotating around the midpoint, rotating the can
   canvas.rotate(sunRadians);
   canvas.translate(-size.width * <span style="color: #0288D1;">0.5</span>, -size.height * <span style="color: #0288D1;">0.5</span>);
 }
+
 </pre>
 </div>
 
@@ -907,10 +935,11 @@ canvas.drawArc(
     ..color = daySideColor
     ..style = <span style="color: #3f51b5;">PaintingStyle</span>.fill,
 );
-
 <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">ellipseHalfHeight</span> = earthRadius * dayNightRatio;
-<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Color</span> <span style="color: #455A64;">ellipseColor</span> =
-    (sunDeclination &gt;= <span style="color: #0288D1;">0.0</span>) ? daySideColor : <span style="color: #3f51b5;">Colors</span>.black;
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Color</span> <span style="color: #455A64;">ellipseColor</span> = (sunDeclination &gt;= <span style="color: #0288D1;">0.0</span> &amp;&amp; _userLatitude &gt;= <span style="color: #0288D1;">0.0</span> ||
+        sunDeclination &lt; <span style="color: #0288D1;">0.0</span> &amp;&amp; _userLatitude &lt; <span style="color: #0288D1;">0.0</span>)
+    ? daySideColor
+    : <span style="color: #3f51b5;">Colors</span>.black;
 <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Rect</span> <span style="color: #455A64;">ellipseRect</span> =
     <span style="color: #3f51b5;">Offset</span>(earthMargin, earthMargin + (earthRadius - ellipseHalfHeight)) &amp;
         <span style="color: #3f51b5;">Size</span>(earthRadius * <span style="color: #0288D1;">2</span>, ellipseHalfHeight * <span style="color: #0288D1;">2</span>);
@@ -950,23 +979,35 @@ Finally we rotate the canvas to its final, original position and draw user's loc
 </div>
 </div>
 
-
-<div id="outline-container-orgc7c6b00" class="outline-3">
-<h3 id="orgc7c6b00">User long presses to open settings</h3>
-<div class="outline-text-3" id="text-orgc7c6b00">
+<div id="outline-container-org6da9817" class="outline-3">
+<h3 id="org6da9817">User swipes right to edit settings</h3>
+<div class="outline-text-3" id="text-org6da9817">
 <p>
-<code>SettingsView</code> is set to be overhauled from its current prototypal state.
+User sees options to set alarm time, location, clock face, and OLED mode. Setting alarm uses native time-picker, and each clock face has a radioesque icon-button in horizontal list. OLED mode is a on-off switch. Setting location opens a subscreen similar to time picker but with world map + overrideable lat/long shown.
 </p>
 
 <p>
-<code>SettingsController</code> is a caching front to <code>SettingsService</code> which is a front for <code>SharedPreferences</code>. They handle radio station URLs, clock faces, and set alarm time in a largely passthrough manner aside from setting some defaults.
+Equirectangular map SVG has 853 width, where dateline is at 829.25 -&gt; -23.75 offset (and so Greenwich at 853/2-23.75). <code>onTapUp (TapUpDetails details)</code> gives position (tapUp happens only when no other gesture has overridden the tap).
+</p>
+
+<p>
+<code>SettingsController</code> is then a caching front for <code>SettingsService</code> which is a front for <code>SharedPreferences</code>. They handle radio station URLs, clock faces, and set alarm time edited via <code>SettingsView</code> in a largely passthrough manner aside from setting some defaults.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org906e541" class="outline-3">
-<h3 id="org906e541">User taps to play radio</h3>
-<div class="outline-text-3" id="text-org906e541">
+<div id="outline-container-org2f47bf4" class="outline-3">
+<h3 id="org2f47bf4">User swipes left to radio view</h3>
+<div class="outline-text-3" id="text-org2f47bf4">
+<p>
+User sees the currently selected radio station in e.g. a dropdown of favorite stations. The view has an engaging way to present all radio stations available. Geoblocked stations can be filtered by telling app to go through them. A random station can be set to play whenever <code>RadioController.play()</code> is called.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga7c6917" class="outline-3">
+<h3 id="orga7c6917">User taps to play radio</h3>
+<div class="outline-text-3" id="text-orga7c6917">
 <p>
 Tapping triggers <code>RadioController.toggle()</code>, which starts/stops the underlying <code>Player</code> from <code>media_kit</code> library. The library does all the heavy lifting.
 </p>
@@ -1052,7 +1093,7 @@ Tapping triggers <code>RadioController.toggle()</code>, which starts/stops the u
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: tazca</p>
-<p class="date">Created: 2024-08-05 Mon 17:35</p>
+<p class="date">Created: 2024-08-08 Thu 19:53</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
