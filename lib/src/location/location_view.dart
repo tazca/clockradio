@@ -7,25 +7,72 @@ import '/src/settings/settings_controller.dart';
 /// When a user changes a setting, the SettingsController is updated and
 /// Widgets that listen to the SettingsController are rebuilt.
 class LocationView extends StatelessWidget {
-  const LocationView({super.key, required this.settingsController});
+  LocationView({super.key, required this.settingsController});
 
   static const routeName = '/location';
 
   final SettingsController settingsController;
+  final TextEditingController textLat = TextEditingController();
+  final TextEditingController textLong = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
+        textLat.text = settingsController.latitude.toString();
+        textLong.text = settingsController.longitude.toString();
+
         return Scaffold(
           appBar: AppBar(
             title: Row(
               children: <Widget>[
                 const Text('Latitude: '),
-                Text('${settingsController.latitude.toString()}°, '),
+                Expanded(
+                  child: TextFormField(
+                    controller: textLat,
+                    onFieldSubmitted: (String value) {
+                      if (value == '') {
+                        settingsController.updateLatitude(0.0);
+                      } else {
+                        try {
+                          double latitude = double.parse(value);
+                          if (latitude > 90.0) {
+                            latitude = 90.0;
+                          } else if (latitude < -90.0) {
+                            latitude = -90.0;
+                          }
+                          settingsController.updateLatitude(latitude);
+                        } catch (e) {
+                          settingsController.updateLatitude(0.0);
+                        }
+                      }
+                    },
+                  ),
+                ),
                 const Text('Longitude: '),
-                Text('${settingsController.longitude.toString()}°'),
+                Expanded(
+                  child: TextFormField(
+                    controller: textLong,
+                    onFieldSubmitted: (String value) {
+                      if (value == '') {
+                        settingsController.updateLongitude(0.0);
+                      } else {
+                        try {
+                          double longitude = double.parse(value);
+                          if (longitude > 180.0) {
+                            longitude = 180.0;
+                          } else if (longitude < -180.0) {
+                            longitude = -180.0;
+                          }
+                          settingsController.updateLongitude(longitude);
+                        } catch (e) {
+                          settingsController.updateLongitude(0.0);
+                        }
+                      }
+                    },
+                  ),
+                ),
               ],
             ),
           ),
@@ -35,6 +82,8 @@ class LocationView extends StatelessWidget {
                 child: Image.asset('assets/images/worldmap.png'),
                 onTapUp: (TapUpDetails details) {
                   _updateLocation(details, context.size);
+                  textLat.text = settingsController.latitude.toString();
+                  textLong.text = settingsController.longitude.toString();
                 },
               );
             },
@@ -54,10 +103,10 @@ class LocationView extends StatelessWidget {
 
     if (mapWidgetSize != null) {
       double overflowingLongitude =
-          (initialLongitude + longitudeOffset * mapWidgetSize.width) /
+          ((initialLongitude + longitudeOffset * mapWidgetSize.width) /
                   mapWidgetSize.width *
                   360 -
-              180;
+              180);
       if (overflowingLongitude > 180) {
         overflowingLongitude -= 360;
       }
