@@ -17,8 +17,6 @@ void main() async {
   final clockController = ClockController.create(
     radioController.play,
     settingsController,
-    61.5,
-    23.75,
   );
   clockController.startClock();
 

@@ -8,413 +8,53 @@ Follow Flutter site's [[https://docs.flutter.dev/get-started/install][Getting St
 
 The =pubspec.yaml= for Clockradio has a font asset set for local non-CDN loading, image and sound assets, and =flutter_svg=, =media_kit=, and =shared_preferences=  dependencies added. Current =pub.dev= release of  =media_kit= [[https://github.com/media-kit/media-kit/issues/595#issuecomment-2094208809][has issues building on Fedora]] and should use =main= branch on GitHub instead.
 
-#+begin_src yaml
-name: clockradio
-description: "A cross-platform clock radio app."
-
-# Prevent accidental publishing to pub.dev.
-publish_to: 'none'
-
-version: 1.0.0+1
-
-environment:
-  sdk: '>=3.4.3 <4.0.0'
-
-dependencies:
-  flutter:
-    sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-  # SVG rendering
-  flutter_svg: any
-  # Audio
-  media_kit: any
-  media_kit_libs_audio: any
-  media_kit_native_event_loop: any
-  # Persist settings
-  shared_preferences: ^2.2.3
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
-  flutter_lints: ^4.0.0
-
-dependency_overrides:
-  media_kit:
-    git:
-      url: https://github.com/media-kit/media-kit
-      path: media_kit
-      ref: main
-  media_kit_libs_audio:
-    git:
-      url: https://github.com/media-kit/media-kit
-      path: libs/universal/media_kit_libs_audio
-      ref: main
-  media_kit_native_event_loop:
-    git:
-      url: https://github.com/media-kit/media-kit
-      path: media_kit_native_event_loop
-      ref: main
-
-flutter:
-  uses-material-design: true
-
-  # Enable generation of localized Strings from arb files.
-  generate: true
-
-  assets:
-    # Add assets from the images directory to the application.
-    - assets/images/
-    - assets/images/led_segments/
-    - assets/sounds/
-
-  fonts:
-    - family: Roboto
-      fonts:
-        - asset: assets/fonts/Roboto-Regular.ttf
-#+end_src
+#+transclude: [[file:pubspec.yaml]]  :src yaml
 
 =analysis_options.yaml= has some =strong-mode= options enabled to make Dart act more sensible. =prefer_single_quotes= seem very idiomatic and avoid escaping more common double quotes.
 
-#+begin_src yaml
-# This file configures the analyzer, which statically analyzes Dart code to
-# check for errors, warnings, and lints.
-#
-# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
-# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
-# invoked from the command line by running `flutter analyze`.
-
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
-include: package:flutter_lints/flutter.yaml
-
-linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
-  rules:
-    prefer_single_quotes: true
-
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
-
-analyzer:
-  strong-mode:
-    implicit-casts: false
-    implicit-dynamic: false
-#+end_src
+#+transclude: [[file:analysis_options.yaml]]  :src yaml
 
 =main.dart= initializes program controllers (and controllers then their associated services) and finally passes the controllers to the app widget itself. Location is fixed to Tampere for the present.
 
-#+begin_src dart
-import 'package:flutter/material.dart';
-
-import 'package:media_kit/media_kit.dart';
-
-import 'src/app.dart';
-import 'src/settings/settings_controller.dart';
-import 'src/radio/radio_controller.dart';
-import 'src/clock/clock_controller.dart';
-
-void main() async {
-  final settingsController = SettingsController.create();
-  await settingsController.loadSettings();
-
-  MediaKit.ensureInitialized();
-  final radioController = RadioController.create(settingsController);
-
-  final clockController = ClockController.create(
-    radioController.play,
-    settingsController,
-    61.5,
-    23.75,
-  );
-  clockController.startClock();
-
-  final app = ClockRadio(
-    clockController: clockController,
-    radioController: radioController,
-    settingsController: settingsController,
-  );
-
-  runApp(app);
-}
-#+end_src
+#+transclude: [[file:lib/main.dart]]  :src dart
 
 =app.dart= mostly follows the basic skeleton template. The =ClockRadio=  app widget rebuilds and updates controllers whenever settings change.
 
-#+begin_src dart
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: settingsController,
-      builder: (BuildContext context, Widget? child) {
-        // Settings have changed:
-        clockController.setAlarm(
-            settingsController.alarmH, settingsController.alarmM);
-
-#+end_src
+#+transclude: [[file:lib/src/app.dart::Widget build]]  :src dart :end "MaterialApp"
 
 The default dark mode theme is used. Clock faces will override this theme to achieve true blacks.
 
 The router is as follows.
 
-#+begin_src dart
-          onGenerateRoute: (RouteSettings routeSettings) {
-            return MaterialPageRoute<void>(
-              settings: routeSettings,
-              builder: (BuildContext context) {
-                switch (routeSettings.name) {
-                  case SettingsView.routeName:
-                    return SettingsView(controller: settingsController);
-                  default:
-                    return ListenableBuilder(
-                      listenable: clockController,
-                      builder: (BuildContext context, Widget? child) {
-                        return ClockView(
-                          clock: clockController.buildClock(),
-                          radio: radioController,
-                        );
-                      },
-                    );
-                }
-              },
-            );
-          },
-        );
-      },
-    );
-  }
-}
-#+end_src
+#+transclude: [[file:lib/src/app.dart::onGenerateRoute]]  :src dart
 
 ** User opens app and sees initial UI
 
 The front page is built from =ClockView= and its child widget =clock=. To save effort per clock face, =ClockView= will catch any taps making it a universal touch interface shared by all clock faces. It will also show any introductory texts.
 
-#+begin_src dart
-import 'package:flutter/material.dart';
-import 'dart:async';
-
-import '../settings/settings_view.dart';
-import '../radio/radio_controller.dart';
-
-class ClockView extends StatelessWidget {
-  const ClockView({
-    super.key,
-    required this.clock,
-    required this.radio,
-  });
-
-  static const routeName = '/';
-
-  final StatelessWidget clock;
-  final RadioController radio;
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-      body: Center(
-        child: GestureDetector(
-          child: clock.build(context),
-          onLongPress: () {
-            Navigator.restorablePushNamed(context, SettingsView.routeName);
-          },
-          onTap: () {
-            radio.toggle();
-          },
-        ),
-      ),
-    );
-  } // Widget
-}
-#+end_src
+#+transclude: [[file:lib/src/clock/clock_view.dart]]  :src dart
 
 =clock= was built earlier in =app.dart= via =ClockController='s =buildClock= method.
 
-#+begin_src dart
-  StatelessWidget buildClock() {
-    switch (_settingsController.clockFace) {
-      case ClockFace.led:
-        return LedClock(clock: this);
-      case ClockFace.solar:
-        return SolarClock(clock: this);
-    }
-  }
-
-#+end_src
+#+transclude: [[file:lib/src/clock/clock_controller.dart::buildClock]]  :src dart :end "startClock"
 
 The default clock face is =LedClock=, set in =SettingsService=.
 
-#+begin_src dart
-  Future<ClockFace> clockFace() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? face = prefs.getString('clockFace');
-    switch (face) {
-      case 'led':
-        return ClockFace.led;
-      case 'solar':
-        return ClockFace.solar;
-      default:
-        return ClockFace.led;
-    }
-  }
-
-#+end_src
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<ClockFace> clockFace]]  :src dart :end "updateClockFace"
 
 =ClockController= has a timer running to update =Clock=  & call alarm each minute on the point and notify the =ListenableBuilder= in =app.dart= widget tree.
 
-#+begin_src dart
-  void startClock() {
-    _clock = Clock.now(old: _clock);
-
-    if (_clock.isAlarmRinging) {
-      _alarmCallback();
-    }
-
-    Timer(Duration(seconds: 60 - DateTime.now().second), startClock);
-    notifyListeners();
-  }
-
-#+end_src
+#+transclude: [[file:lib/src/clock/clock_controller.dart::startClock]]  :src dart :end "setAlarm"
 
 =Clock= is an immutable class telling current time, location, and associated info for implementing clock faces.
 
-#+begin_src dart
-import 'package:flutter/material.dart';
-
-@immutable
-class Clock {
-  const Clock(
-    this.hours,
-    this.minutes,
-    this.alarmH,
-    this.alarmM,
-    this.tzOffset,
-    this.nthDayOfYear,
-    this.userLatitude,
-    this.userLongitude,
-  );
-  final int hours;
-  final int minutes;
-  final int? alarmH;
-  final int? alarmM;
-
-  final Duration tzOffset;
-  final int nthDayOfYear;
-
-  final double userLatitude;
-  final double userLongitude;
-
-  factory Clock.now({
-    Clock? old,
-    double? userLatitude,
-    double? userLongitude,
-    int? alarmH,
-    int? alarmM,
-  }) {
-    final daysSinceJan1 = DateTime.now()
-        .difference(DateTime(DateTime.now().year, 1, 1, 0, 0))
-        .inDays;
-
-    return Clock(
-      DateTime.now().hour,
-      DateTime.now().minute,
-      alarmH ?? old?.alarmH, // specific parameter > old delegate > null value
-      alarmM ?? old?.alarmM,
-      DateTime.now().timeZoneOffset,
-      daysSinceJan1 + 1,
-      userLatitude ?? old?.userLatitude  ?? 0.0,
-      userLongitude ?? old?.userLongitude ?? 0.0,
-    );
-  }
-
-  bool get isAlarmRinging {
-    return alarmH == hours && alarmM == minutes;
-  }
-}
-#+end_src
+#+transclude: [[file:lib/src/clock/clock.dart]]  :src dart
 
 *** LED clock face
 
 The LED clock face employs an array of LED segments: four 7-segment numbers, dots, and alarm elements. =_powerLedElements= encodes hours and minutes into a =Map=. Each of the elements in the =Map= references to an SVG file, to a total of 30 drivable elements (barring future AM/PM elements).
 
-#+begin_src dart
-Map<String, bool> _powerLedElements(
-  int hours,
-  int minutes,
-  int? alarmH,
-  int? alarmM,
-) {
-  final Map<String, List<bool>> typography = {
-    '0': [true, true, true, true, true, true, false],
-    '1': [false, true, true, false, false, false, false],
-    '2': [true, true, false, true, true, false, true],
-    '3': [true, true, true, true, false, false, true],
-    '4': [false, true, true, false, false, true, true],
-    '5': [true, false, true, true, false, true, true],
-    '6': [true, false, true, true, true, true, true],
-    '7': [true, true, true, false, false, false, false],
-    '8': [true, true, true, true, true, true, true],
-    '9': [true, true, true, true, false, true, true],
-  };
-  final List<bool> elementOff = List.filled(7, false);
-
-  final strHours = hours.toString();
-  String? digit1 = (strHours.length > 1) ? strHours[0] : null;
-  List<bool> leds1 = typography[digit1] ?? elementOff;
-  String digit2 = (strHours.length > 1) ? strHours[1] : strHours[0];
-  List<bool> leds2 = typography[digit2] ?? elementOff;
-
-  final strMins = minutes.toString().padLeft(2, '0');
-  String digit3 = strMins[0];
-  List<bool> leds3 = typography[digit3] ?? elementOff;
-  String digit4 = strMins[1];
-  List<bool> leds4 = typography[digit4] ?? elementOff;
-
-  return {
-    'alarm': alarmH != null && alarmM != null,
-    'dots': true,
-    '1a': leds1[0],
-    '1b': leds1[1],
-    '1c': leds1[2],
-    '1d': leds1[3],
-    '1e': leds1[4],
-    '1f': leds1[5],
-    '1g': leds1[6],
-    '2a': leds2[0],
-    '2b': leds2[1],
-    '2c': leds2[2],
-    '2d': leds2[3],
-    '2e': leds2[4],
-    '2f': leds2[5],
-    '2g': leds2[6],
-    '3a': leds3[0],
-    '3b': leds3[1],
-    '3c': leds3[2],
-    '3d': leds3[3],
-    '3e': leds3[4],
-    '3f': leds3[5],
-    '3g': leds3[6],
-    '4a': leds4[0],
-    '4b': leds4[1],
-    '4c': leds4[2],
-    '4d': leds4[3],
-    '4e': leds4[4],
-    '4f': leds4[5],
-    '4g': leds4[6],
-  };
-}
-#+end_src
+#+transclude: [[file:lib/src/clock/ledclock.dart::Map<String, bool> _powerLedElements]]  :src dart
 
 Individual SVGs were derived from breaking apart the following artesanally drawn vector image (inspired by my now-dead clock radio).
 
@@ -422,34 +62,7 @@ Individual SVGs were derived from breaking apart the following artesanally drawn
 
 The clock face should have same physical size regardless of screen DPI. Height is 1.0" by default (3.5:1 aspect ratio -> 3.5" x 1" WxH). A media query gives us the device DPI ratio relative to the standard 96 desktop DPI, as can be seen in =LedClock='s =build= method. Same technique is used on other clock faces as well.
 
-#+begin_src dart
-  Widget build(BuildContext context) {
-    final double clockHeight =
-        MediaQuery.of(context).devicePixelRatio * 96 * 1.0;
-    final Map<String, bool> ledDisplay = _powerLedElements(
-      clock.hrs,
-      clock.mins,
-      clock.aH,
-      clock.aM,
-    );
-
-    List<String> activeLeds = [];
-    for (String led in ledDisplay.keys) {
-      if (ledDisplay[led] ?? false) {
-        activeLeds.add(led);
-      }
-    }
-
-    return Stack(
-      children: <Widget>[
-        for (String led in activeLeds)
-          SvgPicture.asset('assets/images/led_segments/$led.svg',
-              height: clockHeight),
-      ],
-    );
-  }
-#+end_src
-
+#+transclude: [[file:lib/src/clock/ledclock.dart::Widget build]]  :src dart :end "Map<String, bool> _powerLedElements"
 
 *** Solar clock face
 
@@ -457,276 +70,52 @@ This clock face is more technical. It does not use predrawn graphics and relies 
 
 Determining clock face size is more involved than with LED face. The optimum 2.5" height-width fits considerably less displays. =build= returns a =CustomPaint= with =SolarGraphic= inheriting =CustomPainter=.
 
-#+begin_src dart
-  Widget build(BuildContext context) {
-    // Clockface is a square (for now)
-    final double maximumSize = min(
-        MediaQuery.sizeOf(context).height, MediaQuery.sizeOf(context).width);
-    final double optimumSize =
-        MediaQuery.of(context).devicePixelRatio * 96 * 2.5;
-    final double clockSize =
-        (maximumSize > optimumSize) ? optimumSize : maximumSize;
-
-    return CustomPaint(
-      painter: SolarGraphic(clock.nthDay, clock.hrs, clock.mins, clock.aH, clock.aM,
-          clock.tz.inMinutes, clock.userLat, clock.userLong),
-      size: Size(clockSize, clockSize),
-    );
-  }
-#+end_src
+#+transclude: [[file:lib/src/clock/solarclock.dart::Widget build]]  :src dart :thingatpt paragraph
 
 The graphic is derived from following data.
 
-#+begin_src dart
-  const SolarGraphic(
-    this._nthDayOfYear,
-    this._hours,
-    this._mins,
-    this._alarmH,
-    this._alarmM,
-    this._tzOffsetM,
-    this._userLongitude,
-    this._userLatitude,
-  );
-
-#+end_src
+#+transclude: [[file:lib/src/clock/solarclock.dart::const SolarGraphic]]  :src dart :thingatpt paragraph
 
 Overriding =paint= from =CustomPainter=, we start off calculating how current time relates to UTC and to solar noon. With this calculated, we know where sun currently is in radians relative to user's zenith.
 
-#+begin_src dart
-  void paint(Canvas canvas, Size size) {
-    const double pi = 3.141592;
-
-    // Assuming perfectly circular orbit, solar noon is at 12.00 UTC on 0° E/W,
-    // and each 15° added/removed is an hour.
-    // Ie. at 23.75° E, sun is at 0° at 10.25 UTC, so offset is minus 2 hours and plus 25 minutes.
-    final double sNoonOffset = -(_userLatitude / 15.0);
-    final int sNoonOffsetH = sNoonOffset.floor();
-    final int sNoonOffsetM = ((sNoonOffset - sNoonOffsetH) * 60).round();
-
-    // Current time relative to solar noon. At 9.35 UTC, -60 minutes + 10 minutes = -50min.
-    int hoursToSolarMinutes(int h) {
-      return ((h - (_tzOffsetM ~/ 60)) - (12 + sNoonOffsetH)) * 60;
-    }
-
-    int minutesToSolarMinutes(int m) {
-      return (m - (_tzOffsetM % 60)) - (0 + sNoonOffsetM);
-    }
-
-    // -50 min -> -12.5° -> pi/8
-    final double sunRadians =
-        (hoursToSolarMinutes(_hours) + minutesToSolarMinutes(_mins)) /
-            (12 * 60) *
-            pi;
-    final double? alarmRadians = (_alarmH != null && _alarmM != null)
-        ? (hoursToSolarMinutes(_alarmH) + minutesToSolarMinutes(_alarmM)) /
-            (12 * 60) *
-            pi
-        : null;
-
-#+end_src
+#+transclude: [[file:lib/src/clock/solarclock.dart::void paint]]  :src dart :end "Calculating"
 
 To draw day-night separation on Earth, we need to know sun's current declination. This uses a well-known formula to approximate this. =daynightRatio= is the ratio of the distance from earth's center to day-night line and from earth's center to earth's edge. So, it varies roughly between =0.0= and =0.2=. Margins and radiuses were chosen for aesthetic purposes.
 
-#+begin_src dart
-    // Sun declination uses a well-known approximation, and day-night line & user dot are
-    // relative to earth radius.
-    final double sunDeclination =
-        -23.45 * cos((2 * pi / 365) * (_nthDayOfYear + 10));
-    final double dayNightRatio = sin(sunDeclination / 180 * pi);
-    final double userDot = 1 - cos(_userLongitude / 180 * pi);
-
-    double earthRadius = size.height * 0.3;
-    double earthMargin = size.height * 0.2;
-    double sunRadius = size.height * 0.05;
-
-#+end_src
+#+transclude: [[file:lib/src/clock/solarclock.dart::Sun declination uses]]  :src dart :end "The user dot we add"
 
 Since we're dealing with elements rotating around the midpoint, rotating the canvas makes drawing much simpler vs. starting to calculate circular geometry. If alarm is set, we start off with rotate for alarm outline, =drawCircle=, and rotate for sun. Otherwise we just rotate straight for the sun.
 
-#+begin_src dart
-    if (alarmRadians != null) {
-      canvas.translate(size.width * 0.5, size.height * 0.5);
-      canvas.rotate(alarmRadians);
-      canvas.translate(-size.width * 0.5, -size.height * 0.5);
-
-      canvas.drawCircle(
-        Offset(earthMargin + earthRadius, sunRadius + sunRadius * 0.15),
-        sunRadius,
-        Paint()
-          ..color = Colors.white
-          ..style = PaintingStyle.stroke,
-      );
-
-      // avoid doing two sets of translation-rotations:
-      canvas.translate(size.width * 0.5, size.height * 0.5);
-      canvas.rotate(-alarmRadians + sunRadians);
-      canvas.translate(-size.width * 0.5, -size.height * 0.5);
-    } else {
-      canvas.translate(size.width * 0.5, size.height * 0.5);
-      canvas.rotate(sunRadians);
-      canvas.translate(-size.width * 0.5, -size.height * 0.5);
-    }
-#+end_src
+#+transclude: [[file:lib/src/clock/solarclock.dart::alarmRadians != null]]  :src dart :end "// Sun"
 
 Sun is drawn filled. Earth only has an outline, so we have to draw the dayside separately.
 
-#+begin_src dart
-    // Sun
-    canvas.drawCircle(
-      Offset(earthMargin + earthRadius, sunRadius + sunRadius * 0.15),
-      sunRadius,
-      Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.fill,
-    );
-
-    // Earth
-    canvas.drawCircle(
-      Offset(earthMargin + earthRadius, earthMargin + earthRadius),
-      earthRadius,
-      Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke,
-    );
-
-#+end_src
+#+transclude: [[file:lib/src/clock/solarclock.dart::// Sun]]  :src dart :end "const Color daySideColor"
 
 We start off by drawing a filled half-circle pointing towards the sun. Then we draw either a day- or night-colored half-ellipse, which covers the area from center until the day-night line according to =dayNightRatio=.
 
-#+begin_src dart
-    const Color daySideColor = Color.fromARGB(255, 180, 180, 180);
-
-    // Day side from which southernSolsticeRect is substituted from
-    // or northernSolsticeRect added to
-    final Rect daySideRect = Offset(earthMargin, earthMargin) &
-        Size(earthRadius * 2, earthRadius * 2);
-    canvas.drawArc(
-      daySideRect,
-      pi,
-      pi,
-      true,
-      Paint()
-        ..color = daySideColor
-        ..style = PaintingStyle.fill,
-    );
-
-    final double ellipseHalfHeight = earthRadius * dayNightRatio;
-    final Color ellipseColor =
-        (sunDeclination >= 0.0) ? daySideColor : Colors.black;
-    final Rect ellipseRect =
-        Offset(earthMargin, earthMargin + (earthRadius - ellipseHalfHeight)) &
-            Size(earthRadius * 2, ellipseHalfHeight * 2);
-    canvas.drawOval(
-      ellipseRect,
-      Paint()
-        ..color = ellipseColor
-        ..style = PaintingStyle.fill,
-    );
-
-#+end_src
+#+transclude: [[file:lib/src/clock/solarclock.dart::const Color daySideColor]]  :src dart :end "// Now, let's rotate"
 
 Finally we rotate the canvas to its final, original position and draw user's location on Earth.
 
-#+begin_src dart
-    // Now, let's rotate Earth & sun to correct time before adding user dot
-    canvas.translate(size.width * 0.5, size.height * 0.5);
-    canvas.rotate(-sunRadians);
-    canvas.translate(-size.width * 0.5, -size.height * 0.5);
+#+transclude: [[file:lib/src/clock/solarclock.dart::// Now, let's rotate]]  :src dart :end "// Although SolarGraphic"
 
-    // User dot
-    canvas.drawCircle(
-      Offset(earthMargin + earthRadius, earthMargin + earthRadius * userDot),
-      size.width * 0.015,
-      Paint()
-        ..color = Colors.yellow
-        ..style = PaintingStyle.fill,
-    );
-  }
+** User swipes right to edit settings
 
-#+end_src
+User sees options to set alarm time, location, clock face, and OLED mode. Setting alarm uses native time-picker, and each clock face has a radioesque icon-button in horizontal list. OLED mode is a on-off switch. Setting location opens a subscreen similar to time picker but with world map + overrideable lat/long shown.
 
+Equirectangular map SVG has 853 width, where dateline is at 829.25 -> -23.75 offset (and so Greenwich at 853/2-23.75). =onTapUp (TapUpDetails details)= gives position (tapUp happens only when no other gesture has overridden the tap).
 
-** User long presses to open settings
+=SettingsController= is then a caching front for =SettingsService= which is a front for =SharedPreferences=. They handle radio station URLs, clock faces, and set alarm time edited via =SettingsView= in a largely passthrough manner aside from setting some defaults.
 
-=SettingsView= is set to be overhauled from its current prototypal state.
+** User swipes left to radio view
 
-=SettingsController= is a caching front to =SettingsService= which is a front for =SharedPreferences=. They handle radio station URLs, clock faces, and set alarm time in a largely passthrough manner aside from setting some defaults.
+User sees the currently selected radio station in e.g. a dropdown of favorite stations. The view has an engaging way to present all radio stations available. Geoblocked stations can be filtered by telling app to go through them. A random station can be set to play whenever =RadioController.play()= is called.
 
 ** User taps to play radio
 
 Tapping triggers =RadioController.toggle()=, which starts/stops the underlying =Player= from =media_kit= library. The library does all the heavy lifting.
 
-#+begin_src dart
-import '/src/settings/settings_controller.dart';
+#+transclude: [[file:lib/src/radio/radio_controller.dart]]  :src dart
 
-import 'radio_service.dart';
-
-class RadioController {
-  RadioController(this._radioService, this._settingsController);
-
-  final RadioService _radioService;
-  final SettingsController _settingsController;
-
-  factory RadioController.create(SettingsController settingsController) {
-    return RadioController(RadioService.create(), settingsController);
-  }
-
-  void play() {
-    if (isPlaying()) {
-      stop();
-    }
-    _radioService.selectStream(_settingsController.radioStation);
-    _radioService.play();
-  }
-  void stop() {
-    _radioService.stop();
-  }
-
-  void toggle() {
-    if (isPlaying()) {
-      stop();
-    } else {
-      play();
-    }
-  }
-
-  bool isPlaying() {
-    return _radioService.isPlaying();
-  }
-
-}
-#+end_src
-
-#+begin_src dart
-import 'package:media_kit/media_kit.dart';
-
-class RadioService {
-  RadioService(this._player);
-
-  final Player _player;
-
-  factory RadioService.create() {
-    final player = Player();
-    // Add any Player debugging & setup here
-    return RadioService(player);
-  }
-
-  void selectStream(String path) async {
-    await _player.open(Media(path), play: false);
-    await _player.setPlaylistMode(PlaylistMode.loop);
-  }
-
-  void play() async {
-    await _player.play();
-  }
-
-  void stop() async {
-    await _player.stop();
-  }
-
-  bool isPlaying() {
-    return _player.state.playing;
-  }
-}
-#+end_src
+#+transclude: [[file:lib/src/radio/radio_service.dart]]  :src dart

@@ -21,10 +21,16 @@ class SolarClock extends StatelessWidget {
         MediaQuery.of(context).devicePixelRatio * 96 * 2.5;
     final double clockSize =
         (maximumSize > optimumSize) ? optimumSize : maximumSize;
-
     return CustomPaint(
-      painter: SolarGraphic(clock.nthDay, clock.hrs, clock.mins, clock.aH, clock.aM,
-          clock.tz.inMinutes, clock.userLat, clock.userLong),
+      painter: SolarGraphic(
+          clock.nthDay,
+          clock.time.hour,
+          clock.time.minute,
+          clock.alarm?.hour,
+          clock.alarm?.minute,
+          clock.tz.inMinutes,
+          clock.userLat,
+          clock.userLong,),
       size: Size(clockSize, clockSize),
     );
   }
@@ -39,8 +45,8 @@ class SolarGraphic extends CustomPainter {
     this._alarmH,
     this._alarmM,
     this._tzOffsetM,
-    this._userLongitude,
     this._userLatitude,
+    this._userLongitude,
   );
 
   final int _nthDayOfYear;
@@ -56,11 +62,10 @@ class SolarGraphic extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     const double pi = 3.141592;
-
     // Assuming perfectly circular orbit, solar noon is at 12.00 UTC on 0° E/W,
     // and each 15° added/removed is an hour.
     // Ie. at 23.75° E, sun is at 0° at 10.25 UTC, so offset is minus 2 hours and plus 25 minutes.
-    final double sNoonOffset = -(_userLatitude / 15.0);
+    final double sNoonOffset = -(_userLongitude / 15.0);
     final int sNoonOffsetH = sNoonOffset.floor();
     final int sNoonOffsetM = ((sNoonOffset - sNoonOffsetH) * 60).round();
 
@@ -68,6 +73,7 @@ class SolarGraphic extends CustomPainter {
     int hoursToSolarMinutes(int h) {
       return ((h - (_tzOffsetM ~/ 60)) - (12 + sNoonOffsetH)) * 60;
     }
+
     // +10 minutes -> -50 minutes
     int minutesToSolarMinutes(int m) {
       return (m - (_tzOffsetM % 60)) - (0 + sNoonOffsetM);
@@ -90,7 +96,7 @@ class SolarGraphic extends CustomPainter {
     final double sunDeclination =
         -23.45 * cos((2 * pi / 365) * (_nthDayOfYear + 10));
     final double dayNightRatio = sin(sunDeclination / 180 * pi);
-    final double userDot = 1 - cos(_userLongitude / 180 * pi);
+    final double userDot = 1 - cos(_userLatitude / 180 * pi);
 
     double earthRadius = size.height * 0.3;
     double earthMargin = size.height * 0.2;
@@ -155,10 +161,11 @@ class SolarGraphic extends CustomPainter {
         ..color = daySideColor
         ..style = PaintingStyle.fill,
     );
-
     final double ellipseHalfHeight = earthRadius * dayNightRatio;
-    final Color ellipseColor =
-        (sunDeclination >= 0.0) ? daySideColor : Colors.black;
+    final Color ellipseColor = (sunDeclination >= 0.0 && _userLatitude >= 0.0 ||
+            sunDeclination < 0.0 && _userLatitude < 0.0)
+        ? daySideColor
+        : Colors.black;
     final Rect ellipseRect =
         Offset(earthMargin, earthMargin + (earthRadius - ellipseHalfHeight)) &
             Size(earthRadius * 2, ellipseHalfHeight * 2);

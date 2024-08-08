@@ -20,28 +20,27 @@ class ClockController with ChangeNotifier {
   Clock _clock;
   final SettingsController _settingsController;
 
-  final double _userLatitude;
-  final double _userLongitude;
+  double _userLatitude;
+  double _userLongitude;
 
   factory ClockController.create(
     Function alarmCallback,
     SettingsController settingsController,
-    double userLatitude,
-    double userLongitude,
   ) {
     return ClockController(
       alarmCallback,
-      Clock.now(userLatitude: userLatitude, userLongitude: userLongitude),
+      Clock.now(
+        userLatitude: settingsController.latitude,
+        userLongitude: settingsController.longitude,
+      ),
       settingsController,
-      userLatitude,
-      userLongitude,
+      settingsController.latitude,
+      settingsController.longitude,
     );
   }
 
-  int get mins => _clock.minutes;
-  int get hrs => _clock.hours;
-  int? get aH => _clock.alarmH;
-  int? get aM => _clock.alarmM;
+  TimeOfDay get time => _clock.time;
+  TimeOfDay? get alarm => _clock.alarm;
 
   Duration get tz => _clock.tzOffset;
   int get nthDay => _clock.nthDayOfYear;
@@ -69,8 +68,13 @@ class ClockController with ChangeNotifier {
     notifyListeners();
   }
 
-  void setAlarm(int? alarmH, int? alarmM) {
-    _clock = Clock.now(old: _clock, alarmH: alarmH, alarmM: alarmM);
+  void setAlarm(TimeOfDay? alarm) {
+    _clock = Clock.now(old: _clock, alarm: alarm);
+  }
+
+  void setLocation(double latitude, double longitude) {
+    _userLatitude = latitude;
+    _userLongitude = longitude;
   }
 }
 

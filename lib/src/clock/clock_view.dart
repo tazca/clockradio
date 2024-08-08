@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '/src/settings/settings_view.dart';
 import '/src/radio/radio_controller.dart';
 
 class ClockView extends StatelessWidget {
@@ -17,18 +16,16 @@ class ClockView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-      body: Center(
-        child: GestureDetector(
+      body: InkWell(
+        hoverColor: const Color.fromARGB(255, 0, 0, 0),
+        onTap: () {
+          radio.toggle();
+        },
+        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+        child: Center(
           child: clock.build(context),
-          onLongPress: () {
-            Navigator.restorablePushNamed(context, SettingsView.routeName);
-          },
-          onTap: () {
-            radio.toggle();
-          },
         ),
       ),
     );

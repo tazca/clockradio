@@ -4,7 +4,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'clock/clock_controller.dart';
 import 'clock/clock_view.dart';
+import 'introduction/introduction_view.dart';
+import 'location/location_view.dart';
 import 'radio/radio_controller.dart';
+import 'radio/radio_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 
@@ -27,8 +30,9 @@ class ClockRadio extends StatelessWidget {
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
         // Settings have changed:
-        clockController.setAlarm(
-            settingsController.alarmH, settingsController.alarmM);
+        clockController.setAlarm(settingsController.alarm);
+        clockController.setLocation(
+            settingsController.latitude, settingsController.longitude);
 
         return MaterialApp(
           // Providing a restorationScopeId allows the Navigator built by the
@@ -62,23 +66,40 @@ class ClockRadio extends StatelessWidget {
           // in including options for light mode.
           darkTheme: ThemeData.dark(),
           themeMode: ThemeMode.dark,
-          
+
           onGenerateRoute: (RouteSettings routeSettings) {
             return MaterialPageRoute<void>(
               settings: routeSettings,
               builder: (BuildContext context) {
                 switch (routeSettings.name) {
-                  case SettingsView.routeName:
-                    return SettingsView(controller: settingsController);
+                  case LocationView.routeName:
+                    return LocationView(settingsController: settingsController);
                   default:
-                    return ListenableBuilder(
-                      listenable: clockController,
-                      builder: (BuildContext context, Widget? child) {
-                        return ClockView(
-                          clock: clockController.buildClock(),
-                          radio: radioController,
-                        );
-                      },
+                    return Stack(
+                      children: <Widget>[
+                        PageView(
+                          controller: PageController(initialPage: 1),
+                          children: <Widget>[
+                            RadioView(
+                              radio: radioController,
+                              settings: settingsController,
+                            ),
+                            ListenableBuilder(
+                              listenable: clockController,
+                              builder: (BuildContext context, Widget? child) {
+                                return ClockView(
+                                  clock: clockController.buildClock(),
+                                  radio: radioController,
+                                );
+                              },
+                            ),
+                            SettingsView(
+                              controller: settingsController,
+                            ),
+                          ],
+                        ),
+                        if (settingsController.intro) const IntroductionView(),
+                      ],
                     );
                 }
               },

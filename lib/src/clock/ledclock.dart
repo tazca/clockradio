@@ -14,10 +14,10 @@ class LedClock extends StatelessWidget {
     final double clockHeight =
         MediaQuery.of(context).devicePixelRatio * 96 * 1.0;
     final Map<String, bool> ledDisplay = _powerLedElements(
-      clock.hrs,
-      clock.mins,
-      clock.aH,
-      clock.aM,
+      clock.time.hour,
+      clock.time.minute,
+      clock.alarm?.hour,
+      clock.alarm?.minute,
     );
 
     List<String> activeLeds = [];
