@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'dart:ui' show PointerDeviceKind;
 
 import 'clock/clock_controller.dart';
 import 'clock/clock_view.dart';
@@ -67,6 +68,9 @@ class ClockRadio extends StatelessWidget {
           darkTheme: ThemeData.dark(),
           themeMode: ThemeMode.dark,
 
+          // Allow dragging PageView with a mouse
+          scrollBehavior: MouseAndTouchDragBehavior(),
+
           onGenerateRoute: (RouteSettings routeSettings) {
             return MaterialPageRoute<void>(
               settings: routeSettings,
@@ -109,4 +113,13 @@ class ClockRadio extends StatelessWidget {
       },
     );
   }
+}
+
+class MouseAndTouchDragBehavior extends MaterialScrollBehavior {
+  /// Allow dragging PageView with a mouse
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }
