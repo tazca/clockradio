@@ -1,3 +1,4 @@
+import 'dart:math' show sin, cos, sqrt;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -13,6 +14,7 @@ class LedClock extends StatelessWidget {
   Widget build(BuildContext context) {
     final double clockHeight =
         MediaQuery.of(context).devicePixelRatio * 96 * 1.0;
+    final double clockWidth = clockHeight * 3.5;
     final Map<String, bool> ledDisplay = _powerLedElements(
       clock.time.hour,
       clock.time.minute,
@@ -27,13 +29,49 @@ class LedClock extends StatelessWidget {
       }
     }
 
-    return Stack(
+    final Widget built = Stack(
       children: <Widget>[
         for (String led in activeLeds)
           SvgPicture.asset('assets/images/led_segments/$led.svg',
-              height: clockHeight),
+              height: clockHeight, width: clockWidth),
       ],
     );
+
+    if (clock.oledJiggle) {
+      // Do circular jiggle to avoid burn-in
+      const double jiggleSpeed = 30.0; // Divides 60 cleanly.
+      final double jiggle = clock.time.minute.toDouble() % jiggleSpeed;
+
+      // At zero jiggle the LED display is at 9 o'clock.
+      // As jiggle increases it does a full revolution CCW 0->29.
+
+      // Radius is 15.0. Jiggle is normalized to 0..2 radians.
+      // Parametrically, x = r*cos(jiggle), y = r*sin(jiggle)
+      // X and Y are -15.0..15.0
+
+      const double pi = 3.141592;
+      const double jiggleRadius = 7.0;
+      final double t = jiggle / (jiggleSpeed / (2 * pi));
+      final double x = jiggleRadius*cos(t);
+      final double y = jiggleRadius*sin(t);
+      print('$x : $y');
+
+      return SizedBox(
+        height: clockHeight + jiggleRadius * 2,
+        width: clockWidth + jiggleRadius * 2,
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: jiggleRadius - x,
+            right: jiggleRadius + x,
+            top: jiggleRadius - y,
+            bottom: jiggleRadius + y,
+          ),
+          child: built,
+        ),
+      );
+    } else {
+      return built;
+    }
   }
 }
 

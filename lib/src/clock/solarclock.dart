@@ -21,18 +21,57 @@ class SolarClock extends StatelessWidget {
         MediaQuery.of(context).devicePixelRatio * 96 * 2.5;
     final double clockSize =
         (maximumSize > optimumSize) ? optimumSize : maximumSize;
-    return CustomPaint(
+
+    final Widget built = CustomPaint(
       painter: SolarGraphic(
-          clock.nthDay,
-          clock.time.hour,
-          clock.time.minute,
-          clock.alarm?.hour,
-          clock.alarm?.minute,
-          clock.tz.inMinutes,
-          clock.userLat,
-          clock.userLong,),
+        clock.nthDay,
+        clock.time.hour,
+        clock.time.minute,
+        clock.alarm?.hour,
+        clock.alarm?.minute,
+        clock.tz.inMinutes,
+        clock.userLat,
+        clock.userLong,
+        clock.oledJiggle,
+      ),
       size: Size(clockSize, clockSize),
     );
+
+    if (clock.oledJiggle) {
+      // Do circular jiggle to avoid burn-in
+      const double jiggleSpeed = 30.0; // Divide 60 minutes cleanly.
+      final double jiggle = clock.time.minute.toDouble() % jiggleSpeed;
+
+      // At zero jiggle the LED display is at 9 o'clock.
+      // As jiggle increases it does a full revolution CCW 0->29.
+
+      // Radius is 15.0. Jiggle is normalized to 0..2 radians.
+      // Parametrically, x = r*cos(jiggle), y = r*sin(jiggle)
+      // X and Y are -15.0..15.0
+
+      const double pi = 3.141592;
+      const double jiggleRadius = 5.0;
+      final double t = jiggle / (jiggleSpeed / (2 * pi));
+      final double x = jiggleRadius*cos(t);
+      final double y = jiggleRadius*sin(t);
+      print('$x : $y');
+
+      return SizedBox(
+        height: clockSize + jiggleRadius * 2,
+        width: clockSize + jiggleRadius * 2,
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: jiggleRadius - x,
+            right: jiggleRadius + x,
+            top: jiggleRadius - y,
+            bottom: jiggleRadius + y,
+          ),
+          child: built,
+        ),
+      );
+    } else {
+      return built;
+    }
   }
 }
 
@@ -47,6 +86,7 @@ class SolarGraphic extends CustomPainter {
     this._tzOffsetM,
     this._userLatitude,
     this._userLongitude,
+    this._oledJiggle,
   );
 
   final int _nthDayOfYear;
@@ -58,6 +98,7 @@ class SolarGraphic extends CustomPainter {
   final int _tzOffsetM;
   final double _userLatitude;
   final double _userLongitude;
+  final bool _oledJiggle;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -147,6 +188,8 @@ class SolarGraphic extends CustomPainter {
     );
 
     const Color daySideColor = Color.fromARGB(255, 180, 180, 180);
+    final PaintingStyle daySideFill =
+        _oledJiggle ? PaintingStyle.stroke : PaintingStyle.fill;
 
     // Day side from which southernSolsticeRect is substituted from
     // or northernSolsticeRect added to
@@ -156,25 +199,39 @@ class SolarGraphic extends CustomPainter {
       daySideRect,
       pi,
       pi,
-      true,
+      false,
       Paint()
         ..color = daySideColor
-        ..style = PaintingStyle.fill,
+        ..style = daySideFill,
     );
     final double ellipseHalfHeight = earthRadius * dayNightRatio;
-    final Color ellipseColor = (sunDeclination >= 0.0 && _userLatitude >= 0.0 ||
-            sunDeclination < 0.0 && _userLatitude < 0.0)
-        ? daySideColor
-        : Colors.black;
+    final bool dayIsLonger = sunDeclination >= 0.0 && _userLatitude >= 0.0 ||
+                  sunDeclination < 0.0 && _userLatitude < 0.0;
     final Rect ellipseRect =
         Offset(earthMargin, earthMargin + (earthRadius - ellipseHalfHeight)) &
             Size(earthRadius * 2, ellipseHalfHeight * 2);
-    canvas.drawOval(
-      ellipseRect,
-      Paint()
-        ..color = ellipseColor
-        ..style = PaintingStyle.fill,
-    );
+
+    if (_oledJiggle) {
+      canvas.drawArc(
+        ellipseRect,
+        dayIsLonger ? 0 : pi,
+        pi,
+        false,
+        Paint()
+          ..color = daySideColor
+          ..style = PaintingStyle.stroke,
+      );
+    } else {
+      final Color ellipseColor = dayIsLonger
+              ? daySideColor
+              : Colors.black;
+      canvas.drawOval(
+        ellipseRect,
+        Paint()
+          ..color = ellipseColor
+          ..style = PaintingStyle.fill,
+      );
+    }
 
     // Now, let's rotate Earth & sun to correct time before adding user dot
     canvas.translate(size.width * 0.5, size.height * 0.5);
@@ -184,7 +241,7 @@ class SolarGraphic extends CustomPainter {
     // User dot
     canvas.drawCircle(
       Offset(earthMargin + earthRadius, earthMargin + earthRadius * userDot),
-      size.width * 0.015,
+      size.width * 0.012,
       Paint()
         ..color = Colors.yellow
         ..style = PaintingStyle.fill,

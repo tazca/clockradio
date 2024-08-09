@@ -32,15 +32,28 @@ class SettingsView extends StatelessWidget {
             child: Material(
               child: Padding(
                 padding: const EdgeInsets.all(6.0),
-                child: ListView(
+                child: Column(
                   children: <Widget>[
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        Expanded(child: _alarm(context)),
-                        Expanded(child: _location(context)),
+                        _alarm(context),
+                        _location(context),
                       ],
                     ),
+                    const Spacer(),
+                    const Align(
+                      alignment: Alignment.center,
+                      child: Text('Clock faces'),
+                    ),
+                    const Spacer(),
                     _clockFace(context),
+                    const Spacer(),
+                    const Align(
+                      alignment: Alignment.center,
+                      child: Text('Miscellaneous'),
+                    ),
+                    const Spacer(),
                     Row(
                       children: <Widget>[
                         Expanded(child: _oled(context)),
@@ -87,47 +100,41 @@ class SettingsView extends StatelessWidget {
   }
 
   Widget _clockFace(BuildContext context) {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        const Text('Clock faces'),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            InkWell(
-              onTap: () {
-                controller.updateClockFace(ClockFace.led);
-              },
-              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-              child: Stack(
-                children: <Widget>[
-                  const Text('LED face'),
-                  Ink.image(
-                    fit: BoxFit.cover,
-                    width: 100,
-                    height: 100,
-                    image: platformAwareImageProvider('assets/images/ledclock.png'),
-                  ),
-                ],
+        InkWell(
+          onTap: () {
+            controller.updateClockFace(ClockFace.led);
+          },
+          borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+          child: Stack(
+            children: <Widget>[
+              Ink.image(
+                fit: BoxFit.cover,
+                width: 100,
+                height: 100,
+                image: platformAwareImageProvider('assets/images/ledclock.png'),
               ),
-            ),
-            InkWell(
-              onTap: () {
-                controller.updateClockFace(ClockFace.solar);
-              },
-              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-              child: Stack(
-                children: <Widget>[
-                  const Text('Solar face'),
-                  Ink.image(
-                    fit: BoxFit.cover,
-                    width: 100,
-                    height: 100,
-                    image: platformAwareImageProvider('assets/images/solarclock.png'),
-                  ),
-                ],
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            controller.updateClockFace(ClockFace.solar);
+          },
+          borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+          child: Stack(
+            children: <Widget>[
+              Ink.image(
+                fit: BoxFit.cover,
+                width: 100,
+                height: 100,
+                image:
+                    platformAwareImageProvider('assets/images/solarclock.png'),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -156,7 +163,7 @@ class SettingsView extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        const Text('Show intro text'),
+        const Text('Show intro texts'),
         Switch.adaptive(
           onChanged: (x) {
             if (controller.intro) {

@@ -48,6 +48,8 @@ class ClockController with ChangeNotifier {
   double get userLat => _userLatitude;
   double get userLong => _userLongitude;
 
+  bool get oledJiggle => _settingsController.oled;
+
   StatelessWidget buildClock() {
     switch (_settingsController.clockFace) {
       case ClockFace.led:
