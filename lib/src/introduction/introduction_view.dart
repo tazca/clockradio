@@ -16,17 +16,25 @@ class _IntroductionView extends State<IntroductionView> {
   Widget build(BuildContext context) {
     return Visibility(
       visible: _visible,
-      child: const Align(
+      child: Align(
         alignment: Alignment.topCenter,
-        child: Column(
-          children: <Widget>[
-            Text(
-          style: TextStyle(color: Color.fromARGB(255, 192, 192, 192)),
-          'Drag left or right for options'),
-            Text(
-          style: TextStyle(color: Color.fromARGB(255, 192, 192, 192)),
-          'Tap to toggle radio'),
-          ],
+        child: Expanded(
+          child: Column(
+            children: <Widget>[
+              Text(
+                  style: DefaultTextStyle.of(context).style.apply(
+                        color: Color.fromARGB(255, 192, 192, 192),
+                        fontSizeFactor: 1.5,
+                      ),
+                  'Drag left or right for options'),
+              Text(
+                  style: DefaultTextStyle.of(context).style.apply(
+                        color: Color.fromARGB(255, 192, 192, 192),
+                        fontSizeFactor: 1.5,
+                      ),
+                  'Tap to toggle radio'),
+            ],
+          ),
         ),
       ),
     );

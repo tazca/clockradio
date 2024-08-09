@@ -22,6 +22,8 @@ dependencies:
   media_kit_native_event_loop: any
   # Persist settings
   shared_preferences: ^2.2.3
+  # Non-white screen when loading app
+  flutter_native_splash: ^2.4.1
 
 dev_dependencies:
   flutter_test:
@@ -61,3 +63,6 @@ flutter:
     - family: Roboto
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf
+
+flutter_native_splash:
+  color: "#000000"

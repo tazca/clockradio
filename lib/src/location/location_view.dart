@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '/src/settings/settings_controller.dart';
+import '/src/utils/platform_aware_image.dart';
 
 /// Displays the various settings that can be customized by the user.
 ///
@@ -79,7 +80,7 @@ class LocationView extends StatelessWidget {
           body: Builder(
             builder: (BuildContext context) {
               return GestureDetector(
-                child: Image.asset('assets/images/worldmap.png'),
+                child: PlatformAwareImageAsset('assets/images/worldmap.png'),
                 onTapUp: (TapUpDetails details) {
                   _updateLocation(details, context.size);
                   textLat.text = settingsController.latitude.toString();

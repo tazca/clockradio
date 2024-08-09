@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '/src/clock/clock_controller.dart' show ClockFace;
 import '/src/location/location_view.dart';
+import '/src/utils/platform_aware_image.dart' show platformAwareImageProvider;
 
 import 'settings_controller.dart';
 
@@ -20,19 +21,34 @@ class SettingsView extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 500, maxWidth: 300),
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).devicePixelRatio * 96 * 2.5,
+            maxHeight: MediaQuery.of(context).devicePixelRatio * 96 * 2.5,
+            minWidth: MediaQuery.of(context).devicePixelRatio * 96 * 4.0,
+            maxWidth: MediaQuery.of(context).devicePixelRatio * 96 * 4.0,
+          ),
           child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-            child: Container(
-              // color: const Color.fromARGB(255, 32, 32, 32),
-              child: ListView(
-                children: <Widget>[
-                  _alarm(context),
-                  _location(context),
-                  _clockFace(context),
-                  _oled(context),
-                  _intro(context),
-                ],
+            borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+            child: Material(
+              child: Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: ListView(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(child: _alarm(context)),
+                        Expanded(child: _location(context)),
+                      ],
+                    ),
+                    _clockFace(context),
+                    Row(
+                      children: <Widget>[
+                        Expanded(child: _oled(context)),
+                        Expanded(child: _intro(context)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -82,11 +98,16 @@ class SettingsView extends StatelessWidget {
                 controller.updateClockFace(ClockFace.led);
               },
               borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-              child: Ink.image(
-                fit: BoxFit.cover,
-                width: 100,
-                height: 100,
-                image: const AssetImage('assets/images/ledclock.png'),
+              child: Stack(
+                children: <Widget>[
+                  const Text('LED face'),
+                  Ink.image(
+                    fit: BoxFit.cover,
+                    width: 100,
+                    height: 100,
+                    image: platformAwareImageProvider('assets/images/ledclock.png'),
+                  ),
+                ],
               ),
             ),
             InkWell(
@@ -94,11 +115,16 @@ class SettingsView extends StatelessWidget {
                 controller.updateClockFace(ClockFace.solar);
               },
               borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-              child: Ink.image(
-                fit: BoxFit.cover,
-                width: 100,
-                height: 100,
-                image: const AssetImage('assets/images/solarclock.png'),
+              child: Stack(
+                children: <Widget>[
+                  const Text('Solar face'),
+                  Ink.image(
+                    fit: BoxFit.cover,
+                    width: 100,
+                    height: 100,
+                    image: platformAwareImageProvider('assets/images/solarclock.png'),
+                  ),
+                ],
               ),
             ),
           ],
@@ -111,7 +137,7 @@ class SettingsView extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        const Text('Prevent OLED burn-in'),
+        const Text('Prevent OLED burn'),
         Switch.adaptive(
           onChanged: (x) {
             if (controller.oled) {
@@ -130,7 +156,7 @@ class SettingsView extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        const Text('Show help texts on start'),
+        const Text('Show intro text'),
         Switch.adaptive(
           onChanged: (x) {
             if (controller.intro) {

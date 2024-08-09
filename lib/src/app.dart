@@ -5,7 +5,6 @@ import 'dart:ui' show PointerDeviceKind;
 
 import 'clock/clock_controller.dart';
 import 'clock/clock_view.dart';
-import 'introduction/introduction_view.dart';
 import 'location/location_view.dart';
 import 'radio/radio_controller.dart';
 import 'radio/radio_view.dart';
@@ -79,30 +78,26 @@ class ClockRadio extends StatelessWidget {
                   case LocationView.routeName:
                     return LocationView(settingsController: settingsController);
                   default:
-                    return Stack(
+                    return PageView(
+                      controller: PageController(initialPage: 1),
                       children: <Widget>[
-                        PageView(
-                          controller: PageController(initialPage: 1),
-                          children: <Widget>[
-                            RadioView(
-                              radio: radioController,
-                              settings: settingsController,
-                            ),
-                            ListenableBuilder(
-                              listenable: clockController,
-                              builder: (BuildContext context, Widget? child) {
-                                return ClockView(
-                                  clock: clockController.buildClock(),
-                                  radio: radioController,
-                                );
-                              },
-                            ),
-                            SettingsView(
-                              controller: settingsController,
-                            ),
-                          ],
+                        RadioView(
+                          radio: radioController,
+                          settings: settingsController,
                         ),
-                        if (settingsController.intro) const IntroductionView(),
+                        ListenableBuilder(
+                          listenable: clockController,
+                          builder: (BuildContext context, Widget? child) {
+                            return ClockView(
+                              clock: clockController.buildClock(),
+                              radio: radioController,
+                              showIntro: settingsController.intro,
+                            );
+                          },
+                        ),
+                        SettingsView(
+                          controller: settingsController,
+                        ),
                       ],
                     );
                 }
