@@ -80,7 +80,7 @@ class LocationView extends StatelessWidget {
           body: Builder(
             builder: (BuildContext context) {
               return GestureDetector(
-                child: PlatformAwareImageAsset('assets/images/worldmap.png'),
+                child: const PlatformAwareImageAsset('assets/images/worldmap.png'),
                 onTapUp: (TapUpDetails details) {
                   _updateLocation(details, context.size);
                   textLat.text = settingsController.latitude.toString();

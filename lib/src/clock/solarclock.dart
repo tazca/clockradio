@@ -54,7 +54,6 @@ class SolarClock extends StatelessWidget {
       final double t = jiggle / (jiggleSpeed / (2 * pi));
       final double x = jiggleRadius*cos(t);
       final double y = jiggleRadius*sin(t);
-      print('$x : $y');
 
       return SizedBox(
         height: clockSize + jiggleRadius * 2,

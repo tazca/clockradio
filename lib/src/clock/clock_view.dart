@@ -50,13 +50,13 @@ class ClockView extends StatelessWidget {
           children: <Widget>[
             Text(
                 style: DefaultTextStyle.of(context).style.apply(
-                      color: Color.fromARGB(255, 192, 192, 192),
+                      color: const Color.fromARGB(255, 192, 192, 192),
                       fontSizeFactor: 1.5,
                     ),
                 'Drag left or right for options'),
             Text(
                 style: DefaultTextStyle.of(context).style.apply(
-                      color: Color.fromARGB(255, 192, 192, 192),
+                      color: const Color.fromARGB(255, 192, 192, 192),
                       fontSizeFactor: 1.5,
                     ),
                 'Tap to toggle radio'),

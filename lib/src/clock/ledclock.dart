@@ -1,4 +1,4 @@
-import 'dart:math' show sin, cos, sqrt;
+import 'dart:math' show sin, cos;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -54,7 +54,6 @@ class LedClock extends StatelessWidget {
       final double t = jiggle / (jiggleSpeed / (2 * pi));
       final double x = jiggleRadius*cos(t);
       final double y = jiggleRadius*sin(t);
-      print('$x : $y');
 
       return SizedBox(
         height: clockHeight + jiggleRadius * 2,
