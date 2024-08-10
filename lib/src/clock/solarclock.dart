@@ -42,12 +42,12 @@ class SolarClock extends StatelessWidget {
       const double jiggleSpeed = 30.0; // Divide 60 minutes cleanly.
       final double jiggle = clock.time.minute.toDouble() % jiggleSpeed;
 
-      // At zero jiggle the LED display is at 9 o'clock.
-      // As jiggle increases it does a full revolution CCW 0->29.
+      // At zero jiggle the display is at 9 o'clock.
+      // As jiggle increases it does a full revolution CCW 0->29 / 30->59.
 
-      // Radius is 15.0. Jiggle is normalized to 0..2 radians.
+      // Jiggle is normalized to 0..2 radians.
       // Parametrically, x = r*cos(jiggle), y = r*sin(jiggle)
-      // X and Y are -15.0..15.0
+      // X and Y are -radius..radius
 
       const double pi = 3.141592;
       const double jiggleRadius = 5.0;
