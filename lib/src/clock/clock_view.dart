@@ -36,7 +36,6 @@ class ClockView extends StatelessWidget {
       onTap: () {
         radio.toggle();
       },
-      borderRadius: const BorderRadius.all(Radius.circular(16.0)),
       child: Center(
         child: clock.build(context),
       ),

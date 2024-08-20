@@ -79,13 +79,22 @@ class LocationView extends StatelessWidget {
           ),
           body: Builder(
             builder: (BuildContext context) {
-              return GestureDetector(
-                child: const PlatformAwareImageAsset('assets/images/worldmap.png'),
-                onTapUp: (TapUpDetails details) {
-                  _updateLocation(details, context.size);
-                  textLat.text = settingsController.latitude.toString();
-                  textLong.text = settingsController.longitude.toString();
-                },
+              return ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+                child: Material(
+                  child: Ink.image(
+                    fit: BoxFit.fill,
+                    image: platformAwareImageProvider(
+                        'assets/images/worldmap.png'),
+                    child: InkWell(
+                      onTapUp: (TapUpDetails details) {
+                        _updateLocation(details, context.size);
+                        textLat.text = settingsController.latitude.toString();
+                        textLong.text = settingsController.longitude.toString();
+                      },
+                    ),
+                  ),
+                ),
               );
             },
           ),

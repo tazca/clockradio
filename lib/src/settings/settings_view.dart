@@ -74,22 +74,23 @@ class SettingsView extends StatelessWidget {
     return Row(
       children: <Widget>[
         FilledButton.tonal(
-          onPressed: controller.alarmSet ? () async {
-            TimeOfDay? setAlarm = await showTimePicker(
-              initialTime:
-                  controller.alarm ?? const TimeOfDay(hour: 0, minute: 0),
-              context: context,
-              builder: (BuildContext context, Widget? child) {
-                return MediaQuery(
-                  data: MediaQuery.of(context)
-                      .copyWith(alwaysUse24HourFormat: true),
-                  child: child!,
-                );
-              },
-            );
-            controller.updateAlarm(setAlarm);
-          } : null,
-          
+          onPressed: controller.alarmSet
+              ? () async {
+                  TimeOfDay? setAlarm = await showTimePicker(
+                    initialTime:
+                        controller.alarm ?? const TimeOfDay(hour: 0, minute: 0),
+                    context: context,
+                    builder: (BuildContext context, Widget? child) {
+                      return MediaQuery(
+                        data: MediaQuery.of(context)
+                            .copyWith(alwaysUse24HourFormat: true),
+                        child: child!,
+                      );
+                    },
+                  );
+                  controller.updateAlarm(setAlarm);
+                }
+              : null,
           child: const Text('Set alarm'),
         ),
         Switch.adaptive(
@@ -119,37 +120,36 @@ class SettingsView extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        InkWell(
-          onTap: () {
-            controller.updateClockFace(ClockFace.led);
-          },
+        ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-          child: Stack(
-            children: <Widget>[
-              Ink.image(
-                fit: BoxFit.cover,
-                width: 100,
-                height: 100,
-                image: platformAwareImageProvider('assets/images/ledclock.png'),
+          child: Material(
+            child: Ink.image(
+              fit: BoxFit.contain,
+              width: 100,
+              height: 100,
+              image: platformAwareImageProvider('assets/images/ledclock.png'),
+              child: InkWell(
+                onTap: () {
+                  controller.updateClockFace(ClockFace.led);
+                },
               ),
-            ],
+            ),
           ),
         ),
-        InkWell(
-          onTap: () {
-            controller.updateClockFace(ClockFace.solar);
-          },
+        ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-          child: Stack(
-            children: <Widget>[
-              Ink.image(
-                fit: BoxFit.cover,
-                width: 100,
-                height: 100,
-                image:
-                    platformAwareImageProvider('assets/images/solarclock.png'),
+          child: Material(
+            child: Ink.image(
+              fit: BoxFit.cover,
+              width: 100,
+              height: 100,
+              image: platformAwareImageProvider('assets/images/solarclock.png'),
+              child: InkWell(
+                onTap: () {
+                  controller.updateClockFace(ClockFace.solar);
+                },
               ),
-            ],
+            ),
           ),
         ),
       ],
