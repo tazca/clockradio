@@ -71,22 +71,38 @@ class SettingsView extends StatelessWidget {
   }
 
   Widget _alarm(BuildContext context) {
-    return FilledButton.tonal(
-      onPressed: () async {
-        TimeOfDay? setAlarm = await showTimePicker(
-          initialTime: controller.alarm ?? const TimeOfDay(hour: 0, minute: 0),
-          context: context,
-          builder: (BuildContext context, Widget? child) {
-            return MediaQuery(
-              data:
-                  MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-              child: child!,
+    return Row(
+      children: <Widget>[
+        FilledButton.tonal(
+          onPressed: controller.alarmSet ? () async {
+            TimeOfDay? setAlarm = await showTimePicker(
+              initialTime:
+                  controller.alarm ?? const TimeOfDay(hour: 0, minute: 0),
+              context: context,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: true),
+                  child: child!,
+                );
+              },
             );
+            controller.updateAlarm(setAlarm);
+          } : null,
+          
+          child: const Text('Set alarm'),
+        ),
+        Switch.adaptive(
+          onChanged: (x) {
+            if (controller.alarmSet) {
+              controller.updateAlarmSet(false);
+            } else {
+              controller.updateAlarmSet(true);
+            }
           },
-        );
-        controller.updateAlarm(setAlarm);
-      },
-      child: const Text('Set alarm'),
+          value: controller.alarmSet,
+        ),
+      ],
     );
   }
 

@@ -4,7 +4,6 @@ import '/src/clock/clock_controller.dart' show ClockFace;
 
 /// A service that stores and retrieves user settings.
 class SettingsService {
-
   Future<String> radioStation() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? path = prefs.getString('radioStation');
@@ -67,44 +66,51 @@ class SettingsService {
     await prefs.setString('clockFace', face.name);
   }
 
-  Future<int?> alarmH() async {
+  Future<int> alarmH() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('alarmH');
-  }
-  Future<void> updateAlarmH(int? alarmH) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (alarmH == null) {
-      await prefs.remove('alarmH');
-    } else {
-      await prefs.setInt('alarmH', alarmH);
-    }
+    return prefs.getInt('alarmH') ?? 0;
   }
 
-  Future<int?> alarmM() async {
+  Future<void> updateAlarmH(int alarmH) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('alarmM');
+    await prefs.setInt('alarmH', alarmH);
   }
-  Future<void> updateAlarmM(int? alarmM) async {
+
+  Future<int> alarmM() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (alarmM == null) {
-      await prefs.remove('alarmM');
-    } else {
-      await prefs.setInt('alarmM', alarmM);
-    }
+    return prefs.getInt('alarmM') ?? 0;
+  }
+
+  Future<void> updateAlarmM(int alarmM) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('alarmM', alarmM);
+  }
+
+  Future<bool> alarmSet() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('alarmSet') ?? false;
+  }
+
+  Future<void> updateAlarmSet(bool alarmSet) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('alarmSet', alarmSet);
   }
 
   Future<double> latitude() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getDouble('latitude') ?? 0.0;
   }
+
   Future<void> updateLatitude(double latitude) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('latitude', latitude);
   }
+
   Future<double> longitude() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getDouble('longitude') ?? 0.0;
   }
+
   Future<void> updateLongitude(double longitude) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('longitude', longitude);
@@ -114,6 +120,7 @@ class SettingsService {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('oled') ?? false;
   }
+
   Future<bool> updateOled(bool oled) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setBool('oled', oled);
@@ -123,6 +130,7 @@ class SettingsService {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('intro') ?? true;
   }
+
   Future<bool> updateIntro(bool intro) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setBool('intro', intro);

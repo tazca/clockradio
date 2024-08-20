@@ -21,6 +21,7 @@ class SettingsController with ChangeNotifier {
   late ClockFace _clockFace;
   
   late TimeOfDay? _alarm;
+  late bool _alarmSet;
 
   late double _latitude;
   late double _longitude;
@@ -32,7 +33,8 @@ class SettingsController with ChangeNotifier {
   String get radioStation => _radioStation;
   List<String> get radioStations => _radioStations;
   ClockFace get clockFace => _clockFace;
-  TimeOfDay? get alarm => _alarm;
+  TimeOfDay? get alarm => _alarmSet ? _alarm : null;
+  bool get alarmSet => _alarmSet;
   double get latitude => _latitude; 
   double get longitude => _longitude; 
   bool get oled => _oled; 
@@ -49,9 +51,10 @@ class SettingsController with ChangeNotifier {
     _radioStation = await _settingsService.radioStation();
     _radioStations = await _settingsService.radioStations();
     _clockFace = await _settingsService.clockFace();
-    final int? alarmH = await _settingsService.alarmH();
-    final int? alarmM = await _settingsService.alarmM();
-    _alarm = alarmH != null && alarmM != null ? TimeOfDay(hour: alarmH, minute: alarmM) : null;
+    final int alarmH = await _settingsService.alarmH();
+    final int alarmM = await _settingsService.alarmM();
+    _alarmSet = await _settingsService.alarmSet();
+    _alarm = TimeOfDay(hour: alarmH, minute: alarmM);
     _latitude = await _settingsService.latitude();
     _longitude = await _settingsService.longitude();
     _oled = await _settingsService.oled();
@@ -93,8 +96,21 @@ class SettingsController with ChangeNotifier {
     if (newAlarm == _alarm) return;
     _alarm = newAlarm;
     notifyListeners();
-    await _settingsService.updateAlarmH(newAlarm?.hour);
-    await _settingsService.updateAlarmM(newAlarm?.minute);
+    // for backwards compatibility, null = alarm is not set
+    if (newAlarm == null) {
+      await _settingsService.updateAlarmSet(false);
+    } else {
+      await _settingsService.updateAlarmH(newAlarm.hour);
+      await _settingsService.updateAlarmM(newAlarm.minute);
+      await _settingsService.updateAlarmSet(true);
+    }
+  }
+
+  Future<void> updateAlarmSet(bool newAlarmSet) async {
+    if (newAlarmSet == _alarmSet) return;
+    _alarmSet = newAlarmSet;
+    notifyListeners();
+    await _settingsService.updateAlarmSet(false);
   }
 
   Future<void> updateLatitude(double? newLatitude) async {
