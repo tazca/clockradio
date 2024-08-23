@@ -37,15 +37,18 @@ class RadioView extends StatelessWidget {
                 child: ListenableBuilder(
                   listenable: settings,
                   builder: (BuildContext context, Widget? child) {
-                    return Column(
+                    return ListView(
+                      shrinkWrap: true,
                       children: <Widget>[
-                        const Text('Radio deck'),
+                        const Align(
+                          alignment: Alignment.center,
+                          child: Text('Radio deck')),
                         Padding(
-                          padding: EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8),
                           child: _selectFavoriteStation(context),
                         ),
                         Padding(
-                          padding: EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(8),
                           child: _addStation(context),
                         ),
                       ],

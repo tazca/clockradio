@@ -80,7 +80,7 @@ class ClockRadio extends StatelessWidget {
                   default:
                     return PageView(
                       controller: PageController(initialPage: 1),
-                      physics: SnappyPageViewScrollPhysics(),
+                      physics: const SnappyPageViewScrollPhysics(),
                       children: <Widget>[
                         RadioView(
                           radio: radioController,
@@ -122,8 +122,7 @@ class MouseAndTouchDragBehavior extends MaterialScrollBehavior {
 
 // https://stackoverflow.com/questions/60320972/in-flutter-how-to-make-pageview-scroll-faster-the-animation-seems-to-be-slow-an
 class SnappyPageViewScrollPhysics extends ScrollPhysics {
-  const SnappyPageViewScrollPhysics({ScrollPhysics? parent})
-      : super(parent: parent);
+  const SnappyPageViewScrollPhysics({super.parent});
 
   @override
   SnappyPageViewScrollPhysics applyTo(ScrollPhysics? ancestor) {
