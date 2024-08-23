@@ -39,56 +39,14 @@ class RadioView extends StatelessWidget {
                   builder: (BuildContext context, Widget? child) {
                     return Column(
                       children: <Widget>[
-                        const Text('Radio interface'),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxHeight: minHeight * 0.6,
-                                maxWidth: minWidth,
-                              ),
-                              child: const Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  Text('Select station'),
-                                  Text('Add station'),
-                                ],
-                              ),
-                            ),
-                            ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxHeight: minHeight * 0.5,
-                                maxWidth: minWidth,
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  DropdownButton<String>(
-                                    value: settings.radioStation,
-                                    onChanged: settings.updateRadioStation,
-                                    isExpanded: true,
-                                    items: settings.radioStations
-                                        .map<DropdownMenuItem<String>>(
-                                      (String station) {
-                                        return DropdownMenuItem(
-                                          value: station,
-                                          child: Text(station),
-                                        );
-                                      },
-                                    ).toList(),
-                                  ),
-                                  TextField(onSubmitted: (String? value) {
-                                    if (value == null || value == '') {
-                                      return;
-                                    } else {
-                                      settings.addRadioStation(value);
-                                    }
-                                  }),
-                                ],
-                              ),
-                            ),
-                          ],
+                        const Text('Radio deck'),
+                        Padding(
+                          padding: EdgeInsets.all(8),
+                          child: _selectFavoriteStation(context),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8),
+                          child: _addStation(context),
                         ),
                       ],
                     );
@@ -99,6 +57,74 @@ class RadioView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _selectFavoriteStation(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        const Text('Select a station: '),
+        Expanded(
+          child: DropdownButton<String>(
+            value: settings.radioStation,
+            onChanged: settings.updateRadioStation,
+            isExpanded: true,
+            items: settings.radioStations.map<DropdownMenuItem<String>>(
+              (String station) {
+                return DropdownMenuItem(
+                  value: station,
+                  child: Text(station),
+                );
+              },
+            ).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _addStation(BuildContext context) {
+    TextEditingController addRadioController = TextEditingController();
+
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            const Text('Add a new station: '),
+            Expanded(
+              child: DropdownButton<String>(
+                onChanged: (String? str) {},
+                value: 'Custom',
+                isExpanded: true,
+                items: const <DropdownMenuItem<String>>[
+                  DropdownMenuItem(
+                      value: 'Custom', child: Text('Radio station URL')),
+                ],
+              ),
+            ),
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            const Text('URL: '),
+            Expanded(
+              child: TextField(
+                controller: addRadioController,
+                ),
+            ),
+            
+            FilledButton.tonal(
+              onPressed: () {
+                if (addRadioController.text == '') {
+                  return;
+                } else {
+                  settings.addRadioStation(addRadioController.text);
+                }},
+              child: const Text('Add'),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

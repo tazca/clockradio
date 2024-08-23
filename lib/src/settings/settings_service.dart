@@ -20,13 +20,8 @@ class SettingsService {
     final List<String>? paths = prefs.getStringList('radioStations');
     if (paths == null) {
       addRadioStation('assets/sounds/ping.mp3');
-      addRadioStation('https://radio.plaza.one/opus');
-      addRadioStation(
-          'https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8');
       return [
         'assets/sounds/ping.mp3',
-        'https://radio.plaza.one/opus',
-        'https://yleradiolive.akamaized.net/hls/live/2027718/in-YleTampere/256/variant.m3u8',
       ];
     } else {
       return paths;
