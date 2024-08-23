@@ -41,8 +41,8 @@ class RadioView extends StatelessWidget {
                       shrinkWrap: true,
                       children: <Widget>[
                         const Align(
-                          alignment: Alignment.center,
-                          child: Text('Radio deck')),
+                            alignment: Alignment.center,
+                            child: Text('Radio deck')),
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: _selectFavoriteStation(context),
@@ -113,16 +113,23 @@ class RadioView extends StatelessWidget {
             Expanded(
               child: TextField(
                 controller: addRadioController,
-                ),
+                onSubmitted: (String value) {
+                  if (value == '') {
+                    return;
+                  } else {
+                    settings.addRadioStation(value);
+                  }
+                },
+              ),
             ),
-            
             FilledButton.tonal(
               onPressed: () {
                 if (addRadioController.text == '') {
                   return;
                 } else {
                   settings.addRadioStation(addRadioController.text);
-                }},
+                }
+              },
               child: const Text('Add'),
             ),
           ],
