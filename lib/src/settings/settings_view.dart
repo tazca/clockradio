@@ -22,10 +22,10 @@ class SettingsView extends StatelessWidget {
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).devicePixelRatio * 96 * 2.5,
-            maxHeight: MediaQuery.of(context).devicePixelRatio * 96 * 2.5,
-            minWidth: MediaQuery.of(context).devicePixelRatio * 96 * 4.0,
-            maxWidth: MediaQuery.of(context).devicePixelRatio * 96 * 4.0,
+            minHeight: MediaQuery.of(context).devicePixelRatio * 96 * 3.0,
+            maxHeight: MediaQuery.of(context).devicePixelRatio * 96 * 3.0,
+            minWidth: MediaQuery.of(context).devicePixelRatio * 96 * 4.8,
+            maxWidth: MediaQuery.of(context).devicePixelRatio * 96 * 4.8,
           ),
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(8.0)),
@@ -38,7 +38,6 @@ class SettingsView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         _alarm(context),
-                        _location(context),
                       ],
                     ),
                     const Spacer(),
@@ -109,15 +108,16 @@ class SettingsView extends StatelessWidget {
 
   Widget _location(BuildContext context) {
     return FilledButton.tonal(
-      onPressed: () {
+      onPressed: (controller.clockFace == ClockFace.solar) ? () {
         Navigator.restorablePushNamed(context, LocationView.routeName);
-      },
-      child: const Text('Set location'),
+      } : null,
+      child: const Text('Location'),
     );
   }
 
   Widget _clockFace(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         ClipRRect(
@@ -136,21 +136,27 @@ class SettingsView extends StatelessWidget {
             ),
           ),
         ),
-        ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(16.0)),
-          child: Material(
-            child: Ink.image(
-              fit: BoxFit.cover,
-              width: 100,
-              height: 100,
-              image: platformAwareImageProvider('assets/images/solarclock.png'),
-              child: InkWell(
-                onTap: () {
-                  controller.updateClockFace(ClockFace.solar);
-                },
+        Column(
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+              child: Material(
+                child: Ink.image(
+                  fit: BoxFit.cover,
+                  width: 100,
+                  height: 100,
+                  image: platformAwareImageProvider(
+                      'assets/images/solarclock.png'),
+                  child: InkWell(
+                    onTap: () {
+                      controller.updateClockFace(ClockFace.solar);
+                    },
+                  ),
+                ),
               ),
             ),
-          ),
+            _location(context),
+          ],
         ),
       ],
     );
@@ -158,7 +164,7 @@ class SettingsView extends StatelessWidget {
 
   Widget _oled(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         const Text('Prevent OLED burn'),
         Switch.adaptive(
@@ -177,7 +183,7 @@ class SettingsView extends StatelessWidget {
 
   Widget _intro(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         const Text('Show intro texts'),
         Switch.adaptive(
