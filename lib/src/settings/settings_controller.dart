@@ -20,7 +20,7 @@ class SettingsController with ChangeNotifier {
   late List<String> _radioStations;
   late ClockFace _clockFace;
   
-  late TimeOfDay? _alarm;
+  late TimeOfDay _alarm;
   late bool _alarmSet;
 
   late double _latitude;
@@ -33,7 +33,7 @@ class SettingsController with ChangeNotifier {
   String get radioStation => _radioStation;
   List<String> get radioStations => _radioStations;
   ClockFace get clockFace => _clockFace;
-  TimeOfDay? get alarm => _alarmSet ? _alarm : null;
+  TimeOfDay get alarm => _alarm; // _alarmSet ? _alarm : null;
   bool get alarmSet => _alarmSet;
   double get latitude => _latitude; 
   double get longitude => _longitude; 
@@ -94,7 +94,6 @@ class SettingsController with ChangeNotifier {
 
   Future<void> updateAlarm(TimeOfDay? newAlarm) async {
     if (newAlarm == _alarm) return;
-    _alarm = newAlarm;
     notifyListeners();
     // for backwards compatibility, null = alarm is not set
     if (newAlarm == null) {
@@ -102,6 +101,7 @@ class SettingsController with ChangeNotifier {
     } else {
       await _settingsService.updateAlarmH(newAlarm.hour);
       await _settingsService.updateAlarmM(newAlarm.minute);
+      _alarm = newAlarm;
       await _settingsService.updateAlarmSet(true);
     }
   }

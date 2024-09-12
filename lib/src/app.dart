@@ -30,10 +30,13 @@ class ClockRadio extends StatelessWidget {
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
         // Settings have changed:
-        clockController.setAlarm(settingsController.alarm);
+        if (settingsController.alarmSet) {
+          clockController.setAlarm(settingsController.alarm);
+        } else {
+          clockController.setAlarm(null);
+        }
         clockController.setLocation(
             settingsController.latitude, settingsController.longitude);
-
         return MaterialApp(
           // Providing a restorationScopeId allows the Navigator built by the
           // MaterialApp to restore the navigation stack when a user leaves and
