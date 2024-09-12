@@ -127,9 +127,9 @@ class SettingsService {
     return prefs.getBool('oled') ?? false;
   }
 
-  Future<bool> updateOled(bool oled) async {
+  Future<void> updateOled(bool oled) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setBool('oled', oled);
+    await prefs.setBool('oled', oled);
   }
 
   Future<bool> intro() async {
@@ -137,8 +137,19 @@ class SettingsService {
     return prefs.getBool('intro') ?? true;
   }
 
-  Future<bool> updateIntro(bool intro) async {
+  Future<void> updateIntro(bool intro) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.setBool('intro', intro);
+    await prefs.setBool('intro', intro);
+  }
+
+
+  Future<double?> uiScale() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble('uiScale');
+  }
+
+  Future<void> updateUIScale(double newUIScale) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('uiScale', newUIScale);
   }
 }

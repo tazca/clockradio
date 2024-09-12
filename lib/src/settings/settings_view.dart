@@ -22,10 +22,10 @@ class SettingsView extends StatelessWidget {
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).devicePixelRatio * 96 * 3.0,
-            maxHeight: MediaQuery.of(context).devicePixelRatio * 96 * 3.0,
-            minWidth: MediaQuery.of(context).devicePixelRatio * 96 * 4.8,
-            maxWidth: MediaQuery.of(context).devicePixelRatio * 96 * 4.8,
+            minHeight: (controller.uiScale ?? 1.0) * 96 * 3.0,
+            maxHeight: (controller.uiScale ?? 1.0) * 96 * 3.0,
+            minWidth: (controller.uiScale ?? 1.0) * 96 * 4.8,
+            maxWidth: (controller.uiScale ?? 1.0) * 96 * 4.8,
           ),
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(8.0)),
@@ -40,18 +40,18 @@ class SettingsView extends StatelessWidget {
                         _alarm(context),
                       ],
                     ),
-                    const Spacer(),
-                    const Align(
+                    // const Spacer(),
+                    /* const Align(
                       alignment: Alignment.center,
                       child: Text('Clock faces'),
-                    ),
+                    ), */
                     const Spacer(),
                     _clockFace(context),
-                    const Spacer(),
-                    const Align(
+                    // const Spacer(),
+                    /* const Align(
                       alignment: Alignment.center,
                       child: Text('Miscellaneous'),
-                    ),
+                    ), */
                     const Spacer(),
                     Row(
                       children: <Widget>[
@@ -59,6 +59,7 @@ class SettingsView extends StatelessWidget {
                         Expanded(child: _intro(context)),
                       ],
                     ),
+                    _uiScale(context),
                   ],
                 ),
               ),
@@ -72,31 +73,31 @@ class SettingsView extends StatelessWidget {
   Widget _alarm(BuildContext context) {
     return Row(
       children: <Widget>[
-        
         FilledButton.tonal(
           onPressed: () async {
-                  TimeOfDay? setAlarm = await showTimePicker(
-                    cancelText: 'Unset',
-                    confirmText: 'Set alarm',
-                    initialTime:
-                        controller.alarm,
-                    context: context,
-                    builder: (BuildContext context, Widget? child) {
-                      return MediaQuery(
-                        data: MediaQuery.of(context)
-                            .copyWith(alwaysUse24HourFormat: true),
-                        child: child!,
-                      );
-                    },
-                  );
-                  if (setAlarm == null) {
-                    controller.updateAlarmSet(false);
-                  } else {
-                    controller.updateAlarmSet(true);
-                    controller.updateAlarm(setAlarm);
-                  }
-                },
-          child: controller.alarmSet ? const Text('Alarm is set') : const Text('No alarm set'),
+            TimeOfDay? setAlarm = await showTimePicker(
+              cancelText: 'Unset',
+              confirmText: 'Set alarm',
+              initialTime: controller.alarm,
+              context: context,
+              builder: (BuildContext context, Widget? child) {
+                return MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(alwaysUse24HourFormat: true),
+                  child: child!,
+                );
+              },
+            );
+            if (setAlarm == null) {
+              controller.updateAlarmSet(false);
+            } else {
+              controller.updateAlarmSet(true);
+              controller.updateAlarm(setAlarm);
+            }
+          },
+          child: controller.alarmSet
+              ? const Text('Alarm is set')
+              : const Text('No alarm set'),
         ),
       ],
     );
@@ -104,9 +105,11 @@ class SettingsView extends StatelessWidget {
 
   Widget _location(BuildContext context) {
     return FilledButton.tonal(
-      onPressed: (controller.clockFace == ClockFace.solar) ? () {
-        Navigator.restorablePushNamed(context, LocationView.routeName);
-      } : null,
+      onPressed: (controller.clockFace == ClockFace.solar)
+          ? () {
+              Navigator.restorablePushNamed(context, LocationView.routeName);
+            }
+          : null,
       child: const Text('Location'),
     );
   }
@@ -191,6 +194,22 @@ class SettingsView extends StatelessWidget {
             }
           },
           value: controller.intro,
+        ),
+      ],
+    );
+  }
+
+  Widget _uiScale(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        const Text('Clock and menu scale'),
+        Slider.adaptive(
+          divisions: 10,
+          min: 1.0,
+          max: 2.0,
+          value: controller.uiScale ?? 1.0,
+          onChanged: (double x) => controller.updateUIScale(x),
         ),
       ],
     );

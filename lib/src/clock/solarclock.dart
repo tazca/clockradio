@@ -18,7 +18,7 @@ class SolarClock extends StatelessWidget {
     final double maximumSize = min(
         MediaQuery.sizeOf(context).height, MediaQuery.sizeOf(context).width);
     final double optimumSize =
-        MediaQuery.of(context).devicePixelRatio * 96 * 2.5;
+        clock.uiScale * 96 * 2.5;
     final double clockSize =
         (maximumSize > optimumSize) ? optimumSize : maximumSize;
 

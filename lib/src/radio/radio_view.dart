@@ -17,8 +17,8 @@ class RadioView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 2.0" x 3.5"
-    final double minHeight = MediaQuery.of(context).devicePixelRatio * 96 * 2.0;
-    final double minWidth = MediaQuery.of(context).devicePixelRatio * 96 * 3.5;
+    final double minHeight = (settings.uiScale ?? 1.0) * 96 * 2.0;
+    final double minWidth = (settings.uiScale ?? 1.0) * 96 * 3.5;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Center(

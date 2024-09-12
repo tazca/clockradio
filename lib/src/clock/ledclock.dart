@@ -13,7 +13,7 @@ class LedClock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double clockHeight =
-        MediaQuery.of(context).devicePixelRatio * 96 * 1.0;
+        clock.uiScale * 96 * 1.0;
     final double clockWidth = clockHeight * 3.5;
     final Map<String, bool> ledDisplay = _powerLedElements(
       clock.time.hour,

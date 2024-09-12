@@ -31,6 +31,8 @@ class SettingsController with ChangeNotifier {
   late bool _oled;
   late bool _intro;
 
+  late double? _uiScale;
+
   // Allow Widgets to read the user's preferred ThemeMode.
   String get radioStation => _radioStation ?? fallbackStation;
   List<String> get radioStations => _radioStations ?? [fallbackStation];
@@ -41,6 +43,7 @@ class SettingsController with ChangeNotifier {
   double get longitude => _longitude;
   bool get oled => _oled;
   bool get intro => _intro;
+  double? get uiScale => _uiScale;
 
   factory SettingsController.create() {
     return SettingsController(SettingsService());
@@ -66,6 +69,7 @@ class SettingsController with ChangeNotifier {
     _longitude = await _settingsService.longitude();
     _oled = await _settingsService.oled();
     _intro = await _settingsService.intro();
+    _uiScale = await _settingsService.uiScale();
 
     // Important! Inform listeners a change has occurred.
     notifyListeners();
@@ -170,5 +174,14 @@ class SettingsController with ChangeNotifier {
     _intro = newIntro;
     notifyListeners();
     await _settingsService.updateIntro(newIntro);
+  }
+
+  Future<void> updateUIScale(double? newUIScale) async {
+    if (newUIScale == null) return;
+    if (newUIScale == _uiScale) return;
+
+    _uiScale = newUIScale;
+    notifyListeners();
+    await _settingsService.updateUIScale(newUIScale);
   }
 }
