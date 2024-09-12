@@ -82,6 +82,12 @@ class RadioView extends StatelessWidget {
             ).toList(),
           ),
         ),
+        FilledButton.tonal(
+          onPressed: settings.radioStation != SettingsController.fallbackStation ? () {
+            settings.removeRadioStation(settings.radioStation);
+          } : null,
+          child: const Text('Remove'),
+        ),
       ],
     );
   }

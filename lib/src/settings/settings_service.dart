@@ -4,10 +4,10 @@ import '/src/clock/clock_controller.dart' show ClockFace;
 
 /// A service that stores and retrieves user settings.
 class SettingsService {
-  Future<String> radioStation() async {
+  Future<String?> radioStation() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? path = prefs.getString('radioStation');
-    return path ?? 'assets/sounds/ping.mp3';
+    return path;
   }
 
   Future<void> updateRadioStation(String path) async {
@@ -15,17 +15,10 @@ class SettingsService {
     await prefs.setString('radioStation', path);
   }
 
-  Future<List<String>> radioStations() async {
+  Future<List<String>?> radioStations() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final List<String>? paths = prefs.getStringList('radioStations');
-    if (paths == null) {
-      addRadioStation('assets/sounds/ping.mp3');
-      return [
-        'assets/sounds/ping.mp3',
-      ];
-    } else {
-      return paths;
-    }
+    return paths;
   }
 
   Future<void> addRadioStation(String path) async {
@@ -39,6 +32,24 @@ class SettingsService {
       } else {
         paths.add(path);
         await prefs.setStringList('radioStations', paths);
+      }
+    }
+  }
+
+  Future<void> removeRadioStation(String path) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String>? paths = prefs.getStringList('radioStations');
+    if (paths == null) {
+      return;
+    } else {
+      paths.removeWhere((element) => element == path);
+      if (paths.isEmpty) {
+        await prefs.remove('radioStations');
+        await prefs.remove('radioStation');
+        return;
+      } else {
+        await prefs.setStringList('radioStations', paths);
+        return;
       }
     }
   }

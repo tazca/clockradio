@@ -14,12 +14,14 @@ class SettingsController with ChangeNotifier {
 
   final SettingsService _settingsService;
 
+  static const String fallbackStation = 'assets/sound/ping.mp3';
+
   // Use getters & private variables so theyare not updated directly without
   // also persisting the changes with the SettingsService.
-  late String _radioStation;
-  late List<String> _radioStations;
+  late String? _radioStation;
+  late List<String>? _radioStations;
   late ClockFace _clockFace;
-  
+
   late TimeOfDay _alarm;
   late bool _alarmSet;
 
@@ -30,15 +32,15 @@ class SettingsController with ChangeNotifier {
   late bool _intro;
 
   // Allow Widgets to read the user's preferred ThemeMode.
-  String get radioStation => _radioStation;
-  List<String> get radioStations => _radioStations;
+  String get radioStation => _radioStation ?? fallbackStation;
+  List<String> get radioStations => _radioStations ?? [fallbackStation];
   ClockFace get clockFace => _clockFace;
   TimeOfDay get alarm => _alarm; // _alarmSet ? _alarm : null;
   bool get alarmSet => _alarmSet;
-  double get latitude => _latitude; 
-  double get longitude => _longitude; 
-  bool get oled => _oled; 
-  bool get intro => _intro; 
+  double get latitude => _latitude;
+  double get longitude => _longitude;
+  bool get oled => _oled;
+  bool get intro => _intro;
 
   factory SettingsController.create() {
     return SettingsController(SettingsService());
@@ -50,6 +52,11 @@ class SettingsController with ChangeNotifier {
   Future<void> loadSettings() async {
     _radioStation = await _settingsService.radioStation();
     _radioStations = await _settingsService.radioStations();
+    if (_radioStation == null ||
+        (_radioStations != null && !(_radioStations!.contains(radioStation)))) {
+      _radioStation = _radioStations?.first;
+    }
+
     _clockFace = await _settingsService.clockFace();
     final int alarmH = await _settingsService.alarmH();
     final int alarmM = await _settingsService.alarmM();
@@ -80,6 +87,22 @@ class SettingsController with ChangeNotifier {
     _radioStation = newRadioStation;
     await _settingsService.addRadioStation(newRadioStation);
     _radioStations = await _settingsService.radioStations();
+    notifyListeners();
+  }
+
+  Future<void> removeRadioStation(String? oldRadioStation) async {
+    if (oldRadioStation == null) return;
+
+    await _settingsService.removeRadioStation(oldRadioStation);
+    _radioStations = await _settingsService.radioStations();
+    if (_radioStation == oldRadioStation) {
+      if (_radioStations != null) {
+        _radioStation = _radioStations?.first;
+      } else {
+        _radioStation = null;
+      }
+      updateRadioStation(_radioStation);
+    }
     notifyListeners();
   }
 
@@ -121,6 +144,7 @@ class SettingsController with ChangeNotifier {
     notifyListeners();
     await _settingsService.updateLatitude(newLatitude);
   }
+
   Future<void> updateLongitude(double? newLongitude) async {
     if (newLongitude == null) return;
     if (newLongitude == _longitude) return;
