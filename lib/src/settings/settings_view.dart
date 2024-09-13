@@ -204,7 +204,8 @@ class SettingsView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         const Text('Clock and menu scale'),
-        Slider.adaptive(
+        // Slider.adaptive is not showing up on mobile Safari 15
+        Slider(
           divisions: 10,
           min: 1.0,
           max: 2.0,
