@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '/src/clock/clock_controller.dart' show ClockFace;
 
@@ -14,7 +15,8 @@ class SettingsController with ChangeNotifier {
 
   final SettingsService _settingsService;
 
-  static const String fallbackStation = 'assets/sound/ping.mp3';
+  static const String fallbackStation =
+      kIsWeb ? 'assets/assets/sounds/ping.mp3' : 'assets/sounds/ping.mp3';
 
   // Use getters & private variables so theyare not updated directly without
   // also persisting the changes with the SettingsService.

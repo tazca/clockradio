@@ -25,6 +25,6 @@ class RadioService {
   }
 
   bool isPlaying() {
-    return _player.state.playing;
+    return _player.state.playing && _player.state.duration != Duration.zero;
   }
 }
