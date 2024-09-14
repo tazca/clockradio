@@ -39,7 +39,8 @@ class ClockRadio extends StatelessWidget {
             settingsController.latitude, settingsController.longitude);
 
         if (settingsController.uiScale == null) {
-          settingsController.updateUIScale(MediaQuery.of(context).devicePixelRatio);
+          settingsController
+              .updateUIScale(MediaQuery.of(context).devicePixelRatio);
         }
         return MaterialApp(
           // Providing a restorationScopeId allows the Navigator built by the

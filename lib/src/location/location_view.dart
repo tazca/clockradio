@@ -8,7 +8,10 @@ import '/src/utils/platform_aware_image.dart';
 /// When a user changes a setting, the SettingsController is updated and
 /// Widgets that listen to the SettingsController are rebuilt.
 class LocationView extends StatelessWidget {
-  LocationView({super.key, required this.settingsController});
+  LocationView({
+    super.key,
+    required this.settingsController,
+  });
 
   static const routeName = '/location';
 
@@ -18,21 +21,23 @@ class LocationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    textLat.text = settingsController.latitude.toString();
+    textLat.selection = TextSelection.collapsed(offset: textLat.text.length);
+    textLong.text = settingsController.longitude.toString();
+    textLong.selection = TextSelection.collapsed(offset: textLong.text.length);
+
     return ListenableBuilder(
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
-        textLat.text = settingsController.latitude.toString();
-        textLong.text = settingsController.longitude.toString();
-
         return Scaffold(
           appBar: AppBar(
             title: Row(
               children: <Widget>[
                 const Text('Latitude: '),
                 Expanded(
-                  child: TextFormField(
+                  child: TextField(
                     controller: textLat,
-                    onFieldSubmitted: (String value) {
+                    onChanged: (String value) {
                       if (value == '') {
                         settingsController.updateLatitude(0.0);
                       } else {
@@ -53,9 +58,9 @@ class LocationView extends StatelessWidget {
                 ),
                 const Text('Longitude: '),
                 Expanded(
-                  child: TextFormField(
+                  child: TextField(
                     controller: textLong,
-                    onFieldSubmitted: (String value) {
+                    onChanged: (String value) {
                       if (value == '') {
                         settingsController.updateLongitude(0.0);
                       } else {
@@ -82,17 +87,28 @@ class LocationView extends StatelessWidget {
               return ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(16.0)),
                 child: Material(
-                  child: Ink.image(
-                    fit: BoxFit.fill,
-                    image: platformAwareImageProvider(
-                        'assets/images/worldmap.png'),
-                    child: InkWell(
-                      onTapUp: (TapUpDetails details) {
-                        _updateLocation(details, context.size);
-                        textLat.text = settingsController.latitude.toString();
-                        textLong.text = settingsController.longitude.toString();
-                      },
-                    ),
+                  child: Stack(
+                    children: <Widget>[
+                      LayoutBuilder(
+                        builder: (BuildContext context, BoxConstraints constraints) {
+                          return _userDot(constraints.maxWidth, constraints.maxHeight);
+                        }
+                      ),
+                      Ink.image(
+                        fit: BoxFit.fill,
+                        image: platformAwareImageProvider(
+                            'assets/images/worldmap.png'),
+                        child: InkWell(
+                          onTapUp: (TapUpDetails details) {
+                            _updateLocation(details, context.size);
+                            textLat.text =
+                                settingsController.latitude.toString();
+                            textLong.text =
+                                settingsController.longitude.toString();
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -117,6 +133,7 @@ class LocationView extends StatelessWidget {
                   mapWidgetSize.width *
                   360 -
               180);
+
       if (overflowingLongitude > 180) {
         overflowingLongitude -= 360;
       }
@@ -128,5 +145,48 @@ class LocationView extends StatelessWidget {
       settingsController
           .updateLongitude((longitude * 100).roundToDouble() / 100);
     }
+  }
+
+  Widget _userDot(double w, double h) {
+    // Location to x and y, ie. an inverse of _updateLocation
+    const double longitudeOffset = 23.75 / 853;
+
+    double x = ((settingsController.longitude + 180) / 360 * w - longitudeOffset * w);
+    double y = ((-settingsController.latitude) + 90) / 180 * h;
+
+    return CustomPaint(
+      painter: DotGraphic(
+        x,
+        y,
+      ),
+      size: Size(w, h),
+    );
+  }
+}
+
+@immutable
+class DotGraphic extends CustomPainter {
+  const DotGraphic(
+    this._x,
+    this._y,
+  );
+
+  final double _x;
+  final double _y;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawCircle(
+      Offset(_x, _y),
+      size.width * 0.0025,
+      Paint()
+        ..color = Colors.yellow
+        ..style = PaintingStyle.fill,
+    );
+  }
+
+  @override
+  bool shouldRepaint(DotGraphic oldDelegate) {
+    return oldDelegate._x != _x || oldDelegate._y != _y;
   }
 }
