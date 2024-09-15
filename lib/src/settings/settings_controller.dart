@@ -90,7 +90,8 @@ class SettingsController with ChangeNotifier {
     if (newRadioStation == null) return;
     if (newRadioStation == _radioStation) return;
 
-    _radioStation = newRadioStation;
+    _radioStation ??= newRadioStation;
+    
     await _settingsService.addRadioStation(newRadioStation);
     _radioStations = await _settingsService.radioStations();
     notifyListeners();

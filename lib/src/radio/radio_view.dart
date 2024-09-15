@@ -70,7 +70,13 @@ class RadioView extends StatelessWidget {
         Expanded(
           child: DropdownButton<String>(
             value: settings.radioStation,
-            onChanged: settings.updateRadioStation,
+            onChanged: (String? path) {
+              settings.updateRadioStation(path);
+              if (radio.isPlaying()) {
+                radio.stop();
+                radio.play();
+              }
+            },
             isExpanded: true,
             items: settings.radioStations.map<DropdownMenuItem<String>>(
               (String station) {
@@ -83,9 +89,15 @@ class RadioView extends StatelessWidget {
           ),
         ),
         FilledButton.tonal(
-          onPressed: settings.radioStation != SettingsController.fallbackStation ? () {
-            settings.removeRadioStation(settings.radioStation);
-          } : null,
+          onPressed: settings.radioStation != SettingsController.fallbackStation
+              ? () async {
+                  await settings.removeRadioStation(settings.radioStation);
+                  if (radio.isPlaying()) {
+                    radio.stop();
+                    radio.play();
+                  }
+                }
+              : null,
           child: const Text('Remove'),
         ),
       ],
