@@ -1,5 +1,5 @@
-name: clockradio
-description: "A new Flutter project."
+name: s1335_clock_radio 
+description: "S-1335 clock radio"
 
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'
@@ -17,12 +17,12 @@ dependencies:
   # SVG rendering
   flutter_svg: any
   # Audio
-  media_kit: any
-  media_kit_libs_audio: any
-  media_kit_native_event_loop: any
+  media_kit: ^1.1.11
+  media_kit_libs_audio: ^1.0.5
+  media_kit_native_event_loop: ^1.0.9
   # Persist settings
   shared_preferences: ^2.2.3
-  # Non-white screen when loading app
+  # Non-white loading screen when loading app on all platforms
   flutter_native_splash: ^2.4.1
 
 dev_dependencies:
@@ -30,23 +30,6 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^4.0.0
-
-dependency_overrides:
-  media_kit:
-    git:
-      url: https://github.com/media-kit/media-kit
-      path: media_kit
-      ref: main
-  media_kit_libs_audio:
-    git:
-      url: https://github.com/media-kit/media-kit
-      path: libs/universal/media_kit_libs_audio
-      ref: main
-  media_kit_native_event_loop:
-    git:
-      url: https://github.com/media-kit/media-kit
-      path: media_kit_native_event_loop
-      ref: main
 
 flutter:
   uses-material-design: true
