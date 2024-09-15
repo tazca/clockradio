@@ -45,22 +45,25 @@ class ClockView extends StatelessWidget {
   Widget _intro(BuildContext context) {
     return Align(
       alignment: Alignment.topCenter,
-      child: Column(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           children: <Widget>[
             Text(
                 style: DefaultTextStyle.of(context).style.apply(
                       color: const Color.fromARGB(255, 192, 192, 192),
-                      fontSizeFactor: 1.5,
+                      fontSizeFactor: 1.6,
                     ),
-                'Drag left or right for options'),
+                'Drag left / right for options'),
             Text(
                 style: DefaultTextStyle.of(context).style.apply(
                       color: const Color.fromARGB(255, 192, 192, 192),
-                      fontSizeFactor: 1.5,
+                      fontSizeFactor: 1.6,
                     ),
                 'Tap to toggle radio'),
           ],
         ),
+      ),
     );
   }
 }

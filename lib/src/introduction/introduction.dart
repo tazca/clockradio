@@ -36,7 +36,7 @@ class _Introduction extends State<Introduction> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 10), () {
       if (mounted) {
         setState(() {
           _visible = false;
