@@ -15,31 +15,31 @@ import 'settings/settings_view.dart';
 class ClockRadio extends StatelessWidget {
   const ClockRadio({
     super.key,
-    required this.clockController,
-    required this.radioController,
-    required this.settingsController,
+    required this.clock,
+    required this.radio,
+    required this.settings,
   });
 
-  final ClockController clockController;
-  final RadioController radioController;
-  final SettingsController settingsController;
+  final ClockController clock;
+  final RadioController radio;
+  final SettingsController settings;
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: settingsController,
+      listenable: settings,
       builder: (BuildContext context, Widget? child) {
         // Settings have changed:
-        if (settingsController.alarmSet) {
-          clockController.setAlarm(settingsController.alarm);
+        if (settings.alarmSet) {
+          clock.setAlarm(settings.alarm);
         } else {
-          clockController.setAlarm(null);
+          clock.setAlarm(null);
         }
-        clockController.setLocation(
-            settingsController.latitude, settingsController.longitude);
+        clock.setLocation(
+            settings.latitude, settings.longitude);
 
-        if (settingsController.uiScale == null) {
-          settingsController
+        if (settings.uiScale == null) {
+          settings
               .updateUIScale(MediaQuery.of(context).devicePixelRatio);
         }
         return MaterialApp(
@@ -84,28 +84,28 @@ class ClockRadio extends StatelessWidget {
               builder: (BuildContext context) {
                 switch (routeSettings.name) {
                   case LocationView.routeName:
-                    return LocationView(settingsController: settingsController);
+                    return LocationView(settings: settings);
                   default:
                     return PageView(
                       controller: PageController(initialPage: 1),
                       physics: const SnappyPageViewScrollPhysics(),
                       children: <Widget>[
                         RadioView(
-                          radio: radioController,
-                          settings: settingsController,
+                          radio: radio,
+                          settings: settings,
                         ),
                         ListenableBuilder(
-                          listenable: clockController,
+                          listenable: clock,
                           builder: (BuildContext context, Widget? child) {
                             return ClockView(
-                              clock: clockController.buildClock(),
-                              radio: radioController,
-                              showIntro: settingsController.intro,
+                              clock: clock.buildClock(),
+                              radio: radio,
+                              showIntro: settings.intro,
                             );
                           },
                         ),
                         SettingsView(
-                          controller: settingsController,
+                          settings: settings,
                         ),
                       ],
                     );

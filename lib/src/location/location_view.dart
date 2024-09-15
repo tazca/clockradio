@@ -10,24 +10,24 @@ import '/src/utils/platform_aware_image.dart';
 class LocationView extends StatelessWidget {
   LocationView({
     super.key,
-    required this.settingsController,
+    required this.settings,
   });
 
   static const routeName = '/location';
 
-  final SettingsController settingsController;
+  final SettingsController settings;
   final TextEditingController textLat = TextEditingController();
   final TextEditingController textLong = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    textLat.text = settingsController.latitude.toString();
+    textLat.text = settings.latitude.toString();
     textLat.selection = TextSelection.collapsed(offset: textLat.text.length);
-    textLong.text = settingsController.longitude.toString();
+    textLong.text = settings.longitude.toString();
     textLong.selection = TextSelection.collapsed(offset: textLong.text.length);
 
     return ListenableBuilder(
-      listenable: settingsController,
+      listenable: settings,
       builder: (BuildContext context, Widget? child) {
         return Scaffold(
           appBar: AppBar(
@@ -39,7 +39,7 @@ class LocationView extends StatelessWidget {
                     controller: textLat,
                     onChanged: (String value) {
                       if (value == '') {
-                        settingsController.updateLatitude(0.0);
+                        settings.updateLatitude(0.0);
                       } else {
                         try {
                           double latitude = double.parse(value);
@@ -48,9 +48,9 @@ class LocationView extends StatelessWidget {
                           } else if (latitude < -90.0) {
                             latitude = -90.0;
                           }
-                          settingsController.updateLatitude(latitude);
+                          settings.updateLatitude(latitude);
                         } catch (e) {
-                          settingsController.updateLatitude(0.0);
+                          settings.updateLatitude(0.0);
                         }
                       }
                     },
@@ -62,7 +62,7 @@ class LocationView extends StatelessWidget {
                     controller: textLong,
                     onChanged: (String value) {
                       if (value == '') {
-                        settingsController.updateLongitude(0.0);
+                        settings.updateLongitude(0.0);
                       } else {
                         try {
                           double longitude = double.parse(value);
@@ -71,9 +71,9 @@ class LocationView extends StatelessWidget {
                           } else if (longitude < -180.0) {
                             longitude = -180.0;
                           }
-                          settingsController.updateLongitude(longitude);
+                          settings.updateLongitude(longitude);
                         } catch (e) {
-                          settingsController.updateLongitude(0.0);
+                          settings.updateLongitude(0.0);
                         }
                       }
                     },
@@ -102,9 +102,9 @@ class LocationView extends StatelessWidget {
                           onTapUp: (TapUpDetails details) {
                             _updateLocation(details, context.size);
                             textLat.text =
-                                settingsController.latitude.toString();
+                                settings.latitude.toString();
                             textLong.text =
-                                settingsController.longitude.toString();
+                                settings.longitude.toString();
                           },
                         ),
                       ),
@@ -141,8 +141,8 @@ class LocationView extends StatelessWidget {
       final double latitude =
           (initialLatitude / mapWidgetSize.height * 180 - 90) * (-1);
 
-      settingsController.updateLatitude((latitude * 100).roundToDouble() / 100);
-      settingsController
+      settings.updateLatitude((latitude * 100).roundToDouble() / 100);
+      settings
           .updateLongitude((longitude * 100).roundToDouble() / 100);
     }
   }
@@ -151,8 +151,8 @@ class LocationView extends StatelessWidget {
     // Location to x and y, ie. an inverse of _updateLocation
     const double longitudeOffset = 23.75 / 853;
 
-    double x = ((settingsController.longitude + 180) / 360 * w - longitudeOffset * w);
-    double y = ((-settingsController.latitude) + 90) / 180 * h;
+    double x = ((settings.longitude + 180) / 360 * w - longitudeOffset * w);
+    double y = ((-settings.latitude) + 90) / 180 * h;
 
     return CustomPaint(
       painter: DotGraphic(

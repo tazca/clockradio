@@ -5,10 +5,10 @@ import '/src/settings/settings_controller.dart';
 import 'radio_service.dart';
 
 class RadioController {
-  RadioController(this._radioService, this._settingsController);
+  RadioController(this._radioService, this._settings);
 
   final RadioService _radioService;
-  final SettingsController _settingsController;
+  final SettingsController _settings;
 
   Timer? initiateFailsafe;
 
@@ -20,7 +20,7 @@ class RadioController {
     if (isPlaying()) {
       stop();
     }
-    _radioService.selectStream(_settingsController.radioStation);
+    _radioService.selectStream(_settings.radioStation);
     _radioService.play();
     initiateFailsafe =
         Timer(const Duration(milliseconds: 5000), failsafeStream);

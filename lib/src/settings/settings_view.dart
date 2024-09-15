@@ -11,9 +11,9 @@ import 'settings_controller.dart';
 /// When a user changes a setting, the SettingsController is updated and
 /// Widgets that listen to the SettingsController are rebuilt.
 class SettingsView extends StatelessWidget {
-  const SettingsView({super.key, required this.controller});
+  const SettingsView({super.key, required this.settings});
 
-  final SettingsController controller;
+  final SettingsController settings;
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +22,10 @@ class SettingsView extends StatelessWidget {
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            minHeight: (controller.uiScale ?? 1.0) * 96 * 3.0,
-            maxHeight: (controller.uiScale ?? 1.0) * 96 * 3.0,
-            minWidth: (controller.uiScale ?? 1.0) * 96 * 4.8,
-            maxWidth: (controller.uiScale ?? 1.0) * 96 * 4.8,
+            minHeight: (settings.uiScale ?? 1.0) * 96 * 3.0,
+            maxHeight: (settings.uiScale ?? 1.0) * 96 * 3.0,
+            minWidth: (settings.uiScale ?? 1.0) * 96 * 4.8,
+            maxWidth: (settings.uiScale ?? 1.0) * 96 * 4.8,
           ),
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(8.0)),
@@ -78,7 +78,7 @@ class SettingsView extends StatelessWidget {
             TimeOfDay? setAlarm = await showTimePicker(
               cancelText: 'Unset',
               confirmText: 'Set alarm',
-              initialTime: controller.alarm,
+              initialTime: settings.alarm,
               context: context,
               builder: (BuildContext context, Widget? child) {
                 return MediaQuery(
@@ -89,13 +89,13 @@ class SettingsView extends StatelessWidget {
               },
             );
             if (setAlarm == null) {
-              controller.updateAlarmSet(false);
+              settings.updateAlarmSet(false);
             } else {
-              controller.updateAlarmSet(true);
-              controller.updateAlarm(setAlarm);
+              settings.updateAlarmSet(true);
+              settings.updateAlarm(setAlarm);
             }
           },
-          child: controller.alarmSet
+          child: settings.alarmSet
               ? const Text('Alarm is set')
               : const Text('No alarm set'),
         ),
@@ -105,7 +105,7 @@ class SettingsView extends StatelessWidget {
 
   Widget _location(BuildContext context) {
     return FilledButton.tonal(
-      onPressed: (controller.clockFace == ClockFace.solar)
+      onPressed: (settings.clockFace == ClockFace.solar)
           ? () {
               Navigator.restorablePushNamed(context, LocationView.routeName);
             }
@@ -129,7 +129,7 @@ class SettingsView extends StatelessWidget {
               image: platformAwareImageProvider('assets/images/ledclock.png'),
               child: InkWell(
                 onTap: () {
-                  controller.updateClockFace(ClockFace.led);
+                  settings.updateClockFace(ClockFace.led);
                 },
               ),
             ),
@@ -148,7 +148,7 @@ class SettingsView extends StatelessWidget {
                       'assets/images/solarclock.png'),
                   child: InkWell(
                     onTap: () {
-                      controller.updateClockFace(ClockFace.solar);
+                      settings.updateClockFace(ClockFace.solar);
                     },
                   ),
                 ),
@@ -168,13 +168,13 @@ class SettingsView extends StatelessWidget {
         const Text('Prevent OLED burn'),
         Switch.adaptive(
           onChanged: (x) {
-            if (controller.oled) {
-              controller.updateOled(false);
+            if (settings.oled) {
+              settings.updateOled(false);
             } else {
-              controller.updateOled(true);
+              settings.updateOled(true);
             }
           },
-          value: controller.oled,
+          value: settings.oled,
         ),
       ],
     );
@@ -187,13 +187,13 @@ class SettingsView extends StatelessWidget {
         const Text('Show intro texts'),
         Switch.adaptive(
           onChanged: (x) {
-            if (controller.intro) {
-              controller.updateIntro(false);
+            if (settings.intro) {
+              settings.updateIntro(false);
             } else {
-              controller.updateIntro(true);
+              settings.updateIntro(true);
             }
           },
-          value: controller.intro,
+          value: settings.intro,
         ),
       ],
     );
@@ -209,8 +209,8 @@ class SettingsView extends StatelessWidget {
           divisions: 10,
           min: 1.0,
           max: 2.0,
-          value: controller.uiScale ?? 1.0,
-          onChanged: (double x) => controller.updateUIScale(x),
+          value: settings.uiScale ?? 1.0,
+          onChanged: (double x) => settings.updateUIScale(x),
         ),
       ],
     );

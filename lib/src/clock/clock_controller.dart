@@ -11,31 +11,31 @@ class ClockController with ChangeNotifier {
   ClockController(
     this._alarmCallback,
     this._clock,
-    this._settingsController,
+    this._settings,
     this._userLatitude,
     this._userLongitude,
   );
 
   Function _alarmCallback;
   Clock _clock;
-  final SettingsController _settingsController;
+  final SettingsController _settings;
 
   double _userLatitude;
   double _userLongitude;
 
   factory ClockController.create(
     Function alarmCallback,
-    SettingsController settingsController,
+    SettingsController settings,
   ) {
     return ClockController(
       alarmCallback,
       Clock.now(
-        userLatitude: settingsController.latitude,
-        userLongitude: settingsController.longitude,
+        userLatitude: settings.latitude,
+        userLongitude: settings.longitude,
       ),
-      settingsController,
-      settingsController.latitude,
-      settingsController.longitude,
+      settings,
+      settings.latitude,
+      settings.longitude,
     );
   }
 
@@ -48,11 +48,11 @@ class ClockController with ChangeNotifier {
   double get userLat => _userLatitude;
   double get userLong => _userLongitude;
 
-  bool get oledJiggle => _settingsController.oled;
-  double get uiScale => _settingsController.uiScale ?? 1.0;
+  bool get oledJiggle => _settings.oled;
+  double get uiScale => _settings.uiScale ?? 1.0;
 
   StatelessWidget buildClock() {
-    switch (_settingsController.clockFace) {
+    switch (_settings.clockFace) {
       case ClockFace.led:
         return LedClock(clock: this);
       case ClockFace.solar:

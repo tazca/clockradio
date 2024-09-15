@@ -8,22 +8,22 @@ import 'src/radio/radio_controller.dart';
 import 'src/clock/clock_controller.dart';
 
 void main() async {
-  final settingsController = SettingsController.create();
-  await settingsController.loadSettings();
+  final settings = SettingsController.create();
+  await settings.loadSettings();
 
   MediaKit.ensureInitialized();
-  final radioController = RadioController.create(settingsController);
+  final radio = RadioController.create(settings);
 
-  final clockController = ClockController.create(
-    radioController.play,
-    settingsController,
+  final clock = ClockController.create(
+    radio.play,
+    settings,
   );
-  clockController.startClock();
+  clock.startClock();
 
   final app = ClockRadio(
-    clockController: clockController,
-    radioController: radioController,
-    settingsController: settingsController,
+    clock: clock,
+    radio: radio,
+    settings: settings,
   );
 
   runApp(app);
