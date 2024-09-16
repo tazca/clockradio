@@ -1,121 +1,346 @@
-#+TITLE: Clockradio app
+#+TITLE: S-1335 clock radio
 #+OPTIONS: num:nil
 
-* Setting up development environment
-Follow Flutter site's [[https://docs.flutter.dev/get-started/install][Getting Started]] section, and use maybe [[https://vscodium.com/][VSCodium]] as the IDE as it has well integrated Dart/Flutter support with a plugin.
+* Developer sets up development environment
+Follow Flutter site's [[https://docs.flutter.dev/get-started/install][Getting Started]] section, and maybe use [[https://vscodium.com/][VSCodium]] as IDE as it has a well integrated Dart/Flutter plugin.
 
-* Clock radio
+* S-1335 clock radio
 
-The =pubspec.yaml= for Clockradio has a font asset set for local non-CDN loading, image and sound assets, and =flutter_svg=, =media_kit=, and =shared_preferences=  dependencies added. Current =pub.dev= release of  =media_kit= [[https://github.com/media-kit/media-kit/issues/595#issuecomment-2094208809][has issues building on Fedora]] and should use =main= branch on GitHub instead.
+The logo for the app was made first and the name is derived from it. I figured it's a boring appliance, so a boring code of letters and numbers similar to hardware clock radios should fit fine. The rest will now explain the inner workings of this software.
 
+Notably, S-1335 doesn't have tests and the state is limited to simple but fairly omnipresent controllers, meaning no =Provider= or similar architectures were implemented. Coming from Haskell and immutability, I also heavily leaned on =StatelessWidget= rather than =StatefulWidget= class. It's a second iteration of my first Flutter project.
+
+The =pubspec.yaml= for S-1335 has a font asset set to allow local non-CDN loading.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/pubspec.yaml][pubspec.yaml]]
 #+transclude: [[file:pubspec.yaml]]  :src yaml
 
-=analysis_options.yaml= has some =strong-mode= options enabled to make Dart act more sensible. =prefer_single_quotes= seem very idiomatic and avoid escaping more common double quotes.
+=analysis_options.yaml= has select =strong-mode= options enabled to have sensible guard rails. =prefer_single_quotes= seems idiomatic.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/analysis_options.yaml][analysis_options.yaml]]
 #+transclude: [[file:analysis_options.yaml]]  :src yaml
 
-=main.dart= initializes program controllers (and controllers then their associated services) and finally passes the controllers to the app widget itself. Location is fixed to Tampere for the present.
+=main.dart= initializes program controllers (and controllers their associated services). It then passes the controllers to the app widget itself.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/main.dart][lib/main.dart]]
 #+transclude: [[file:lib/main.dart]]  :src dart
 
 =app.dart= mostly follows the basic skeleton template. The =ClockRadio=  app widget rebuilds and updates controllers whenever settings change.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/app.dart][lib/src/app.dart]]
 #+transclude: [[file:lib/src/app.dart::Widget build]]  :src dart :end "MaterialApp"
 
-The default dark mode theme is used. Clock faces will override this theme to achieve true blacks.
+The default dark mode theme is used, but most views use true black as background outside user controls. The router shows how =RadioView=, =ClockView=, and =SettingsView= come together into a =PageView= widget, which allows swiping between these three views.
 
-The router is as follows.
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/app.dart][lib/src/app.dart]]
+#+transclude: [[file:lib/src/app.dart::onGenerateRoute]] :lines 1-35 :src dart
 
-#+transclude: [[file:lib/src/app.dart::onGenerateRoute]]  :src dart
+To allow swiping also when using mouse, we need to set up a custom =MaterialScrollBehaviour=.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/app.dart][lib/src/app.dart]]
+#+transclude: [[file:lib/src/app.dart::class MouseAndTouchDragBehavior]]  :src dart :thingatpt paragraph
+
+The default =PageView= physics take ages, so we need to make it snappier using a custom =ScrollPhysics=.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/app.dart][lib/src/app.dart]]
+#+transclude: [[file:lib/src/app.dart::class SnappyPageViewScrollPhysics]]  :src dart
 
 ** User opens app and sees initial UI
 
-The front page is built from =ClockView= and its child widget =clock=. To save effort per clock face, =ClockView= will catch any taps making it a universal touch interface shared by all clock faces. It will also show any introductory texts.
+The opening page in the =PageView= is =ClockView= and its child widget =clock=. =ClockView= essentially does three things: it shows introductory text =_intro=, a clock face =_clock=, and catches any taps to play and stop the =radio=.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/clock_view.dart][lib/src/clock/clock_view.dart]]
 #+transclude: [[file:lib/src/clock/clock_view.dart]]  :src dart
 
-=clock= was built earlier in =app.dart= via =ClockController='s =buildClock= method.
+The  =Introduction= widget controls whether =_intro= and =_clock= or only =_clock= is shown. The class shows the intro widget if =show= is set and then turns it invisible after a time.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/introduction/introduction.dart][lib/src/introduction/introduction.dart]]
+#+transclude: [[file:lib/src/introduction/introduction.dart]]  :src dart
+
+=clock= widget was produced earlier in =app.dart= by =ClockController.buildClock= method.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/clock_controller.dart][lib/src/clock/clock_controller.dart]]
 #+transclude: [[file:lib/src/clock/clock_controller.dart::buildClock]]  :src dart :end "startClock"
 
-The default clock face is =LedClock=, set in =SettingsService=.
+The default clock face is =LedClock= as set in =SettingsService=.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
 #+transclude: [[file:lib/src/settings/settings_service.dart::Future<ClockFace> clockFace]]  :src dart :end "updateClockFace"
 
-=ClockController= has a timer running to update =Clock=  & call alarm each minute on the point and notify the =ListenableBuilder= in =app.dart= widget tree.
+=ClockController= has a timer running to recreate =Clock=  & check alarm each minute on the point.  =ListenableBuilder= in =app.dart= widget tree will be listening to =ClockController= to repaint the clock face.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/clock_controller.dart][lib/src/clock/clock_controller.dart]]
 #+transclude: [[file:lib/src/clock/clock_controller.dart::startClock]]  :src dart :end "setAlarm"
 
-=Clock= is an immutable class telling current time, location, and associated info for implementing clock faces.
+=Clock= is an immutable class that tells current time, and collects and derives associated info from =ClockController=. Clock faces are then painted based on =Clock=.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/clock.dart][lib/src/clock/clock.dart]]
 #+transclude: [[file:lib/src/clock/clock.dart]]  :src dart
 
 *** LED clock face
 
-The LED clock face employs an array of LED segments: four 7-segment numbers, dots, and alarm elements. =_powerLedElements= encodes hours and minutes into a =Map=. Each of the elements in the =Map= references to an SVG file, to a total of 30 drivable elements (barring future AM/PM elements).
+The LED clock face employs an array of LED segments: four 7-segment numbers, dots, and alarm elements. =_powerLedElements= encodes hours and minutes into a =Map=. Each of the elements in the =Map= references to an SVG file, to a total of 30 drivable elements (barring potential AM/PM elements in the future).
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/ledclock.dart][lib/src/clock/ledclock.dart]]
 #+transclude: [[file:lib/src/clock/ledclock.dart::Map<String, bool> _powerLedElements]]  :src dart
 
 Individual SVGs were derived from breaking apart the following artesanally drawn vector image (inspired by my now-dead clock radio).
 
 [[file:documentation_7seg_final.svg]]
 
-The clock face should have same physical size regardless of screen DPI. Height is 1.0" by default (3.5:1 aspect ratio -> 3.5" x 1" WxH). A media query gives us the device DPI ratio relative to the standard 96 desktop DPI, as can be seen in =LedClock='s =build= method. Same technique is used on other clock faces as well.
+The clock face should have same physical size regardless of screen DPI. The default size we're aiming for roughly is  3.5" x 1" WxH, which fits nicely on a 1st gen iPhone SE. =clock.uiScale= gives us the device DPI ratio (after user-set UI scaling) relative to the standard 96 desktop DPI.
 
-#+transclude: [[file:lib/src/clock/ledclock.dart::Widget build]]  :src dart :end "Map<String, bool> _powerLedElements"
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/ledclock.dart][lib/src/clock/ledclock.dart]]
+#+transclude: [[file:lib/src/clock/ledclock.dart::Widget build]]  :src dart :end "if (clock.oledJiggle)"
+
+We have to account for users with OLED screens and potential burn-in. If OLED burn-in prevention setting is enabled, we'll slowly move the clock face in a circle with each revolution taking =jiggleSpeed= minutes.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/ledclock.dart][lib/src/clock/ledclock.dart]]
+#+transclude: [[file:lib/src/clock/ledclock.dart::if (clock.oledJiggle)]]  :src dart :end "Map<String, bool> _powerLedElements"
 
 *** Solar clock face
 
-This clock face is more technical. It does not use predrawn graphics and relies on trigonometric analysis off user's location and current date.
+This clock face is more algorithmical. It does not use predrawn graphics and relies on trigonometric analysis off user's location and current date. It uses Flutter's =CustomPainter= class for drawing arcs and such.
 
 Determining clock face size is more involved than with LED face. The optimum 2.5" height-width fits considerably less displays. =build= returns a =CustomPaint= with =SolarGraphic= inheriting =CustomPainter=.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart][lib/src/clock/solarclock.dart]]
 #+transclude: [[file:lib/src/clock/solarclock.dart::Widget build]]  :src dart :thingatpt paragraph
 
 The graphic is derived from following data.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart][lib/src/clock/solarclock.dart]]
 #+transclude: [[file:lib/src/clock/solarclock.dart::const SolarGraphic]]  :src dart :thingatpt paragraph
 
 Overriding =paint= from =CustomPainter=, we start off calculating how current time relates to UTC and to solar noon. With this calculated, we know where sun currently is in radians relative to user's zenith.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart][lib/src/clock/solarclock.dart]]
 #+transclude: [[file:lib/src/clock/solarclock.dart::void paint]]  :src dart :end "Calculating"
 
 To draw day-night separation on Earth, we need to know sun's current declination. This uses a well-known formula to approximate this. =daynightRatio= is the ratio of the distance from earth's center to day-night line and from earth's center to earth's edge. So, it varies roughly between =0.0= and =0.2=. Margins and radiuses were chosen for aesthetic purposes.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart][lib/src/clock/solarclock.dart]]
 #+transclude: [[file:lib/src/clock/solarclock.dart::Sun declination uses]]  :src dart :end "The user dot we add"
 
-Since we're dealing with elements rotating around the midpoint, rotating the canvas makes drawing much simpler vs. starting to calculate circular geometry. If alarm is set, we start off with rotate for alarm outline, =drawCircle=, and rotate for sun. Otherwise we just rotate straight for the sun.
+Since we're dealing with elements rotating concentrically, rotating the canvas makes drawing much simpler than starting to calculate circular geometry. If alarm is set, we start off with rotate for alarm outline, =drawCircle=, and rotate for sun. Otherwise we just rotate straight for the sun.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart][lib/src/clock/solarclock.dart]]
 #+transclude: [[file:lib/src/clock/solarclock.dart::alarmRadians != null]]  :src dart :end "// Sun"
 
 Sun is drawn filled. Earth only has an outline, so we have to draw the dayside separately.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart][lib/src/clock/solarclock.dart]]
 #+transclude: [[file:lib/src/clock/solarclock.dart::// Sun]]  :src dart :end "const Color daySideColor"
 
-We start off by drawing a filled half-circle pointing towards the sun. Then we draw either a day- or night-colored half-ellipse, which covers the area from center until the day-night line according to =dayNightRatio=.
+We start off by drawing a filled half-circle pointing towards the sun. Then we draw either a day- or night-colored half-ellipse, which covers the area from center until the day-night line according to =dayNightRatio=. If user has OLED burn-in prevention set, =Paintingstyle.stroke= is used, and the day-night line is drawn in an arc instead of a filled ellipse.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart][lib/src/clock/solarclock.dart]]
 #+transclude: [[file:lib/src/clock/solarclock.dart::const Color daySideColor]]  :src dart :end "// Now, let's rotate"
 
 Finally we rotate the canvas to its final, original position and draw user's location on Earth.
 
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart][lib/src/clock/solarclock.dart]]
 #+transclude: [[file:lib/src/clock/solarclock.dart::// Now, let's rotate]]  :src dart :end "// Although SolarGraphic"
 
-** User swipes right to edit settings
+** User drags left to edit settings
 
-User sees options to set alarm time, location, clock face, and OLED mode. Setting alarm uses native time-picker, and each clock face has a radioesque icon-button in horizontal list. OLED mode is a on-off switch. Setting location opens a subscreen similar to time picker but with world map + overrideable lat/long shown.
+User sees options to set alarm time, location, clock face, OLED burn-in prevention and introductory text toggles, and UI scale slider,. Setting alarm uses Flutter's time picker, and both clock faces have a radioesque icon-button in horizontal list. Setting location opens a subscreen with a clickable world map + lat/long text fields.
 
-Equirectangular map SVG has 853 width, where dateline is at 829.25 -> -23.75 offset (and so Greenwich at 853/2-23.75). =onTapUp (TapUpDetails details)= gives position (tapUp happens only when no other gesture has overridden the tap).
+Settings are governed by the =SettingsController=, which is a caching abstraction for =SettingsService= which abstracts =SharedPreferences=. Saved settings include radio station URLs, clock face selection, alarm, location, OLED burn-in prevention, showing introductory texts, and UI scale. All but radio station URLs are modified via =SettingsView= which the user now sees.
 
-=SettingsController= is then a caching front for =SettingsService= which is a front for =SharedPreferences=. They handle radio station URLs, clock faces, and set alarm time edited via =SettingsView= in a largely passthrough manner aside from setting some defaults.
+=SettingsView.build= collects the individual settings widgets =_alarm=, =_clockFace=, =_oled=, =_intro=, and =_uiScale= in a =Column= widget.
 
-** User swipes left to radio view
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart][lib/src/settings/settings_view.dart]]
+#+transclude: [[file:lib/src/settings/settings_view.dart::child: Column(]] :lines 1-20 :src dart
 
-User sees the currently selected radio station in e.g. a dropdown of favorite stations. The view has an engaging way to present all radio stations available. Geoblocked stations can be filtered by telling app to go through them. A random station can be set to play whenever =RadioController.play()= is called.
+The =Column= widget is then wrapped in =Padding=, =Material=, =ClipRRect=, =ConstrainedBox=, =Center=, and then finally =Scaffold=.
 
-** User taps to play radio
+*** User presses "No alarm set" / "Alarm is set" button
 
-Tapping triggers =RadioController.toggle()=, which starts/stops the underlying =Player= from =media_kit= library. The library does all the heavy lifting.
+The button launches a =showTimePicker= with 24h format enforced and updates the =SettingsController= accordingly. The controller has separate conception of alarm time and if alarm is set, so that previously unset alarm time can be seen preset in the time picker.
 
-#+transclude: [[file:lib/src/radio/radio_controller.dart]]  :src dart
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart][lib/src/settings/settings_view.dart]]
+#+transclude: [[file:lib/src/settings/settings_view.dart::Widget _alarm(]]  :src dart :thingatpt paragraph
 
-#+transclude: [[file:lib/src/radio/radio_service.dart]]  :src dart
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> updateAlarmSet]]  :src dart :thingatpt paragraph
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> updateAlarmSet]]  :src dart :thingatpt paragraph
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> updateAlarm]]  :src dart :thingatpt paragraph
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> updateAlarmH]]  :src dart :thingatpt paragraph
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> updateAlarmM]]  :src dart :thingatpt paragraph
+
+
+*** User selects a clock face
+
+The clock face buttons use an =InkWell= that updates the clock face on tap. Each clock face is hardcoded as its own widget tree as there are only a few.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart][lib/src/settings/settings_view.dart]]
+#+transclude: [[file:lib/src/settings/settings_view.dart::Widget _clockFace(]]  :src dart :thingatpt paragraph
+
+Flutter's web builds differ from native builds asset-wise. We need to use =NetworkImage= on web and =AssetImage= on native builds. This is done via =platformAwareImageProvider= shim.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/utils/platform_aware_image.dart][lib/src/utils/platform_aware_image.dart]]
+#+transclude: [[file:lib/src/utils/platform_aware_image.dart::ImageProvider]]  :src dart
+
+The clock face is then updated in =SettingsController=.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> updateClockFace]] :lines 1-8 :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> updateClockFace]]  :src dart :thingatpt paragraph
+
+*** User presses location button
+
+The location button is only enabled when the solar clock face is selected. It is then a clockface-specific setting as it does not make sense with the digital clockface. After pressing the button user is moved to =LocationView=.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart][lib/src/settings/settings_view.dart]]
+#+transclude: [[file:lib/src/settings/settings_view.dart::Widget _location(]]  :src dart :thingatpt paragraph
+
+=LocationView= will span all available screen area to allow better ergonomics setting location by clicking the map projection. =_userDot= widget paints the currently set location on the =Ink.image= presenting the world map. Tapping on the =Ink.image= will update set location and the =TextField= widgets controlled by the respective =TextEditingController= classes.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/location/location_view.dart][lib/src/location/location_view.dart]]
+#+transclude: [[file:lib/src/location/location_view.dart::body: Builder(]] :lines 1-32 :src dart
+
+The =TextField= widgets show current latitude and longitude, and allow setting a new location. They require some input sanitization logic, but can update settings directly rather than deriving the numbers via =_updateLocation=. The =_userDot= moves after each input.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/location/location_view.dart][lib/src/location/location_view.dart]]
+#+transclude: [[file:lib/src/location/location_view.dart::title: Row(]]  :src dart :end "body: Builder("
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> updateLongitude]] :lines 1-8 :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> updateLongitude]]  :src dart :thingatpt paragraph
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> updateLatitude]] :lines 1-8 :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> updateLatitude]]  :src dart :thingatpt paragraph
+
+To make changes via keyboard sensical, we need to move the cursor to the end of the =TextField= after each rebuild. The widgets are rebuilt after each character input.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/location/location_view.dart][lib/src/location/location_view.dart]]
+#+transclude: [[file:lib/src/location/location_view.dart::Widget build]] :lines 1-5 :src dart
+
+**** User taps on the world map & dot is drawn from set location
+
+The problem gets more interesting here. We need to derive latitude and longitude from X and Y coordinates on an arbitrarily sized map projection. Using an equirectangular projection makes this problem graspable, as it allows a mere linear conversion without making users' life more difficult.
+
+The chosen equirectangular map projection is 853 units width. The dateline is not at the edge, but rather at 829.25 units which then means a 23.75 unit offset (and so Greenwich or 0° longitude is at 853/2-23.75 units). =onTapUp (TapUpDetails details)= from =InkWell= has given us the X and Y coordinates (tapUp happens only when no other gesture has overridden the tap) and =context= the width and height of the map area. While longitude requires the dateline offset and accounting for overflowing 180°+ behind the dateline, latitude is a simple linear relationship.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/location/location_view.dart][lib/src/location/location_view.dart]]
+#+transclude: [[file:lib/src/location/location_view.dart::void _updateLocation(]]  :src dart :end "Widget _userDot("
+
+Drawing the user's location then requires doing this in reverse. The location is stored as latitude and longitude, and =CustomPaint= requires X and Y coordinates.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/location/location_view.dart][lib/src/location/location_view.dart]]
+#+transclude: [[file:lib/src/location/location_view.dart::Widget _userDot(]]  :src dart
+
+*** User edits miscellaneous settings
+
+The miscellaneous settings include OLED burn-in prevention, showing introductory texts, and setting UI scale. The burn-in prevention is a simple toggle.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart][lib/src/settings/settings_view.dart]]
+#+transclude: [[file:lib/src/settings/settings_view.dart::Widget _oled(]]  :src dart :thingatpt paragraph
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> updateOled]] :lines 1-8 :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> updateOled]]  :src dart :thingatpt paragraph
+
+The introductory text toggle is identical.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart][lib/src/settings/settings_view.dart]]
+#+transclude: [[file:lib/src/settings/settings_view.dart::Widget _intro(]]  :src dart :thingatpt paragraph
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> updateIntro]] :lines 1-8 :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> updateIntro]]  :src dart :thingatpt paragraph
+
+The UI scale uses a =Slider= that sets the scaling ratio from 1.0 to 2.0. The upper limit could be set higher, but as a design decision it's kept as low as is sensible.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart][lib/src/settings/settings_view.dart]]
+#+transclude: [[file:lib/src/settings/settings_view.dart::Widget _uiScale(]]  :src dart :thingatpt paragraph
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> updateUIScale]] :lines 1-8 :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> updateUIScale]] :lines 1-4 :src dart
+
+** User drags right to edit radio
+
+User sees the currently selected radio station in a dropdown of favorite stations. They can remove stations and add new ones. Ideally the view would have an engaging way to present all radio stations available, but the current dropdown and manual URL adding provides a good enough foundation. The view essentially has a =ListView= with a headline and two widgets =_selectFavoriteStation= and =_addStation=.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/radio/radio_view.dart][lib/src/radio/radio_view.dart]]
+#+transclude: [[file:lib/src/radio/radio_view.dart::return ListView(]] :lines 1-16 :src dart
+
+Audio functionality is implemented using =media_kit= library, which provides a straightforward-to-use  =Player= class. =RadioService= can be then implemented as a thin wrapper. =Player.state.duration= is used as heuristic to see if there anything playable actually playing.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/radio/radio_service.dart][lib/src/radio/radio_service.dart]]
+#+transclude: [[file:lib/src/radio/radio_service.dart::class RadioService]]  :src dart
+
+=RadioController= is similarly thin. It does implement a failsafe protocol, where a bundled ping sound is played if =RadioService= is not playing anything after 5 seconds.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/radio/radio_controller.dart][lib/src/radio/radio_controller.dart]]
+#+transclude: [[file:lib/src/radio/radio_controller.dart::class RadioController]]  :src dart
+
+*** User adds a radio station
+
+Adding radio station works by inputting an URL. A =DropdownButton= is used to allow different methods in the future, but could be omitted for the present version. Since we have to account for both user pressing enter in the =TextField= and tapping on the button, we need =onSubmitted= and =onPressed= callbacks respectively. A =TextEditingController= is needed for the =onPressed= callback.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/radio/radio_view.dart][lib/src/radio/radio_view.dart]]
+#+transclude: [[file:lib/src/radio/radio_view.dart::Widget _addStation(]]  :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> addRadioStation(]] :lines 1-10 :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> addRadioStation(]] :lines 1-14 :src dart
+
+*** User changes and removes a station
+
+These interactions are bound to the =_selectFavoriteStation= widget. In addition to using =SettingsController.updateRadioStation= and =SettingController.removeRadioStation= methods, the user expects for the currently playing radio station to match whatever is selected in =DropdownButton=. This requires some heuristics both when changing  station and when removing the [currently selected] station.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/radio/radio_view.dart][lib/src/radio/radio_view.dart]]
+#+transclude: [[file:lib/src/radio/radio_view.dart::Widget _selectFavoriteStation(]]  :src dart :thingatpt paragraph
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> updateRadioStation(]] :lines 1-8 :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> updateRadioStation(]]  :src dart :thingatpt paragraph
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::Future<void> removeRadioStation(]] :lines 1-15 :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart][lib/src/settings/settings_service.dart]]
+#+transclude: [[file:lib/src/settings/settings_service.dart::Future<void> removeRadioStation(]]  :src dart :thingatpt paragraph
+
+When no radio stations are saved, =SettingsController.radioStation= and =.radioStations= return a fallback value =SettingsController.fallbackStation=.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::String get radioStation]] :lines 1-2 :src dart
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart][lib/src/settings/settings_controller.dart]]
+#+transclude: [[file:lib/src/settings/settings_controller.dart::static const String fallbackStation]] :lines 1-2 :src dart
+
+*** User taps to play radio back in clock view
+
+Tapping triggers =RadioController.toggle()=, which starts/stops =RadioService= and thus =Player= from =media_kit=.
+
+#+caption:  [[https://github.com/tazca/clockradio/blob/main/lib/src/clock/clock_view.dart][lib/src/clock/clock_view.dart]]
+#+transclude: [[file:lib/src/clock/clock_view.dart::Widget _clock(]] :lines 4-6 :src dart

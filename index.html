@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2024-08-08 Thu 19:53 -->
+<!-- 2024-09-16 Mon 17:56 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Clockradio app</title>
+<title>S-1335 clock radio</title>
 <meta name="author" content="tazca" />
 <meta name="generator" content="Org Mode" />
 <style>
@@ -196,48 +196,68 @@
 </head>
 <body>
 <div id="content" class="content">
-<h1 class="title">Clockradio app</h1>
+<h1 class="title">S-1335 clock radio</h1>
 <div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org98c58a5">Setting up development environment</a></li>
-<li><a href="#org5d21dd6">Clock radio</a>
+<li><a href="#org57c6657">Developer sets up development environment</a></li>
+<li><a href="#org12bbb5b">S-1335 clock radio</a>
 <ul>
-<li><a href="#org593b0fd">User opens app and sees initial UI</a>
+<li><a href="#org691dfb2">User opens app and sees initial UI</a>
 <ul>
-<li><a href="#org08977b2">LED clock face</a></li>
-<li><a href="#org352075b">Solar clock face</a></li>
+<li><a href="#orgacc0493">LED clock face</a></li>
+<li><a href="#org6be4a82">Solar clock face</a></li>
 </ul>
 </li>
-<li><a href="#org6da9817">User swipes right to edit settings</a></li>
-<li><a href="#org2f47bf4">User swipes left to radio view</a></li>
-<li><a href="#orga7c6917">User taps to play radio</a></li>
+<li><a href="#org94d226c">User drags left to edit settings</a>
+<ul>
+<li><a href="#org8898d2e">User presses "No alarm set" / "Alarm is set" button</a></li>
+<li><a href="#orge64567e">User selects a clock face</a></li>
+<li><a href="#orgf523aef">User presses location button</a></li>
+<li><a href="#org2a959d4">User edits miscellaneous settings</a></li>
+</ul>
+</li>
+<li><a href="#orgb364744">User drags right to edit radio</a>
+<ul>
+<li><a href="#org170d80f">User adds a radio station</a></li>
+<li><a href="#org8a0728a">User changes and removes a station</a></li>
+<li><a href="#org1de41e1">User taps to play radio back in clock view</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org98c58a5" class="outline-2">
-<h2 id="org98c58a5">Setting up development environment</h2>
-<div class="outline-text-2" id="text-org98c58a5">
+<div id="outline-container-org57c6657" class="outline-2">
+<h2 id="org57c6657">Developer sets up development environment</h2>
+<div class="outline-text-2" id="text-org57c6657">
 <p>
-Follow Flutter site's <a href="https://docs.flutter.dev/get-started/install">Getting Started</a> section, and use maybe <a href="https://vscodium.com/">VSCodium</a> as the IDE as it has well integrated Dart/Flutter support with a plugin.
+Follow Flutter site's <a href="https://docs.flutter.dev/get-started/install">Getting Started</a> section, and maybe use <a href="https://vscodium.com/">VSCodium</a> as IDE as it has a well integrated Dart/Flutter plugin.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org5d21dd6" class="outline-2">
-<h2 id="org5d21dd6">Clock radio</h2>
-<div class="outline-text-2" id="text-org5d21dd6">
+<div id="outline-container-org12bbb5b" class="outline-2">
+<h2 id="org12bbb5b">S-1335 clock radio</h2>
+<div class="outline-text-2" id="text-org12bbb5b">
 <p>
-The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-CDN loading, image and sound assets, and <code>flutter_svg</code>, <code>media_kit</code>, and <code>shared_preferences</code>  dependencies added. Current <code>pub.dev</code> release of  <code>media_kit</code> <a href="https://github.com/media-kit/media-kit/issues/595#issuecomment-2094208809">has issues building on Fedora</a> and should use <code>main</code> branch on GitHub instead.
+The logo for the app was made first and the name is derived from it. I figured it's a boring appliance, so a boring code of letters and numbers similar to hardware clock radios should fit fine. The rest will now explain the inner workings of this software.
+</p>
+
+<p>
+Notably, S-1335 doesn't have tests and the state is limited to simple but fairly omnipresent controllers, meaning no <code>Provider</code> or similar architectures were implemented. Coming from Haskell and immutability, I also heavily leaned on <code>StatelessWidget</code> rather than <code>StatefulWidget</code> class. It's a second iteration of my first Flutter project.
+</p>
+
+<p>
+The <code>pubspec.yaml</code> for S-1335 has a font asset set to allow local non-CDN loading.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-yaml"><span style="color: #455A64;">name</span>: clockradio
-<span style="color: #455A64;">description</span>: <span style="color: #6C3082;">"A new Flutter project."</span>
+<label class="org-src-name"><span class="listing-number">Listing 1: </span><a href="https://github.com/tazca/clockradio/blob/main/pubspec.yaml">pubspec.yaml</a></label><pre class="src src-yaml"><span style="color: #455A64;">name</span>: s1335_clock_radio
+<span style="color: #455A64;">description</span>: <span style="color: #6C3082;">"S-1335 clock radio"</span>
 
 <span style="color: #795548;"># </span><span style="color: #795548;">Prevent accidental publishing to pub.dev.</span>
 <span style="color: #455A64;">publish_to</span>: <span style="color: #6C3082;">'none'</span>
@@ -255,34 +275,19 @@ The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-
   <span style="color: #795548;"># </span><span style="color: #795548;">SVG rendering</span>
   <span style="color: #455A64;">flutter_svg</span>: any
   <span style="color: #795548;"># </span><span style="color: #795548;">Audio</span>
-  <span style="color: #455A64;">media_kit</span>: any
-  <span style="color: #455A64;">media_kit_libs_audio</span>: any
-  <span style="color: #455A64;">media_kit_native_event_loop</span>: any
+  <span style="color: #455A64;">media_kit</span>: ^1.1.11
+  <span style="color: #455A64;">media_kit_libs_audio</span>: ^1.0.5
+  <span style="color: #455A64;">media_kit_native_event_loop</span>: ^1.0.9
   <span style="color: #795548;"># </span><span style="color: #795548;">Persist settings</span>
   <span style="color: #455A64;">shared_preferences</span>: ^2.2.3
+  <span style="color: #795548;"># </span><span style="color: #795548;">Non-white loading screen when loading app on all platforms</span>
+  <span style="color: #455A64;">flutter_native_splash</span>: ^2.4.1
 
 <span style="color: #455A64;">dev_dependencies</span>:
   <span style="color: #455A64;">flutter_test</span>:
     <span style="color: #455A64;">sdk</span>: flutter
 
   <span style="color: #455A64;">flutter_lints</span>: ^4.0.0
-
-<span style="color: #455A64;">dependency_overrides</span>:
-  <span style="color: #455A64;">media_kit</span>:
-    <span style="color: #455A64;">git</span>:
-      <span style="color: #455A64;">url</span>: https://github.com/media-kit/media-kit
-      <span style="color: #455A64;">path</span>: media_kit
-      <span style="color: #455A64;">ref</span>: main
-  <span style="color: #455A64;">media_kit_libs_audio</span>:
-    <span style="color: #455A64;">git</span>:
-      <span style="color: #455A64;">url</span>: https://github.com/media-kit/media-kit
-      <span style="color: #455A64;">path</span>: libs/universal/media_kit_libs_audio
-      <span style="color: #455A64;">ref</span>: main
-  <span style="color: #455A64;">media_kit_native_event_loop</span>:
-    <span style="color: #455A64;">git</span>:
-      <span style="color: #455A64;">url</span>: https://github.com/media-kit/media-kit
-      <span style="color: #455A64;">path</span>: media_kit_native_event_loop
-      <span style="color: #455A64;">ref</span>: main
 
 <span style="color: #455A64;">flutter</span>:
   <span style="color: #455A64;">uses-material-design</span>: <span style="color: #0288D1;">true</span>
@@ -299,15 +304,18 @@ The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-
     - <span style="color: #455A64;">family</span>: Roboto
       <span style="color: #455A64;">fonts</span>:
         - <span style="color: #455A64;">asset</span>: assets/fonts/Roboto-Regular.ttf
+
+<span style="color: #455A64;">flutter_native_splash</span>:
+  <span style="color: #455A64;">color</span>: <span style="color: #6C3082;">"#000000"</span>
 </pre>
 </div>
 
 <p>
-<code>analysis_options.yaml</code> has some <code>strong-mode</code> options enabled to make Dart act more sensible. <code>prefer_single_quotes</code> seem very idiomatic and avoid escaping more common double quotes.
+<code>analysis_options.yaml</code> has select <code>strong-mode</code> options enabled to have sensible guard rails. <code>prefer_single_quotes</code> seems idiomatic.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-yaml"><span style="color: #795548;"># </span><span style="color: #795548;">This file configures the analyzer, which statically analyzes Dart code to</span>
+<label class="org-src-name"><span class="listing-number">Listing 2: </span><a href="https://github.com/tazca/clockradio/blob/main/analysis_options.yaml">analysis_options.yaml</a></label><pre class="src src-yaml"><span style="color: #795548;"># </span><span style="color: #795548;">This file configures the analyzer, which statically analyzes Dart code to</span>
 <span style="color: #795548;"># </span><span style="color: #795548;">check for errors, warnings, and lints.</span>
 <span style="color: #795548;">#</span>
 <span style="color: #795548;"># </span><span style="color: #795548;">The issues identified by the analyzer are surfaced in the UI of Dart-enabled</span>
@@ -343,11 +351,11 @@ The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-
 </div>
 
 <p>
-<code>main.dart</code> initializes program controllers (and controllers then their associated services) and finally passes the controllers to the app widget itself. Location is fixed to Tampere for the present.
+<code>main.dart</code> initializes program controllers (and controllers their associated services). It then passes the controllers to the app widget itself.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
+<label class="org-src-name"><span class="listing-number">Listing 3: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/main.dart">lib/main.dart</a></label><pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
 
 <span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:media_kit/media_kit.dart'</span>;
 
@@ -357,22 +365,22 @@ The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-
 <span style="color: #795548;">import</span> <span style="color: #6C3082;">'src/clock/clock_controller.dart'</span>;
 
 <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">main</span>() <span style="color: #bf360c;">async</span> {
-  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">settingsController</span> = <span style="color: #3f51b5;">SettingsController</span>.create();
-  <span style="color: #bf360c;">await</span> settingsController.loadSettings();
+  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">settings</span> = <span style="color: #3f51b5;">SettingsController</span>.create();
+  <span style="color: #bf360c;">await</span> settings.loadSettings();
 
   <span style="color: #3f51b5;">MediaKit</span>.ensureInitialized();
-  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">radioController</span> = <span style="color: #3f51b5;">RadioController</span>.create(settingsController);
+  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">radio</span> = <span style="color: #3f51b5;">RadioController</span>.create(settings);
 
-  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">clockController</span> = <span style="color: #3f51b5;">ClockController</span>.create(
-    radioController.play,
-    settingsController,
+  <span style="color: #bf360c;">final</span> <span style="color: #455A64;">clock</span> = <span style="color: #3f51b5;">ClockController</span>.create(
+    radio.play,
+    settings,
   );
-  clockController.startClock();
+  clock.startClock();
 
   <span style="color: #bf360c;">final</span> <span style="color: #455A64;">app</span> = <span style="color: #3f51b5;">ClockRadio</span>(
-    clockController: clockController,
-    radioController: radioController,
-    settingsController: settingsController,
+    clock: clock,
+    radio: radio,
+    settings: settings,
   );
 
   runApp(app);
@@ -384,135 +392,180 @@ The <code>pubspec.yaml</code> for Clockradio has a font asset set for local non-
 <code>app.dart</code> mostly follows the basic skeleton template. The <code>ClockRadio</code>  app widget rebuilds and updates controllers whenever settings change.
 </p>
 
-<div class="org-src-container">
-<pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
-  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ListenableBuilder</span>(
-    listenable: settingsController,
-    builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>, <span style="color: #3f51b5;">Widget</span>? child) {
-      <span style="color: #795548;">// </span><span style="color: #795548;">Settings have changed:</span>
-      clockController.setAlarm(settingsController.alarm);
-      clockController.setLocation(
-          settingsController.latitude, settingsController.longitude);
-
-</pre>
-</div>
-
 <p>
-The default dark mode theme is used. Clock faces will override this theme to achieve true blacks.
+The default dark mode theme is used, but most views use true black as background outside user controls. The router shows how <code>RadioView</code>, <code>ClockView</code>, and <code>SettingsView</code> come together into a <code>PageView</code> widget, which allows swiping between these three views.
 </p>
 
 <p>
-The router is as follows.
+To allow swiping also when using mouse, we need to set up a custom <code>MaterialScrollBehaviour</code>.
+</p>
+
+<p>
+The default <code>PageView</code> physics take ages, so we need to make it snappier using a custom <code>ScrollPhysics</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart">          onGenerateRoute: (<span style="color: #3f51b5;">RouteSettings</span> <span style="color: #455A64;">routeSettings</span>) {
-            <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">MaterialPageRoute</span>&lt;<span style="color: #3f51b5;">void</span>&gt;(
-              settings: routeSettings,
-              builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
-                <span style="color: #bf360c;">switch</span> (routeSettings.name) {
-                  <span style="color: #bf360c;">case</span> <span style="color: #3f51b5;">LocationView</span>.routeName:
-                    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">LocationView</span>(settingsController: settingsController);
-                  <span style="color: #bf360c;">default</span>:
-                    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Stack</span>(
-                      children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
-                        <span style="color: #3f51b5;">PageView</span>(
-                          controller: <span style="color: #3f51b5;">PageController</span>(initialPage: <span style="color: #0288D1;">1</span>),
-                          children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
-                            <span style="color: #3f51b5;">RadioView</span>(
-                              radio: radioController,
-                              settings: settingsController,
-                            ),
-                            <span style="color: #3f51b5;">ListenableBuilder</span>(
-                              listenable: clockController,
-                              builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>, <span style="color: #3f51b5;">Widget</span>? <span style="color: #455A64;">child</span>) {
-                                <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ClockView</span>(
-                                  clock: clockController.buildClock(),
-                                  radio: radioController,
-                                );
-                              },
-                            ),
-                            <span style="color: #3f51b5;">SettingsView</span>(
-                              controller: settingsController,
-                            ),
-                          ],
-                        ),
-                        <span style="color: #bf360c;">if</span> (settingsController.intro) <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">IntroductionView</span>(),
-                      ],
-                    );
-                }
-              },
-            );
-          },
-        );
-      },
-    );
-  }
-}
+<label class="org-src-name"><span class="listing-number">Listing 4: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/app.dart">lib/src/app.dart</a></label><pre class="src src-dart"><span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">SnappyPageViewScrollPhysics</span> <span style="color: #bf360c;">extends</span> <span style="color: #3f51b5;">ScrollPhysics</span> {
+  <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">SnappyPageViewScrollPhysics</span>({<span style="color: #bf360c;">super</span>.parent});
 
-<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">MouseAndTouchDragBehavior</span> <span style="color: #bf360c;">extends</span> <span style="color: #3f51b5;">MaterialScrollBehavior</span> {
-  <span style="color: #795548;">/// </span><span style="color: #795548;">Allow dragging PageView with a mouse</span>
   <span style="color: #0288D1;">@override</span>
-  <span style="color: #3f51b5;">Set</span>&lt;<span style="color: #3f51b5;">PointerDeviceKind</span>&gt; <span style="color: #795548;">get</span> <span style="color: #455A64;">dragDevices</span> =&gt; {
-        <span style="color: #3f51b5;">PointerDeviceKind</span>.touch,
-        <span style="color: #3f51b5;">PointerDeviceKind</span>.mouse,
-      };
+  <span style="color: #3f51b5;">SnappyPageViewScrollPhysics</span> <span style="color: #388E3C;">applyTo</span>(<span style="color: #3f51b5;">ScrollPhysics</span>? <span style="color: #455A64;">ancestor</span>) {
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">SnappyPageViewScrollPhysics</span>(parent: buildParent(ancestor)!);
+  }
+
+  <span style="color: #0288D1;">@override</span>
+  <span style="color: #3f51b5;">SpringDescription</span> <span style="color: #795548;">get</span> <span style="color: #455A64;">spring</span> =&gt; <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">SpringDescription</span>(
+        mass: <span style="color: #0288D1;">80</span>,
+        stiffness: <span style="color: #0288D1;">100</span>,
+        damping: <span style="color: #0288D1;">0.8</span>,
+      );
 }
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org593b0fd" class="outline-3">
-<h3 id="org593b0fd">User opens app and sees initial UI</h3>
-<div class="outline-text-3" id="text-org593b0fd">
+<div id="outline-container-org691dfb2" class="outline-3">
+<h3 id="org691dfb2">User opens app and sees initial UI</h3>
+<div class="outline-text-3" id="text-org691dfb2">
 <p>
-The front page is built from <code>ClockView</code> and its child widget <code>clock</code>. To save effort per clock face, <code>ClockView</code> will catch any taps making it a universal touch interface shared by all clock faces. It will also show any introductory texts.
+The opening page in the <code>PageView</code> is <code>ClockView</code> and its child widget <code>clock</code>. <code>ClockView</code> essentially does three things: it shows introductory text <code>_intro</code>, a clock face <code>_clock</code>, and catches any taps to play and stop the <code>radio</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
+<label class="org-src-name"><span class="listing-number">Listing 5: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/clock_view.dart">lib/src/clock/clock_view.dart</a></label><pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
 
+<span style="color: #795548;">import</span> <span style="color: #6C3082;">'../introduction/introduction.dart'</span>;
 <span style="color: #795548;">import</span> <span style="color: #6C3082;">'/src/radio/radio_controller.dart'</span>;
 
 <span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">ClockView</span> <span style="color: #bf360c;">extends</span> <span style="color: #3f51b5;">StatelessWidget</span> {
-  <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">ClockView</span>({
-    <span style="color: #bf360c;">super</span>.key,
-    <span style="color: #795548;">required</span> <span style="color: #bf360c;">this</span>.clock,
-    <span style="color: #795548;">required</span> <span style="color: #bf360c;">this</span>.radio,
-  });
+  <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">ClockView</span>(
+      {<span style="color: #bf360c;">super</span>.key,
+      <span style="color: #795548;">required</span> <span style="color: #bf360c;">this</span>.clock,
+      <span style="color: #795548;">required</span> <span style="color: #bf360c;">this</span>.radio,
+      <span style="color: #795548;">required</span> <span style="color: #bf360c;">this</span>.showIntro});
 
   <span style="color: #795548;">static</span> <span style="color: #bf360c;">const</span> <span style="color: #455A64;">routeName</span> = <span style="color: #6C3082;">'/'</span>;
 
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">StatelessWidget</span> <span style="color: #455A64;">clock</span>;
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">RadioController</span> <span style="color: #455A64;">radio</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">bool</span> <span style="color: #455A64;">showIntro</span>;
 
   <span style="color: #0288D1;">@override</span>
   <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
     <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Scaffold</span>(
       backgroundColor: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>),
-      body: <span style="color: #3f51b5;">InkWell</span>(
-        hoverColor: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>),
-        onTap: () {
-          radio.toggle();
-        },
-        borderRadius: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">BorderRadius</span>.all(<span style="color: #3f51b5;">Radius</span>.circular(<span style="color: #0288D1;">16.0</span>)),
-        child: <span style="color: #3f51b5;">Center</span>(
-          child: clock.build(context),
+      body: <span style="color: #3f51b5;">Builder</span>(builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+        <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Introduction</span>(
+          intro: _intro(context),
+          show: showIntro,
+          child: _clock(context),
+        );
+      }),
+    );
+  } <span style="color: #795548;">// </span><span style="color: #795548;">Widget</span>
+
+  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_clock</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">InkWell</span>(
+      hoverColor: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>, <span style="color: #0288D1;">0</span>),
+      onTap: () {
+        radio.toggle();
+      },
+      child: <span style="color: #3f51b5;">Center</span>(
+        child: clock.build(context),
+      ),
+    );
+  }
+
+  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_intro</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Align</span>(
+      alignment: <span style="color: #3f51b5;">Alignment</span>.topCenter,
+      child: <span style="color: #3f51b5;">Padding</span>(
+        padding: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">EdgeInsets</span>.all(<span style="color: #0288D1;">16.0</span>),
+        child: <span style="color: #3f51b5;">Column</span>(
+          children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+            <span style="color: #3f51b5;">Text</span>(
+                style: <span style="color: #3f51b5;">DefaultTextStyle</span>.of(context).style.apply(
+                      color: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">192</span>, <span style="color: #0288D1;">192</span>, <span style="color: #0288D1;">192</span>),
+                      fontSizeFactor: <span style="color: #0288D1;">1.6</span>,
+                    ),
+                <span style="color: #6C3082;">'Drag left / right for options'</span>),
+            <span style="color: #3f51b5;">Text</span>(
+                style: <span style="color: #3f51b5;">DefaultTextStyle</span>.of(context).style.apply(
+                      color: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">192</span>, <span style="color: #0288D1;">192</span>, <span style="color: #0288D1;">192</span>),
+                      fontSizeFactor: <span style="color: #0288D1;">1.6</span>,
+                    ),
+                <span style="color: #6C3082;">'Tap to toggle radio'</span>),
+          ],
         ),
       ),
     );
-  } <span style="color: #795548;">// </span><span style="color: #795548;">Widget</span>
+  }
 }
 </pre>
 </div>
 
 <p>
-<code>clock</code> was built earlier in <code>app.dart</code> via <code>ClockController</code>'s <code>buildClock</code> method.
+The  <code>Introduction</code> widget controls whether <code>_intro</code> and <code>_clock</code> or only <code>_clock</code> is shown. The class shows the intro widget if <code>show</code> is set and then turns it invisible after a time.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #3f51b5;">StatelessWidget</span> <span style="color: #388E3C;">buildClock</span>() {
-  <span style="color: #bf360c;">switch</span> (_settingsController.clockFace) {
+<label class="org-src-name"><span class="listing-number">Listing 6: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/introduction/introduction.dart">lib/src/introduction/introduction.dart</a></label><pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
+
+<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">Introduction</span> <span style="color: #bf360c;">extends</span> <span style="color: #3f51b5;">StatefulWidget</span> {
+  <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Introduction</span>({
+    <span style="color: #bf360c;">super</span>.key,
+    <span style="color: #795548;">required</span> <span style="color: #bf360c;">this</span>.child,
+    <span style="color: #795548;">required</span> <span style="color: #bf360c;">this</span>.intro,
+    <span style="color: #795548;">required</span> <span style="color: #bf360c;">this</span>.show,
+  });
+
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Widget</span> <span style="color: #455A64;">child</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Widget</span> <span style="color: #455A64;">intro</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">bool</span> <span style="color: #455A64;">show</span>;
+
+  <span style="color: #0288D1;">@override</span>
+  <span style="color: #3f51b5;">State</span>&lt;<span style="color: #3f51b5;">StatefulWidget</span>&gt; <span style="color: #388E3C;">createState</span>() =&gt; <span style="color: #3f51b5;">_Introduction</span>();
+}
+
+<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">_Introduction</span> <span style="color: #bf360c;">extends</span> <span style="color: #3f51b5;">State</span>&lt;<span style="color: #3f51b5;">Introduction</span>&gt; {
+  <span style="color: #3f51b5;">bool</span> <span style="color: #455A64;">_visible</span> = <span style="color: #0288D1;">true</span>;
+
+  <span style="color: #0288D1;">@override</span>
+  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+    <span style="color: #bf360c;">if</span> (widget.show) {
+      <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Stack</span>(
+        children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+          widget.child,
+          <span style="color: #3f51b5;">Visibility</span>(visible: _visible, child: widget.intro),
+        ],
+      );
+    } <span style="color: #bf360c;">else</span> {
+      <span style="color: #bf360c;">return</span> widget.child;
+    }
+  }
+
+  <span style="color: #0288D1;">@override</span>
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">initState</span>() {
+    <span style="color: #bf360c;">super</span>.initState();
+    <span style="color: #3f51b5;">Future</span>.delayed(<span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Duration</span>(seconds: <span style="color: #0288D1;">10</span>), () {
+      <span style="color: #bf360c;">if</span> (mounted) {
+        setState(() {
+          _visible = <span style="color: #0288D1;">false</span>;
+        });
+      }
+    });
+  }
+}
+</pre>
+</div>
+
+<p>
+<code>clock</code> widget was produced earlier in <code>app.dart</code> by <code>ClockController.buildClock</code> method.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 7: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/clock_controller.dart">lib/src/clock/clock_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">StatelessWidget</span> <span style="color: #388E3C;">buildClock</span>() {
+  <span style="color: #bf360c;">switch</span> (_settings.clockFace) {
     <span style="color: #bf360c;">case</span> <span style="color: #3f51b5;">ClockFace</span>.led:
       <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">LedClock</span>(clock: <span style="color: #bf360c;">this</span>);
     <span style="color: #bf360c;">case</span> <span style="color: #3f51b5;">ClockFace</span>.solar:
@@ -524,11 +577,11 @@ The front page is built from <code>ClockView</code> and its child widget <code>c
 </div>
 
 <p>
-The default clock face is <code>LedClock</code>, set in <code>SettingsService</code>.
+The default clock face is <code>LedClock</code> as set in <code>SettingsService</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">ClockFace</span>&gt; <span style="color: #388E3C;">clockFace</span>() <span style="color: #bf360c;">async</span> {
+<label class="org-src-name"><span class="listing-number">Listing 8: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">ClockFace</span>&gt; <span style="color: #388E3C;">clockFace</span>() <span style="color: #bf360c;">async</span> {
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">String</span>? face = prefs.getString(<span style="color: #6C3082;">'clockFace'</span>);
   <span style="color: #bf360c;">switch</span> (face) {
@@ -545,11 +598,11 @@ The default clock face is <code>LedClock</code>, set in <code>SettingsService</c
 </div>
 
 <p>
-<code>ClockController</code> has a timer running to update <code>Clock</code>  &amp; call alarm each minute on the point and notify the <code>ListenableBuilder</code> in <code>app.dart</code> widget tree.
+<code>ClockController</code> has a timer running to recreate <code>Clock</code>  &amp; check alarm each minute on the point.  <code>ListenableBuilder</code> in <code>app.dart</code> widget tree will be listening to <code>ClockController</code> to repaint the clock face.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">startClock</span>() {
+<label class="org-src-name"><span class="listing-number">Listing 9: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/clock_controller.dart">lib/src/clock/clock_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">startClock</span>() {
   _clock = <span style="color: #3f51b5;">Clock</span>.now(old: _clock);
 
   <span style="color: #bf360c;">if</span> (_clock.isAlarmRinging) {
@@ -564,11 +617,11 @@ The default clock face is <code>LedClock</code>, set in <code>SettingsService</c
 </div>
 
 <p>
-<code>Clock</code> is an immutable class telling current time, location, and associated info for implementing clock faces.
+<code>Clock</code> is an immutable class that tells current time, and collects and derives associated info from <code>ClockController</code>. Clock faces are then painted based on <code>Clock</code>.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
+<label class="org-src-name"><span class="listing-number">Listing 10: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/clock.dart">lib/src/clock/clock.dart</a></label><pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:flutter/material.dart'</span>;
 
 <span style="color: #0288D1;">@immutable</span>
 <span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">Clock</span> {
@@ -606,7 +659,7 @@ The default clock face is <code>LedClock</code>, set in <code>SettingsService</c
 
     <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Clock</span>(
       <span style="color: #3f51b5;">TimeOfDay</span>.now(),
-      alarm ?? old?.alarm, <span style="color: #795548;">// </span><span style="color: #795548;">specific parameter &gt; old delegate &gt; null value</span>
+      alarm ?? old?.alarm,
       <span style="color: #3f51b5;">DateTime</span>.now().timeZoneOffset,
       daysSinceJan1 + <span style="color: #0288D1;">1</span>,
       userLatitude ?? old?.userLatitude ?? <span style="color: #0288D1;">0.0</span>,
@@ -622,15 +675,15 @@ The default clock face is <code>LedClock</code>, set in <code>SettingsService</c
 </div>
 </div>
 
-<div id="outline-container-org08977b2" class="outline-4">
-<h4 id="org08977b2">LED clock face</h4>
-<div class="outline-text-4" id="text-org08977b2">
+<div id="outline-container-orgacc0493" class="outline-4">
+<h4 id="orgacc0493">LED clock face</h4>
+<div class="outline-text-4" id="text-orgacc0493">
 <p>
-The LED clock face employs an array of LED segments: four 7-segment numbers, dots, and alarm elements. <code>_powerLedElements</code> encodes hours and minutes into a <code>Map</code>. Each of the elements in the <code>Map</code> references to an SVG file, to a total of 30 drivable elements (barring future AM/PM elements).
+The LED clock face employs an array of LED segments: four 7-segment numbers, dots, and alarm elements. <code>_powerLedElements</code> encodes hours and minutes into a <code>Map</code>. Each of the elements in the <code>Map</code> references to an SVG file, to a total of 30 drivable elements (barring potential AM/PM elements in the future).
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #3f51b5;">Map</span>&lt;<span style="color: #3f51b5;">String</span>, <span style="color: #3f51b5;">bool</span>&gt; <span style="color: #388E3C;">_powerLedElements</span>(
+<label class="org-src-name"><span class="listing-number">Listing 11: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/ledclock.dart">lib/src/clock/ledclock.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Map</span>&lt;<span style="color: #3f51b5;">String</span>, <span style="color: #3f51b5;">bool</span>&gt; <span style="color: #388E3C;">_powerLedElements</span>(
   <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">hours</span>,
   <span style="color: #3f51b5;">int</span> <span style="color: #455A64;">minutes</span>,
   <span style="color: #3f51b5;">int</span>? <span style="color: #455A64;">alarmH</span>,
@@ -703,40 +756,84 @@ Individual SVGs were derived from breaking apart the following artesanally drawn
 </p>
 
 
-<div id="org24b0115" class="figure">
+<div id="org632055f" class="figure">
 <p><img src="documentation_7seg_final.svg" alt="documentation_7seg_final.svg" class="org-svg" />
 </p>
 </div>
 
 <p>
-The clock face should have same physical size regardless of screen DPI. Height is 1.0" by default (3.5:1 aspect ratio -&gt; 3.5" x 1" WxH). A media query gives us the device DPI ratio relative to the standard 96 desktop DPI, as can be seen in <code>LedClock</code>'s <code>build</code> method. Same technique is used on other clock faces as well.
+The clock face should have same physical size regardless of screen DPI. The default size we're aiming for roughly is  3.5" x 1" WxH, which fits nicely on a 1st gen iPhone SE. <code>clock.uiScale</code> gives us the device DPI ratio (after user-set UI scaling) relative to the standard 96 desktop DPI.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart">  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
-    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockHeight</span> =
-        <span style="color: #3f51b5;">MediaQuery</span>.of(context).devicePixelRatio * <span style="color: #0288D1;">96</span> * <span style="color: #0288D1;">1.0</span>;
-    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Map</span>&lt;<span style="color: #3f51b5;">String</span>, <span style="color: #3f51b5;">bool</span>&gt; <span style="color: #455A64;">ledDisplay</span> = _powerLedElements(
-      clock.time.hour,
-      clock.time.minute,
-      clock.alarm?.hour,
-      clock.alarm?.minute,
-    );
+<label class="org-src-name"><span class="listing-number">Listing 12: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/ledclock.dart">lib/src/clock/ledclock.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockHeight</span> =
+      clock.uiScale * <span style="color: #0288D1;">96</span> * <span style="color: #0288D1;">1.0</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockWidth</span> = clockHeight * <span style="color: #0288D1;">3.5</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Map</span>&lt;<span style="color: #3f51b5;">String</span>, <span style="color: #3f51b5;">bool</span>&gt; <span style="color: #455A64;">ledDisplay</span> = _powerLedElements(
+    clock.time.hour,
+    clock.time.minute,
+    clock.alarm?.hour,
+    clock.alarm?.minute,
+  );
 
-    <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">String</span>&gt; <span style="color: #455A64;">activeLeds</span> = [];
-    <span style="color: #bf360c;">for</span> (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">led</span> <span style="color: #bf360c;">in</span> ledDisplay.keys) {
-      <span style="color: #bf360c;">if</span> (ledDisplay[led] ?? <span style="color: #0288D1;">false</span>) {
-        activeLeds.add(led);
-      }
+  <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">String</span>&gt; <span style="color: #455A64;">activeLeds</span> = [];
+  <span style="color: #bf360c;">for</span> (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">led</span> <span style="color: #bf360c;">in</span> ledDisplay.keys) {
+    <span style="color: #bf360c;">if</span> (ledDisplay[led] ?? <span style="color: #0288D1;">false</span>) {
+      activeLeds.add(led);
     }
+  }
 
-    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Stack</span>(
-      children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
-        <span style="color: #bf360c;">for</span> (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">led</span> <span style="color: #bf360c;">in</span> activeLeds)
-          <span style="color: #3f51b5;">SvgPicture</span>.asset(<span style="color: #6C3082;">'assets/images/led_segments/</span><span style="color: #455A64;">$led</span><span style="color: #6C3082;">.svg'</span>,
-              height: clockHeight),
-      ],
-    );
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Widget</span> <span style="color: #455A64;">built</span> = <span style="color: #3f51b5;">Stack</span>(
+    children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+      <span style="color: #bf360c;">for</span> (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">led</span> <span style="color: #bf360c;">in</span> activeLeds)
+        <span style="color: #3f51b5;">SvgPicture</span>.asset(<span style="color: #6C3082;">'assets/images/led_segments/</span><span style="color: #455A64;">$led</span><span style="color: #6C3082;">.svg'</span>,
+            height: clockHeight, width: clockWidth),
+    ],
+  );
+
+</pre>
+</div>
+
+<p>
+We have to account for users with OLED screens and potential burn-in. If OLED burn-in prevention setting is enabled, we'll slowly move the clock face in a circle with each revolution taking <code>jiggleSpeed</code> minutes.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 13: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/ledclock.dart">lib/src/clock/ledclock.dart</a></label><pre class="src src-dart">    <span style="color: #bf360c;">if</span> (clock.oledJiggle) {
+      <span style="color: #795548;">// </span><span style="color: #795548;">Do circular jiggle to avoid burn-in</span>
+      <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">jiggleSpeed</span> = <span style="color: #0288D1;">30.0</span>; <span style="color: #795548;">// </span><span style="color: #795548;">Divides 60 cleanly.</span>
+      <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">jiggle</span> = clock.time.minute.toDouble() % jiggleSpeed;
+
+      <span style="color: #795548;">// </span><span style="color: #795548;">At zero jiggle the LED display is at 9 o'clock.</span>
+      <span style="color: #795548;">// </span><span style="color: #795548;">As jiggle increases it does a full revolution CCW 0-&gt;29 / 30-&gt;59.</span>
+
+      <span style="color: #795548;">// </span><span style="color: #795548;">Jiggle is normalized to 0..2 radians.</span>
+      <span style="color: #795548;">// </span><span style="color: #795548;">Parametrically, x = r*cos(jiggle), y = r*sin(jiggle)</span>
+      <span style="color: #795548;">// </span><span style="color: #795548;">X and Y are -radius..radius</span>
+
+      <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">pi</span> = <span style="color: #0288D1;">3.141592</span>;
+      <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">jiggleRadius</span> = <span style="color: #0288D1;">7.0</span>;
+      <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">t</span> = jiggle / (jiggleSpeed / (<span style="color: #0288D1;">2</span> * pi));
+      <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">x</span> = jiggleRadius*cos(t);
+      <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">y</span> = jiggleRadius*sin(t);
+
+      <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">SizedBox</span>(
+        height: clockHeight + jiggleRadius * <span style="color: #0288D1;">2</span>,
+        width: clockWidth + jiggleRadius * <span style="color: #0288D1;">2</span>,
+        child: <span style="color: #3f51b5;">Padding</span>(
+          padding: <span style="color: #3f51b5;">EdgeInsets</span>.only(
+            left: jiggleRadius - x,
+            right: jiggleRadius + x,
+            top: jiggleRadius - y,
+            bottom: jiggleRadius + y,
+          ),
+          child: built,
+        ),
+      );
+    } <span style="color: #bf360c;">else</span> {
+      <span style="color: #bf360c;">return</span> built;
+    }
   }
 }
 
@@ -745,11 +842,11 @@ The clock face should have same physical size regardless of screen DPI. Height i
 </div>
 </div>
 
-<div id="outline-container-org352075b" class="outline-4">
-<h4 id="org352075b">Solar clock face</h4>
-<div class="outline-text-4" id="text-org352075b">
+<div id="outline-container-org6be4a82" class="outline-4">
+<h4 id="org6be4a82">Solar clock face</h4>
+<div class="outline-text-4" id="text-org6be4a82">
 <p>
-This clock face is more technical. It does not use predrawn graphics and relies on trigonometric analysis off user's location and current date.
+This clock face is more algorithmical. It does not use predrawn graphics and relies on trigonometric analysis off user's location and current date. It uses Flutter's <code>CustomPainter</code> class for drawing arcs and such.
 </p>
 
 <p>
@@ -757,28 +854,14 @@ Determining clock face size is more involved than with LED face. The optimum 2.5
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart">  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
-    <span style="color: #795548;">// </span><span style="color: #795548;">Clockface is a square (for now)</span>
-    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">maximumSize</span> = min(
-        <span style="color: #3f51b5;">MediaQuery</span>.sizeOf(context).height, <span style="color: #3f51b5;">MediaQuery</span>.sizeOf(context).width);
-    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">optimumSize</span> =
-        <span style="color: #3f51b5;">MediaQuery</span>.of(context).devicePixelRatio * <span style="color: #0288D1;">96</span> * <span style="color: #0288D1;">2.5</span>;
-    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockSize</span> =
-        (maximumSize &gt; optimumSize) ? optimumSize : maximumSize;
-    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">CustomPaint</span>(
-      painter: <span style="color: #3f51b5;">SolarGraphic</span>(
-          clock.nthDay,
-          clock.time.hour,
-          clock.time.minute,
-          clock.alarm?.hour,
-          clock.alarm?.minute,
-          clock.tz.inMinutes,
-          clock.userLat,
-          clock.userLong,),
-      size: <span style="color: #3f51b5;">Size</span>(clockSize, clockSize),
-    );
-  }
-}
+<label class="org-src-name"><span class="listing-number">Listing 14: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart">lib/src/clock/solarclock.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #795548;">// </span><span style="color: #795548;">Clockface is a square (for now)</span>
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">maximumSize</span> = min(
+      <span style="color: #3f51b5;">MediaQuery</span>.sizeOf(context).height, <span style="color: #3f51b5;">MediaQuery</span>.sizeOf(context).width);
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">optimumSize</span> =
+      clock.uiScale * <span style="color: #0288D1;">96</span> * <span style="color: #0288D1;">2.5</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">clockSize</span> =
+      (maximumSize &gt; optimumSize) ? optimumSize : maximumSize;
 </pre>
 </div>
 
@@ -787,7 +870,7 @@ The graphic is derived from following data.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">SolarGraphic</span>(
+<label class="org-src-name"><span class="listing-number">Listing 15: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart">lib/src/clock/solarclock.dart</a></label><pre class="src src-dart"><span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">SolarGraphic</span>(
   <span style="color: #bf360c;">this</span>._nthDayOfYear,
   <span style="color: #bf360c;">this</span>._hours,
   <span style="color: #bf360c;">this</span>._mins,
@@ -796,6 +879,7 @@ The graphic is derived from following data.
   <span style="color: #bf360c;">this</span>._tzOffsetM,
   <span style="color: #bf360c;">this</span>._userLatitude,
   <span style="color: #bf360c;">this</span>._userLongitude,
+  <span style="color: #bf360c;">this</span>._oledJiggle,
 );
 </pre>
 </div>
@@ -805,7 +889,7 @@ Overriding <code>paint</code> from <code>CustomPainter</code>, we start off calc
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">paint</span>(<span style="color: #3f51b5;">Canvas</span> <span style="color: #455A64;">canvas</span>, <span style="color: #3f51b5;">Size</span> <span style="color: #455A64;">size</span>) {
+<label class="org-src-name"><span class="listing-number">Listing 16: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart">lib/src/clock/solarclock.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">paint</span>(<span style="color: #3f51b5;">Canvas</span> <span style="color: #455A64;">canvas</span>, <span style="color: #3f51b5;">Size</span> <span style="color: #455A64;">size</span>) {
   <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">pi</span> = <span style="color: #0288D1;">3.141592</span>;
   <span style="color: #795548;">// </span><span style="color: #795548;">Assuming perfectly circular orbit, solar noon is at 12.00 UTC on 0&#176; E/W,</span>
   <span style="color: #795548;">// </span><span style="color: #795548;">and each 15&#176; added/removed is an hour.</span>
@@ -844,7 +928,7 @@ To draw day-night separation on Earth, we need to know sun's current declination
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #795548;">// </span><span style="color: #795548;">Calculating sun declination uses a well-known approximation</span>
+<label class="org-src-name"><span class="listing-number">Listing 17: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart">lib/src/clock/solarclock.dart</a></label><pre class="src src-dart"><span style="color: #795548;">// </span><span style="color: #795548;">Calculating sun declination uses a well-known approximation</span>
 <span style="color: #795548;">// </span><span style="color: #795548;">Day-night line &amp; user dot are relative to earth radius.</span>
 <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">sunDeclination</span> =
     -<span style="color: #0288D1;">23.45</span> * cos((<span style="color: #0288D1;">2</span> * pi / <span style="color: #0288D1;">365</span>) * (_nthDayOfYear + <span style="color: #0288D1;">10</span>));
@@ -859,11 +943,11 @@ To draw day-night separation on Earth, we need to know sun's current declination
 </div>
 
 <p>
-Since we're dealing with elements rotating around the midpoint, rotating the canvas makes drawing much simpler vs. starting to calculate circular geometry. If alarm is set, we start off with rotate for alarm outline, <code>drawCircle</code>, and rotate for sun. Otherwise we just rotate straight for the sun.
+Since we're dealing with elements rotating concentrically, rotating the canvas makes drawing much simpler than starting to calculate circular geometry. If alarm is set, we start off with rotate for alarm outline, <code>drawCircle</code>, and rotate for sun. Otherwise we just rotate straight for the sun.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #bf360c;">if</span> (alarmRadians != <span style="color: #0288D1;">null</span>) {
+<label class="org-src-name"><span class="listing-number">Listing 18: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart">lib/src/clock/solarclock.dart</a></label><pre class="src src-dart"><span style="color: #bf360c;">if</span> (alarmRadians != <span style="color: #0288D1;">null</span>) {
   canvas.translate(size.width * <span style="color: #0288D1;">0.5</span>, size.height * <span style="color: #0288D1;">0.5</span>);
   canvas.rotate(alarmRadians);
   canvas.translate(-size.width * <span style="color: #0288D1;">0.5</span>, -size.height * <span style="color: #0288D1;">0.5</span>);
@@ -894,7 +978,7 @@ Sun is drawn filled. Earth only has an outline, so we have to draw the dayside s
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #795548;">// </span><span style="color: #795548;">Sun</span>
+<label class="org-src-name"><span class="listing-number">Listing 19: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart">lib/src/clock/solarclock.dart</a></label><pre class="src src-dart"><span style="color: #795548;">// </span><span style="color: #795548;">Sun</span>
 <span style="color: #455A64;">canvas</span>.drawCircle(
   <span style="color: #3f51b5;">Offset</span>(earthMargin + earthRadius, sunRadius + sunRadius * <span style="color: #0288D1;">0.15</span>),
   sunRadius,
@@ -916,11 +1000,13 @@ Sun is drawn filled. Earth only has an outline, so we have to draw the dayside s
 </div>
 
 <p>
-We start off by drawing a filled half-circle pointing towards the sun. Then we draw either a day- or night-colored half-ellipse, which covers the area from center until the day-night line according to <code>dayNightRatio</code>.
+We start off by drawing a filled half-circle pointing towards the sun. Then we draw either a day- or night-colored half-ellipse, which covers the area from center until the day-night line according to <code>dayNightRatio</code>. If user has OLED burn-in prevention set, <code>Paintingstyle.stroke</code> is used, and the day-night line is drawn in an arc instead of a filled ellipse.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span> <span style="color: #455A64;">daySideColor</span> = <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">180</span>, <span style="color: #0288D1;">180</span>, <span style="color: #0288D1;">180</span>);
+<label class="org-src-name"><span class="listing-number">Listing 20: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart">lib/src/clock/solarclock.dart</a></label><pre class="src src-dart"><span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Color</span> <span style="color: #455A64;">daySideColor</span> = <span style="color: #3f51b5;">Color</span>.fromARGB(<span style="color: #0288D1;">255</span>, <span style="color: #0288D1;">180</span>, <span style="color: #0288D1;">180</span>, <span style="color: #0288D1;">180</span>);
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">PaintingStyle</span> <span style="color: #455A64;">daySideFill</span> =
+    _oledJiggle ? <span style="color: #3f51b5;">PaintingStyle</span>.stroke : <span style="color: #3f51b5;">PaintingStyle</span>.fill;
 
 <span style="color: #795548;">// </span><span style="color: #795548;">Day side from which southernSolsticeRect is substituted from</span>
 <span style="color: #795548;">// </span><span style="color: #795548;">or northernSolsticeRect added to</span>
@@ -930,25 +1016,39 @@ canvas.drawArc(
   daySideRect,
   pi,
   pi,
-  <span style="color: #0288D1;">true</span>,
+  <span style="color: #0288D1;">false</span>,
   <span style="color: #3f51b5;">Paint</span>()
     ..color = daySideColor
-    ..style = <span style="color: #3f51b5;">PaintingStyle</span>.fill,
+    ..style = daySideFill,
 );
 <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">ellipseHalfHeight</span> = earthRadius * dayNightRatio;
-<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Color</span> <span style="color: #455A64;">ellipseColor</span> = (sunDeclination &gt;= <span style="color: #0288D1;">0.0</span> &amp;&amp; _userLatitude &gt;= <span style="color: #0288D1;">0.0</span> ||
-        sunDeclination &lt; <span style="color: #0288D1;">0.0</span> &amp;&amp; _userLatitude &lt; <span style="color: #0288D1;">0.0</span>)
-    ? daySideColor
-    : <span style="color: #3f51b5;">Colors</span>.black;
+<span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">bool</span> <span style="color: #455A64;">dayIsLonger</span> = sunDeclination &gt;= <span style="color: #0288D1;">0.0</span> &amp;&amp; _userLatitude &gt;= <span style="color: #0288D1;">0.0</span> ||
+              sunDeclination &lt; <span style="color: #0288D1;">0.0</span> &amp;&amp; _userLatitude &lt; <span style="color: #0288D1;">0.0</span>;
 <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Rect</span> <span style="color: #455A64;">ellipseRect</span> =
     <span style="color: #3f51b5;">Offset</span>(earthMargin, earthMargin + (earthRadius - ellipseHalfHeight)) &amp;
         <span style="color: #3f51b5;">Size</span>(earthRadius * <span style="color: #0288D1;">2</span>, ellipseHalfHeight * <span style="color: #0288D1;">2</span>);
-canvas.drawOval(
-  ellipseRect,
-  <span style="color: #3f51b5;">Paint</span>()
-    ..color = ellipseColor
-    ..style = <span style="color: #3f51b5;">PaintingStyle</span>.fill,
-);
+
+<span style="color: #bf360c;">if</span> (_oledJiggle) {
+  canvas.drawArc(
+    ellipseRect,
+    dayIsLonger ? <span style="color: #0288D1;">0</span> : pi,
+    pi,
+    <span style="color: #0288D1;">false</span>,
+    <span style="color: #3f51b5;">Paint</span>()
+      ..color = daySideColor
+      ..style = <span style="color: #3f51b5;">PaintingStyle</span>.stroke,
+  );
+} <span style="color: #bf360c;">else</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Color</span> <span style="color: #455A64;">ellipseColor</span> = dayIsLonger
+          ? daySideColor
+          : <span style="color: #3f51b5;">Colors</span>.black;
+  canvas.drawOval(
+    ellipseRect,
+    <span style="color: #3f51b5;">Paint</span>()
+      ..color = ellipseColor
+      ..style = <span style="color: #3f51b5;">PaintingStyle</span>.fill,
+  );
+}
 
 </pre>
 </div>
@@ -958,7 +1058,7 @@ Finally we rotate the canvas to its final, original position and draw user's loc
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart">  <span style="color: #795548;">// </span><span style="color: #795548;">Now, let's rotate Earth &amp; sun to correct time before adding user dot</span>
+<label class="org-src-name"><span class="listing-number">Listing 21: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/solarclock.dart">lib/src/clock/solarclock.dart</a></label><pre class="src src-dart">  <span style="color: #795548;">// </span><span style="color: #795548;">Now, let's rotate Earth &amp; sun to correct time before adding user dot</span>
   canvas.translate(size.width * <span style="color: #0288D1;">0.5</span>, size.height * <span style="color: #0288D1;">0.5</span>);
   canvas.rotate(-sunRadians);
   canvas.translate(-size.width * <span style="color: #0288D1;">0.5</span>, -size.height * <span style="color: #0288D1;">0.5</span>);
@@ -966,7 +1066,7 @@ Finally we rotate the canvas to its final, original position and draw user's loc
   <span style="color: #795548;">// </span><span style="color: #795548;">User dot</span>
   canvas.drawCircle(
     <span style="color: #3f51b5;">Offset</span>(earthMargin + earthRadius, earthMargin + earthRadius * userDot),
-    size.width * <span style="color: #0288D1;">0.015</span>,
+    size.width * <span style="color: #0288D1;">0.012</span>,
     <span style="color: #3f51b5;">Paint</span>()
       ..color = <span style="color: #3f51b5;">Colors</span>.yellow
       ..style = <span style="color: #3f51b5;">PaintingStyle</span>.fill,
@@ -979,85 +1079,698 @@ Finally we rotate the canvas to its final, original position and draw user's loc
 </div>
 </div>
 
-<div id="outline-container-org6da9817" class="outline-3">
-<h3 id="org6da9817">User swipes right to edit settings</h3>
-<div class="outline-text-3" id="text-org6da9817">
+<div id="outline-container-org94d226c" class="outline-3">
+<h3 id="org94d226c">User drags left to edit settings</h3>
+<div class="outline-text-3" id="text-org94d226c">
 <p>
-User sees options to set alarm time, location, clock face, and OLED mode. Setting alarm uses native time-picker, and each clock face has a radioesque icon-button in horizontal list. OLED mode is a on-off switch. Setting location opens a subscreen similar to time picker but with world map + overrideable lat/long shown.
+User sees options to set alarm time, location, clock face, OLED burn-in prevention and introductory text toggles, and UI scale slider,. Setting alarm uses Flutter's time picker, and both clock faces have a radioesque icon-button in horizontal list. Setting location opens a subscreen with a clickable world map + lat/long text fields.
 </p>
 
 <p>
-Equirectangular map SVG has 853 width, where dateline is at 829.25 -&gt; -23.75 offset (and so Greenwich at 853/2-23.75). <code>onTapUp (TapUpDetails details)</code> gives position (tapUp happens only when no other gesture has overridden the tap).
+Settings are governed by the <code>SettingsController</code>, which is a caching abstraction for <code>SettingsService</code> which abstracts <code>SharedPreferences</code>. Saved settings include radio station URLs, clock face selection, alarm, location, OLED burn-in prevention, showing introductory texts, and UI scale. All but radio station URLs are modified via <code>SettingsView</code> which the user now sees.
 </p>
 
 <p>
-<code>SettingsController</code> is then a caching front for <code>SettingsService</code> which is a front for <code>SharedPreferences</code>. They handle radio station URLs, clock faces, and set alarm time edited via <code>SettingsView</code> in a largely passthrough manner aside from setting some defaults.
-</p>
-</div>
-</div>
-
-<div id="outline-container-org2f47bf4" class="outline-3">
-<h3 id="org2f47bf4">User swipes left to radio view</h3>
-<div class="outline-text-3" id="text-org2f47bf4">
-<p>
-User sees the currently selected radio station in e.g. a dropdown of favorite stations. The view has an engaging way to present all radio stations available. Geoblocked stations can be filtered by telling app to go through them. A random station can be set to play whenever <code>RadioController.play()</code> is called.
-</p>
-</div>
-</div>
-
-<div id="outline-container-orga7c6917" class="outline-3">
-<h3 id="orga7c6917">User taps to play radio</h3>
-<div class="outline-text-3" id="text-orga7c6917">
-<p>
-Tapping triggers <code>RadioController.toggle()</code>, which starts/stops the underlying <code>Player</code> from <code>media_kit</code> library. The library does all the heavy lifting.
+<code>SettingsView.build</code> collects the individual settings widgets <code>_alarm</code>, <code>_clockFace</code>, <code>_oled</code>, <code>_intro</code>, and <code>_uiScale</code> in a <code>Column</code> widget.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'/src/settings/settings_controller.dart'</span>;
+<label class="org-src-name"><span class="listing-number">Listing 22: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart">lib/src/settings/settings_view.dart</a></label><pre class="src src-dart">child: <span style="color: #3f51b5;">Column</span>(
+  children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+    <span style="color: #3f51b5;">Row</span>(
+      mainAxisAlignment: <span style="color: #3f51b5;">MainAxisAlignment</span>.spaceAround,
+      children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+        _alarm(context),
+      ],
+    ),
+    <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Spacer</span>(),
+    _clockFace(context),
+    <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Spacer</span>(),
+    <span style="color: #3f51b5;">Row</span>(
+      children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+        <span style="color: #3f51b5;">Expanded</span>(child: _oled(context)),
+        <span style="color: #3f51b5;">Expanded</span>(child: _intro(context)),
+      ],
+    ),
+    _uiScale(context),
+  ],
+),
+</pre>
+</div>
 
-<span style="color: #795548;">import</span> <span style="color: #6C3082;">'radio_service.dart'</span>;
+<p>
+The <code>Column</code> widget is then wrapped in <code>Padding</code>, <code>Material</code>, <code>ClipRRect</code>, <code>ConstrainedBox</code>, <code>Center</code>, and then finally <code>Scaffold</code>.
+</p>
+</div>
 
-<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">RadioController</span> {
-  <span style="color: #3f51b5;">RadioController</span>(<span style="color: #bf360c;">this</span>._radioService, <span style="color: #bf360c;">this</span>._settingsController);
+<div id="outline-container-org8898d2e" class="outline-4">
+<h4 id="org8898d2e">User presses "No alarm set" / "Alarm is set" button</h4>
+<div class="outline-text-4" id="text-org8898d2e">
+<p>
+The button launches a <code>showTimePicker</code> with 24h format enforced and updates the <code>SettingsController</code> accordingly. The controller has separate conception of alarm time and if alarm is set, so that previously unset alarm time can be seen preset in the time picker.
+</p>
 
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">RadioService</span> <span style="color: #455A64;">_radioService</span>;
-  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SettingsController</span> <span style="color: #455A64;">_settingsController</span>;
-
-  <span style="color: #795548;">factory</span> <span style="color: #3f51b5;">RadioController</span>.<span style="color: #388E3C;">create</span>(<span style="color: #3f51b5;">SettingsController</span> <span style="color: #455A64;">settingsController</span>) {
-    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">RadioController</span>(<span style="color: #3f51b5;">RadioService</span>.create(), settingsController);
-  }
-
-  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">play</span>() {
-    <span style="color: #bf360c;">if</span> (isPlaying()) {
-      stop();
-    }
-    _radioService.selectStream(_settingsController.radioStation);
-    _radioService.play();
-  }
-  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">stop</span>() {
-    _radioService.stop();
-  }
-
-  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">toggle</span>() {
-    <span style="color: #bf360c;">if</span> (isPlaying()) {
-      stop();
-    } <span style="color: #bf360c;">else</span> {
-      play();
-    }
-  }
-
-  <span style="color: #3f51b5;">bool</span> <span style="color: #388E3C;">isPlaying</span>() {
-    <span style="color: #bf360c;">return</span> _radioService.isPlaying();
-  }
-
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 23: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart">lib/src/settings/settings_view.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_alarm</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Row</span>(
+    children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+      <span style="color: #3f51b5;">FilledButton</span>.tonal(
+        onPressed: () <span style="color: #bf360c;">async</span> {
+          <span style="color: #3f51b5;">TimeOfDay</span>? setAlarm = <span style="color: #bf360c;">await</span> showTimePicker(
+            cancelText: <span style="color: #6C3082;">'Unset'</span>,
+            confirmText: <span style="color: #6C3082;">'Set alarm'</span>,
+            initialTime: settings.alarm,
+            context: context,
+            builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>, <span style="color: #3f51b5;">Widget</span>? <span style="color: #455A64;">child</span>) {
+              <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">MediaQuery</span>(
+                data: <span style="color: #3f51b5;">MediaQuery</span>.of(context)
+                    .copyWith(alwaysUse24HourFormat: <span style="color: #0288D1;">true</span>),
+                child: child!,
+              );
+            },
+          );
+          <span style="color: #bf360c;">if</span> (setAlarm == <span style="color: #0288D1;">null</span>) {
+            settings.updateAlarmSet(<span style="color: #0288D1;">false</span>);
+          } <span style="color: #bf360c;">else</span> {
+            settings.updateAlarmSet(<span style="color: #0288D1;">true</span>);
+            settings.updateAlarm(setAlarm);
+          }
+        },
+        child: settings.alarmSet
+            ? <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Alarm is set'</span>)
+            : <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'No alarm set'</span>),
+      ),
+    ],
+  );
 }
 </pre>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-dart"><span style="color: #795548;">import</span> <span style="color: #6C3082;">'package:media_kit/media_kit.dart'</span>;
+<label class="org-src-name"><span class="listing-number">Listing 24: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateAlarmSet</span>(<span style="color: #3f51b5;">bool</span> <span style="color: #455A64;">newAlarmSet</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (newAlarmSet == _alarmSet) <span style="color: #bf360c;">return</span>;
+  _alarmSet = newAlarmSet;
+  notifyListeners();
+  <span style="color: #bf360c;">await</span> _settingsService.updateAlarmSet(<span style="color: #0288D1;">false</span>);
+}
+</pre>
+</div>
 
-<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">RadioService</span> {
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 25: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateAlarmSet</span>(<span style="color: #3f51b5;">bool</span> <span style="color: #455A64;">alarmSet</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">await</span> prefs.setBool(<span style="color: #6C3082;">'alarmSet'</span>, alarmSet);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 26: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateAlarm</span>(<span style="color: #3f51b5;">TimeOfDay</span>? newAlarm) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (newAlarm == _alarm) <span style="color: #bf360c;">return</span>;
+  notifyListeners();
+  <span style="color: #795548;">// </span><span style="color: #795548;">for backwards compatibility, null = alarm is not set</span>
+  <span style="color: #bf360c;">if</span> (newAlarm == <span style="color: #0288D1;">null</span>) {
+    <span style="color: #bf360c;">await</span> _settingsService.updateAlarmSet(<span style="color: #0288D1;">false</span>);
+  } <span style="color: #bf360c;">else</span> {
+    <span style="color: #bf360c;">await</span> _settingsService.updateAlarmH(newAlarm.hour);
+    <span style="color: #bf360c;">await</span> _settingsService.updateAlarmM(newAlarm.minute);
+    _alarm = newAlarm;
+    <span style="color: #bf360c;">await</span> _settingsService.updateAlarmSet(<span style="color: #0288D1;">true</span>);
+  }
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 27: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateAlarmH</span>(<span style="color: #3f51b5;">int</span> <span style="color: #455A64;">alarmH</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">await</span> prefs.setInt(<span style="color: #6C3082;">'alarmH'</span>, alarmH);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 28: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateAlarmM</span>(<span style="color: #3f51b5;">int</span> <span style="color: #455A64;">alarmM</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">await</span> prefs.setInt(<span style="color: #6C3082;">'alarmM'</span>, alarmM);
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge64567e" class="outline-4">
+<h4 id="orge64567e">User selects a clock face</h4>
+<div class="outline-text-4" id="text-orge64567e">
+<p>
+The clock face buttons use an <code>InkWell</code> that updates the clock face on tap. Each clock face is hardcoded as its own widget tree as there are only a few.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 29: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart">lib/src/settings/settings_view.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_clockFace</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Row</span>(
+    crossAxisAlignment: <span style="color: #3f51b5;">CrossAxisAlignment</span>.start,
+    mainAxisAlignment: <span style="color: #3f51b5;">MainAxisAlignment</span>.spaceEvenly,
+    children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+      <span style="color: #3f51b5;">ClipRRect</span>(
+        borderRadius: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">BorderRadius</span>.all(<span style="color: #3f51b5;">Radius</span>.circular(<span style="color: #0288D1;">16.0</span>)),
+        child: <span style="color: #3f51b5;">Material</span>(
+          child: <span style="color: #3f51b5;">Ink</span>.image(
+            fit: <span style="color: #3f51b5;">BoxFit</span>.contain,
+            width: <span style="color: #0288D1;">100</span>,
+            height: <span style="color: #0288D1;">100</span>,
+            image: platformAwareImageProvider(<span style="color: #6C3082;">'assets/images/ledclock.png'</span>),
+            child: <span style="color: #3f51b5;">InkWell</span>(
+              onTap: () {
+                settings.updateClockFace(<span style="color: #3f51b5;">ClockFace</span>.led);
+              },
+            ),
+          ),
+        ),
+      ),
+      <span style="color: #3f51b5;">Column</span>(
+        children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+          <span style="color: #3f51b5;">ClipRRect</span>(
+            borderRadius: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">BorderRadius</span>.all(<span style="color: #3f51b5;">Radius</span>.circular(<span style="color: #0288D1;">16.0</span>)),
+            child: <span style="color: #3f51b5;">Material</span>(
+              child: <span style="color: #3f51b5;">Ink</span>.image(
+                fit: <span style="color: #3f51b5;">BoxFit</span>.cover,
+                width: <span style="color: #0288D1;">100</span>,
+                height: <span style="color: #0288D1;">100</span>,
+                image: platformAwareImageProvider(
+                    <span style="color: #6C3082;">'assets/images/solarclock.png'</span>),
+                child: <span style="color: #3f51b5;">InkWell</span>(
+                  onTap: () {
+                    settings.updateClockFace(<span style="color: #3f51b5;">ClockFace</span>.solar);
+                  },
+                ),
+              ),
+            ),
+          ),
+          _location(context),
+        ],
+      ),
+    ],
+  );
+}
+</pre>
+</div>
+
+<p>
+Flutter's web builds differ from native builds asset-wise. We need to use <code>NetworkImage</code> on web and <code>AssetImage</code> on native builds. This is done via <code>platformAwareImageProvider</code> shim.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 30: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/utils/platform_aware_image.dart">lib/src/utils/platform_aware_image.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">ImageProvider</span> <span style="color: #388E3C;">platformAwareImageProvider</span>(<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">asset</span>, {<span style="color: #3f51b5;">String</span>? package}) {
+  <span style="color: #bf360c;">if</span> (kIsWeb) {
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">NetworkImage</span>(
+      scale: <span style="color: #0288D1;">1.0</span>,
+      <span style="color: #6C3082;">'assets/${package == null ? '' : '</span>packages/$package/<span style="color: #6C3082;">'}</span><span style="color: #455A64;">$asset</span><span style="color: #6C3082;">'</span>,
+    );
+  }
+
+  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">AssetImage</span>(
+    asset,
+    package: package,
+  );
+}
+</pre>
+</div>
+
+<p>
+The clock face is then updated in <code>SettingsController</code>.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 31: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateClockFace</span>(<span style="color: #3f51b5;">ClockFace</span>? newClockFace) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (newClockFace == <span style="color: #0288D1;">null</span>) <span style="color: #bf360c;">return</span>;
+  <span style="color: #bf360c;">if</span> (newClockFace == _clockFace) <span style="color: #bf360c;">return</span>;
+
+  _clockFace = newClockFace;
+  notifyListeners();
+  <span style="color: #bf360c;">await</span> _settingsService.updateClockFace(newClockFace);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 32: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateClockFace</span>(<span style="color: #3f51b5;">ClockFace</span> <span style="color: #455A64;">face</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">await</span> prefs.setString(<span style="color: #6C3082;">'clockFace'</span>, face.name);
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf523aef" class="outline-4">
+<h4 id="orgf523aef">User presses location button</h4>
+<div class="outline-text-4" id="text-orgf523aef">
+<p>
+The location button is only enabled when the solar clock face is selected. It is then a clockface-specific setting as it does not make sense with the digital clockface. After pressing the button user is moved to <code>LocationView</code>.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 33: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart">lib/src/settings/settings_view.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_location</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">FilledButton</span>.tonal(
+    onPressed: (settings.clockFace == <span style="color: #3f51b5;">ClockFace</span>.solar)
+        ? () {
+            <span style="color: #3f51b5;">Navigator</span>.restorablePushNamed(context, <span style="color: #3f51b5;">LocationView</span>.routeName);
+          }
+        : <span style="color: #0288D1;">null</span>,
+    child: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Location'</span>),
+  );
+}
+</pre>
+</div>
+
+<p>
+<code>LocationView</code> will span all available screen area to allow better ergonomics setting location by clicking the map projection. <code>_userDot</code> widget paints the currently set location on the <code>Ink.image</code> presenting the world map. Tapping on the <code>Ink.image</code> will update set location and the <code>TextField</code> widgets controlled by the respective <code>TextEditingController</code> classes.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 34: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/location/location_view.dart">lib/src/location/location_view.dart</a></label><pre class="src src-dart">    body: <span style="color: #3f51b5;">Builder</span>(
+      builder: (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+        <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ClipRRect</span>(
+          borderRadius: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">BorderRadius</span>.all(<span style="color: #3f51b5;">Radius</span>.circular(<span style="color: #0288D1;">16.0</span>)),
+          child: <span style="color: #3f51b5;">Material</span>(
+            child: <span style="color: #3f51b5;">Stack</span>(
+              children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+                <span style="color: #3f51b5;">LayoutBuilder</span>(builder:
+                    (<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>, <span style="color: #3f51b5;">BoxConstraints</span> <span style="color: #455A64;">constraints</span>) {
+                  <span style="color: #bf360c;">return</span> _userDot(
+                      constraints.maxWidth, constraints.maxHeight);
+                }),
+                <span style="color: #3f51b5;">Ink</span>.image(
+                  fit: <span style="color: #3f51b5;">BoxFit</span>.fill,
+                  image: platformAwareImageProvider(
+                      <span style="color: #6C3082;">'assets/images/worldmap.png'</span>),
+                  child: <span style="color: #3f51b5;">InkWell</span>(
+                    onTapUp: (<span style="color: #3f51b5;">TapUpDetails</span> <span style="color: #455A64;">details</span>) {
+                      _updateLocation(details, context.size);
+                      textLat.text = settings.latitude.toString();
+                      textLong.text = settings.longitude.toString();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+  );
+},
+</pre>
+</div>
+
+<p>
+The <code>TextField</code> widgets show current latitude and longitude, and allow setting a new location. They require some input sanitization logic, but can update settings directly rather than deriving the numbers via <code>_updateLocation</code>. The <code>_userDot</code> moves after each input.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 35: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/location/location_view.dart">lib/src/location/location_view.dart</a></label><pre class="src src-dart">  title: <span style="color: #3f51b5;">Row</span>(
+    children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+      <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Latitude: '</span>),
+      <span style="color: #3f51b5;">Expanded</span>(
+        child: <span style="color: #3f51b5;">TextField</span>(
+          controller: textLat,
+          onChanged: (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">value</span>) {
+            <span style="color: #bf360c;">if</span> (value == <span style="color: #6C3082;">''</span>) {
+              settings.updateLatitude(<span style="color: #0288D1;">0.0</span>);
+            } <span style="color: #bf360c;">else</span> {
+              <span style="color: #bf360c;">try</span> {
+                <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">latitude</span> = <span style="color: #3f51b5;">double</span>.parse(value);
+                <span style="color: #bf360c;">if</span> (latitude &gt; <span style="color: #0288D1;">90.0</span>) {
+                  latitude = <span style="color: #0288D1;">90.0</span>;
+                } <span style="color: #bf360c;">else</span> <span style="color: #bf360c;">if</span> (latitude &lt; -<span style="color: #0288D1;">90.0</span>) {
+                  latitude = -<span style="color: #0288D1;">90.0</span>;
+                }
+                settings.updateLatitude(latitude);
+              } <span style="color: #bf360c;">catch</span> (<span style="color: #455A64;">e</span>) {
+                settings.updateLatitude(<span style="color: #0288D1;">0.0</span>);
+              }
+            }
+          },
+        ),
+      ),
+      <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Longitude: '</span>),
+      <span style="color: #3f51b5;">Expanded</span>(
+        child: <span style="color: #3f51b5;">TextField</span>(
+          controller: textLong,
+          onChanged: (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">value</span>) {
+            <span style="color: #bf360c;">if</span> (value == <span style="color: #6C3082;">''</span>) {
+              settings.updateLongitude(<span style="color: #0288D1;">0.0</span>);
+            } <span style="color: #bf360c;">else</span> {
+              <span style="color: #bf360c;">try</span> {
+                <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">longitude</span> = <span style="color: #3f51b5;">double</span>.parse(value);
+                <span style="color: #bf360c;">if</span> (longitude &gt; <span style="color: #0288D1;">180.0</span>) {
+                  longitude = <span style="color: #0288D1;">180.0</span>;
+                } <span style="color: #bf360c;">else</span> <span style="color: #bf360c;">if</span> (longitude &lt; -<span style="color: #0288D1;">180.0</span>) {
+                  longitude = -<span style="color: #0288D1;">180.0</span>;
+                }
+                settings.updateLongitude(longitude);
+              } <span style="color: #bf360c;">catch</span> (<span style="color: #455A64;">e</span>) {
+                settings.updateLongitude(<span style="color: #0288D1;">0.0</span>);
+              }
+            }
+          },
+        ),
+      ),
+    ],
+  ),
+),
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 36: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateLongitude</span>(<span style="color: #3f51b5;">double</span>? newLongitude) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (newLongitude == <span style="color: #0288D1;">null</span>) <span style="color: #bf360c;">return</span>;
+  <span style="color: #bf360c;">if</span> (newLongitude == _longitude) <span style="color: #bf360c;">return</span>;
+
+  _longitude = newLongitude;
+  notifyListeners();
+  <span style="color: #bf360c;">await</span> _settingsService.updateLongitude(newLongitude);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 37: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateLongitude</span>(<span style="color: #3f51b5;">double</span> <span style="color: #455A64;">longitude</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">await</span> prefs.setDouble(<span style="color: #6C3082;">'longitude'</span>, longitude);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 38: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateLatitude</span>(<span style="color: #3f51b5;">double</span>? newLatitude) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (newLatitude == <span style="color: #0288D1;">null</span>) <span style="color: #bf360c;">return</span>;
+  <span style="color: #bf360c;">if</span> (newLatitude == _latitude) <span style="color: #bf360c;">return</span>;
+
+  _latitude = newLatitude;
+  notifyListeners();
+  <span style="color: #bf360c;">await</span> _settingsService.updateLatitude(newLatitude);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 39: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateLatitude</span>(<span style="color: #3f51b5;">double</span> <span style="color: #455A64;">latitude</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">await</span> prefs.setDouble(<span style="color: #6C3082;">'latitude'</span>, latitude);
+}
+</pre>
+</div>
+
+<p>
+To make changes via keyboard sensical, we need to move the cursor to the end of the <code>TextField</code> after each rebuild. The widgets are rebuilt after each character input.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 40: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/location/location_view.dart">lib/src/location/location_view.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">build</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  textLat.text = settings.latitude.toString();
+  textLat.selection = <span style="color: #3f51b5;">TextSelection</span>.collapsed(offset: textLat.text.length);
+  textLong.text = settings.longitude.toString();
+  textLong.selection = <span style="color: #3f51b5;">TextSelection</span>.collapsed(offset: textLong.text.length);
+</pre>
+</div>
+</div>
+
+<ul class="org-ul">
+<li><a id="org5082a1f"></a>User taps on the world map &amp; dot is drawn from set location<br />
+<div class="outline-text-5" id="text-org5082a1f">
+<p>
+The problem gets more interesting here. We need to derive latitude and longitude from X and Y coordinates on an arbitrarily sized map projection. Using an equirectangular projection makes this problem graspable, as it allows a mere linear conversion without making users' life more difficult.
+</p>
+
+<p>
+The chosen equirectangular map projection is 853 units width. The dateline is not at the edge, but rather at 829.25 units which then means a 23.75 unit offset (and so Greenwich or 0° longitude is at 853/2-23.75 units). <code>onTapUp (TapUpDetails details)</code> from <code>InkWell</code> has given us the X and Y coordinates (tapUp happens only when no other gesture has overridden the tap) and <code>context</code> the width and height of the map area. While longitude requires the dateline offset and accounting for overflowing 180°+ behind the dateline, latitude is a simple linear relationship.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 41: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/location/location_view.dart">lib/src/location/location_view.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">_updateLocation</span>(<span style="color: #3f51b5;">TapUpDetails</span> <span style="color: #455A64;">details</span>, <span style="color: #3f51b5;">Size</span>? <span style="color: #455A64;">mapWidgetSize</span>) {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">initialLongitude</span> = details.localPosition.dx;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">initialLatitude</span> = details.localPosition.dy;
+
+  <span style="color: #795548;">// </span><span style="color: #795548;">The date line does not go exactly at map's edges: Greenwich</span>
+  <span style="color: #795548;">// </span><span style="color: #795548;">is about 1/40 of the map's width left of center.</span>
+  <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">longitudeOffset</span> = <span style="color: #0288D1;">23.75</span> / <span style="color: #0288D1;">853</span>;
+
+  <span style="color: #bf360c;">if</span> (mapWidgetSize != <span style="color: #0288D1;">null</span>) {
+    <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">overflowingLongitude</span> =
+        ((initialLongitude + longitudeOffset * mapWidgetSize.width) /
+                mapWidgetSize.width *
+                <span style="color: #0288D1;">360</span> -
+            <span style="color: #0288D1;">180</span>);
+
+    <span style="color: #bf360c;">if</span> (overflowingLongitude &gt; <span style="color: #0288D1;">180</span>) {
+      overflowingLongitude -= <span style="color: #0288D1;">360</span>;
+    }
+    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">longitude</span> = overflowingLongitude;
+    <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">latitude</span> =
+        (initialLatitude / mapWidgetSize.height * <span style="color: #0288D1;">180</span> - <span style="color: #0288D1;">90</span>) * (-<span style="color: #0288D1;">1</span>);
+
+    settings.updateLatitude((latitude * <span style="color: #0288D1;">100</span>).roundToDouble() / <span style="color: #0288D1;">100</span>);
+    settings.updateLongitude((longitude * <span style="color: #0288D1;">100</span>).roundToDouble() / <span style="color: #0288D1;">100</span>);
+  }
+}
+
+</pre>
+</div>
+
+<p>
+Drawing the user's location then requires doing this in reverse. The location is stored as latitude and longitude, and <code>CustomPaint</code> requires X and Y coordinates.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 42: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/location/location_view.dart">lib/src/location/location_view.dart</a></label><pre class="src src-dart">  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_userDot</span>(<span style="color: #3f51b5;">double</span> <span style="color: #455A64;">w</span>, <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">h</span>) {
+    <span style="color: #795548;">// </span><span style="color: #795548;">Location to x and y, ie. an inverse of _updateLocation</span>
+    <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">longitudeOffset</span> = <span style="color: #0288D1;">23.75</span> / <span style="color: #0288D1;">853</span>;
+
+    <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">x</span> = ((settings.longitude + <span style="color: #0288D1;">180</span>) / <span style="color: #0288D1;">360</span> * w - longitudeOffset * w);
+    <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">y</span> = ((-settings.latitude) + <span style="color: #0288D1;">90</span>) / <span style="color: #0288D1;">180</span> * h;
+
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">CustomPaint</span>(
+      painter: <span style="color: #3f51b5;">DotGraphic</span>(
+        x,
+        y,
+      ),
+      size: <span style="color: #3f51b5;">Size</span>(w, h),
+    );
+  }
+}
+
+<span style="color: #0288D1;">@immutable</span>
+<span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">DotGraphic</span> <span style="color: #bf360c;">extends</span> <span style="color: #3f51b5;">CustomPainter</span> {
+  <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">DotGraphic</span>(
+    <span style="color: #bf360c;">this</span>._x,
+    <span style="color: #bf360c;">this</span>._y,
+  );
+
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">_x</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">double</span> <span style="color: #455A64;">_y</span>;
+
+  <span style="color: #0288D1;">@override</span>
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">paint</span>(<span style="color: #3f51b5;">Canvas</span> <span style="color: #455A64;">canvas</span>, <span style="color: #3f51b5;">Size</span> <span style="color: #455A64;">size</span>) {
+    canvas.drawCircle(
+      <span style="color: #3f51b5;">Offset</span>(_x, _y),
+      size.width * <span style="color: #0288D1;">0.0025</span>,
+      <span style="color: #3f51b5;">Paint</span>()
+        ..color = <span style="color: #3f51b5;">Colors</span>.yellow
+        ..style = <span style="color: #3f51b5;">PaintingStyle</span>.fill,
+    );
+  }
+
+  <span style="color: #0288D1;">@override</span>
+  <span style="color: #3f51b5;">bool</span> <span style="color: #388E3C;">shouldRepaint</span>(<span style="color: #3f51b5;">DotGraphic</span> <span style="color: #455A64;">oldDelegate</span>) {
+    <span style="color: #bf360c;">return</span> oldDelegate._x != _x || oldDelegate._y != _y;
+  }
+}
+</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org2a959d4" class="outline-4">
+<h4 id="org2a959d4">User edits miscellaneous settings</h4>
+<div class="outline-text-4" id="text-org2a959d4">
+<p>
+The miscellaneous settings include OLED burn-in prevention, showing introductory texts, and setting UI scale. The burn-in prevention is a simple toggle.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 43: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart">lib/src/settings/settings_view.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_oled</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Row</span>(
+    mainAxisAlignment: <span style="color: #3f51b5;">MainAxisAlignment</span>.spaceEvenly,
+    children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+      <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Prevent OLED burn'</span>),
+      <span style="color: #3f51b5;">Switch</span>.adaptive(
+        onChanged: (<span style="color: #455A64;">x</span>) {
+          <span style="color: #bf360c;">if</span> (settings.oled) {
+            settings.updateOled(<span style="color: #0288D1;">false</span>);
+          } <span style="color: #bf360c;">else</span> {
+            settings.updateOled(<span style="color: #0288D1;">true</span>);
+          }
+        },
+        value: settings.oled,
+      ),
+    ],
+  );
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 44: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateOled</span>(<span style="color: #3f51b5;">bool</span>? newOled) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (newOled == <span style="color: #0288D1;">null</span>) <span style="color: #bf360c;">return</span>;
+  <span style="color: #bf360c;">if</span> (newOled == _oled) <span style="color: #bf360c;">return</span>;
+
+  _oled = newOled;
+  notifyListeners();
+  <span style="color: #bf360c;">await</span> _settingsService.updateOled(newOled);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 45: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateOled</span>(<span style="color: #3f51b5;">bool</span> <span style="color: #455A64;">oled</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">await</span> prefs.setBool(<span style="color: #6C3082;">'oled'</span>, oled);
+}
+</pre>
+</div>
+
+<p>
+The introductory text toggle is identical.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 46: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart">lib/src/settings/settings_view.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_intro</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Row</span>(
+    mainAxisAlignment: <span style="color: #3f51b5;">MainAxisAlignment</span>.spaceEvenly,
+    children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+      <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Show intro texts'</span>),
+      <span style="color: #3f51b5;">Switch</span>.adaptive(
+        onChanged: (<span style="color: #455A64;">x</span>) {
+          <span style="color: #bf360c;">if</span> (settings.intro) {
+            settings.updateIntro(<span style="color: #0288D1;">false</span>);
+          } <span style="color: #bf360c;">else</span> {
+            settings.updateIntro(<span style="color: #0288D1;">true</span>);
+          }
+        },
+        value: settings.intro,
+      ),
+    ],
+  );
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 47: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateIntro</span>(<span style="color: #3f51b5;">bool</span>? newIntro) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (newIntro == <span style="color: #0288D1;">null</span>) <span style="color: #bf360c;">return</span>;
+  <span style="color: #bf360c;">if</span> (newIntro == _intro) <span style="color: #bf360c;">return</span>;
+
+  _intro = newIntro;
+  notifyListeners();
+  <span style="color: #bf360c;">await</span> _settingsService.updateIntro(newIntro);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 48: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateIntro</span>(<span style="color: #3f51b5;">bool</span> <span style="color: #455A64;">intro</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">await</span> prefs.setBool(<span style="color: #6C3082;">'intro'</span>, intro);
+}
+</pre>
+</div>
+
+<p>
+The UI scale uses a <code>Slider</code> that sets the scaling ratio from 1.0 to 2.0. The upper limit could be set higher, but as a design decision it's kept as low as is sensible.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 49: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_view.dart">lib/src/settings/settings_view.dart</a></label><pre class="src src-dart">  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_uiScale</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Row</span>(
+      mainAxisAlignment: <span style="color: #3f51b5;">MainAxisAlignment</span>.center,
+      children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+        <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Clock and menu scale'</span>),
+        <span style="color: #795548;">// </span><span style="color: #795548;">Slider.adaptive is not showing up on mobile Safari 15</span>
+        <span style="color: #3f51b5;">Slider</span>(
+          divisions: <span style="color: #0288D1;">10</span>,
+          min: <span style="color: #0288D1;">1.0</span>,
+          max: <span style="color: #0288D1;">2.0</span>,
+          value: settings.uiScale ?? <span style="color: #0288D1;">1.0</span>,
+          onChanged: (<span style="color: #3f51b5;">double</span> <span style="color: #455A64;">x</span>) =&gt; settings.updateUIScale(x),
+        ),
+      ],
+    );
+  }
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 50: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateUIScale</span>(<span style="color: #3f51b5;">double</span>? newUIScale) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (newUIScale == <span style="color: #0288D1;">null</span>) <span style="color: #bf360c;">return</span>;
+  <span style="color: #bf360c;">if</span> (newUIScale == _uiScale) <span style="color: #bf360c;">return</span>;
+
+  _uiScale = newUIScale;
+  notifyListeners();
+  <span style="color: #bf360c;">await</span> _settingsService.updateUIScale(newUIScale);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 51: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateUIScale</span>(<span style="color: #3f51b5;">double</span> <span style="color: #455A64;">newUIScale</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">await</span> prefs.setDouble(<span style="color: #6C3082;">'uiScale'</span>, newUIScale);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb364744" class="outline-3">
+<h3 id="orgb364744">User drags right to edit radio</h3>
+<div class="outline-text-3" id="text-orgb364744">
+<p>
+User sees the currently selected radio station in a dropdown of favorite stations. They can remove stations and add new ones. Ideally the view would have an engaging way to present all radio stations available, but the current dropdown and manual URL adding provides a good enough foundation. The view essentially has a <code>ListView</code> with a headline and two widgets <code>_selectFavoriteStation</code> and <code>_addStation</code>.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 52: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/radio/radio_view.dart">lib/src/radio/radio_view.dart</a></label><pre class="src src-dart"><span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">ListView</span>(
+  shrinkWrap: <span style="color: #0288D1;">true</span>,
+  children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+    <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Align</span>(
+        alignment: <span style="color: #3f51b5;">Alignment</span>.center,
+        child: <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Radio deck'</span>)),
+    <span style="color: #3f51b5;">Padding</span>(
+      padding: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">EdgeInsets</span>.all(<span style="color: #0288D1;">8</span>),
+      child: _selectFavoriteStation(context),
+    ),
+    <span style="color: #3f51b5;">Padding</span>(
+      padding: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">EdgeInsets</span>.all(<span style="color: #0288D1;">8</span>),
+      child: _addStation(context),
+    ),
+  ],
+);
+</pre>
+</div>
+
+<p>
+Audio functionality is implemented using <code>media_kit</code> library, which provides a straightforward-to-use  <code>Player</code> class. <code>RadioService</code> can be then implemented as a thin wrapper. <code>Player.state.duration</code> is used as heuristic to see if there anything playable actually playing.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 53: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/radio/radio_service.dart">lib/src/radio/radio_service.dart</a></label><pre class="src src-dart"><span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">RadioService</span> {
   <span style="color: #3f51b5;">RadioService</span>(<span style="color: #bf360c;">this</span>._player);
 
   <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">Player</span> <span style="color: #455A64;">_player</span>;
@@ -1082,10 +1795,306 @@ Tapping triggers <code>RadioController.toggle()</code>, which starts/stops the u
   }
 
   <span style="color: #3f51b5;">bool</span> <span style="color: #388E3C;">isPlaying</span>() {
-    <span style="color: #bf360c;">return</span> _player.state.playing;
+    <span style="color: #bf360c;">return</span> _player.state.playing &amp;&amp; _player.state.duration != <span style="color: #3f51b5;">Duration</span>.zero;
   }
 }
 </pre>
+</div>
+
+<p>
+<code>RadioController</code> is similarly thin. It does implement a failsafe protocol, where a bundled ping sound is played if <code>RadioService</code> is not playing anything after 5 seconds.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 54: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/radio/radio_controller.dart">lib/src/radio/radio_controller.dart</a></label><pre class="src src-dart"><span style="color: #bf360c;">class</span> <span style="color: #3f51b5;">RadioController</span> {
+  <span style="color: #3f51b5;">RadioController</span>(<span style="color: #bf360c;">this</span>._radioService, <span style="color: #bf360c;">this</span>._settings);
+
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">RadioService</span> <span style="color: #455A64;">_radioService</span>;
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SettingsController</span> <span style="color: #455A64;">_settings</span>;
+
+  <span style="color: #3f51b5;">Timer</span>? initiateFailsafe;
+
+  <span style="color: #795548;">factory</span> <span style="color: #3f51b5;">RadioController</span>.<span style="color: #388E3C;">create</span>(<span style="color: #3f51b5;">SettingsController</span> <span style="color: #455A64;">settingsController</span>) {
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">RadioController</span>(<span style="color: #3f51b5;">RadioService</span>.create(), settingsController);
+  }
+
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">play</span>() {
+    <span style="color: #bf360c;">if</span> (isPlaying()) {
+      stop();
+    }
+    _radioService.selectStream(_settings.radioStation);
+    _radioService.play();
+    initiateFailsafe =
+        <span style="color: #3f51b5;">Timer</span>(<span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Duration</span>(milliseconds: <span style="color: #0288D1;">5000</span>), failsafeStream);
+  }
+
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">stop</span>() {
+    _radioService.stop();
+    initiateFailsafe?.cancel();
+  }
+
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">toggle</span>() {
+    <span style="color: #bf360c;">if</span> (isPlaying()) {
+      stop();
+    } <span style="color: #bf360c;">else</span> {
+      play();
+    }
+  }
+
+  <span style="color: #3f51b5;">bool</span> <span style="color: #388E3C;">isPlaying</span>() {
+    <span style="color: #bf360c;">return</span> _radioService.isPlaying();
+  }
+
+  <span style="color: #3f51b5;">void</span> <span style="color: #388E3C;">failsafeStream</span>() {
+    <span style="color: #bf360c;">if</span> (isPlaying() == <span style="color: #0288D1;">false</span>) {
+      _radioService.selectStream(<span style="color: #3f51b5;">SettingsController</span>.fallbackStation);
+      _radioService.play();
+    }
+  }
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org170d80f" class="outline-4">
+<h4 id="org170d80f">User adds a radio station</h4>
+<div class="outline-text-4" id="text-org170d80f">
+<p>
+Adding radio station works by inputting an URL. A <code>DropdownButton</code> is used to allow different methods in the future, but could be omitted for the present version. Since we have to account for both user pressing enter in the <code>TextField</code> and tapping on the button, we need <code>onSubmitted</code> and <code>onPressed</code> callbacks respectively. A <code>TextEditingController</code> is needed for the <code>onPressed</code> callback.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 55: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/radio/radio_view.dart">lib/src/radio/radio_view.dart</a></label><pre class="src src-dart">  <span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_addStation</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+    <span style="color: #3f51b5;">TextEditingController</span> <span style="color: #455A64;">addRadioController</span> = <span style="color: #3f51b5;">TextEditingController</span>();
+
+    <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Column</span>(
+      children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+        <span style="color: #3f51b5;">Row</span>(
+          children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+            <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Add a new station: '</span>),
+            <span style="color: #3f51b5;">Expanded</span>(
+              child: <span style="color: #3f51b5;">DropdownButton</span>&lt;<span style="color: #3f51b5;">String</span>&gt;(
+                onChanged: (<span style="color: #3f51b5;">String</span>? <span style="color: #455A64;">str</span>) {},
+                value: <span style="color: #6C3082;">'Custom'</span>,
+                isExpanded: <span style="color: #0288D1;">true</span>,
+                items: <span style="color: #bf360c;">const</span> &lt;<span style="color: #3f51b5;">DropdownMenuItem</span>&lt;<span style="color: #3f51b5;">String</span>&gt;&gt;[
+                  <span style="color: #3f51b5;">DropdownMenuItem</span>(
+                      value: <span style="color: #6C3082;">'Custom'</span>, child: <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Radio station URL'</span>)),
+                ],
+              ),
+            ),
+          ],
+        ),
+        <span style="color: #3f51b5;">Row</span>(
+          children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+            <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'URL: '</span>),
+            <span style="color: #3f51b5;">Expanded</span>(
+              child: <span style="color: #3f51b5;">TextField</span>(
+                controller: addRadioController,
+                onSubmitted: (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">value</span>) {
+                  <span style="color: #bf360c;">if</span> (value == <span style="color: #6C3082;">''</span>) {
+                    <span style="color: #bf360c;">return</span>;
+                  } <span style="color: #bf360c;">else</span> {
+                    settings.addRadioStation(value);
+                  }
+                },
+              ),
+            ),
+            <span style="color: #3f51b5;">FilledButton</span>.tonal(
+              onPressed: () {
+                <span style="color: #bf360c;">if</span> (addRadioController.text == <span style="color: #6C3082;">''</span>) {
+                  <span style="color: #bf360c;">return</span>;
+                } <span style="color: #bf360c;">else</span> {
+                  settings.addRadioStation(addRadioController.text);
+                }
+              },
+              child: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Add'</span>),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 56: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">addRadioStation</span>(<span style="color: #3f51b5;">String</span>? newRadioStation) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (newRadioStation == <span style="color: #0288D1;">null</span>) <span style="color: #bf360c;">return</span>;
+  <span style="color: #bf360c;">if</span> (newRadioStation == _radioStation) <span style="color: #bf360c;">return</span>;
+
+  _radioStation ??= newRadioStation;
+
+  <span style="color: #bf360c;">await</span> _settingsService.addRadioStation(newRadioStation);
+  _radioStations = <span style="color: #bf360c;">await</span> _settingsService.radioStations();
+  notifyListeners();
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 57: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">addRadioStation</span>(<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">path</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">String</span>&gt;? paths = prefs.getStringList(<span style="color: #6C3082;">'radioStations'</span>);
+  <span style="color: #bf360c;">if</span> (paths == <span style="color: #0288D1;">null</span>) {
+    <span style="color: #bf360c;">await</span> prefs.setStringList(<span style="color: #6C3082;">'radioStations'</span>, [path]);
+  } <span style="color: #bf360c;">else</span> {
+    <span style="color: #bf360c;">if</span> (paths.contains(path)) {
+      <span style="color: #bf360c;">return</span>;
+    } <span style="color: #bf360c;">else</span> {
+      paths.add(path);
+      <span style="color: #bf360c;">await</span> prefs.setStringList(<span style="color: #6C3082;">'radioStations'</span>, paths);
+    }
+  }
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8a0728a" class="outline-4">
+<h4 id="org8a0728a">User changes and removes a station</h4>
+<div class="outline-text-4" id="text-org8a0728a">
+<p>
+These interactions are bound to the <code>_selectFavoriteStation</code> widget. In addition to using <code>SettingsController.updateRadioStation</code> and <code>SettingController.removeRadioStation</code> methods, the user expects for the currently playing radio station to match whatever is selected in <code>DropdownButton</code>. This requires some heuristics both when changing  station and when removing the [currently selected] station.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 58: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/radio/radio_view.dart">lib/src/radio/radio_view.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Widget</span> <span style="color: #388E3C;">_selectFavoriteStation</span>(<span style="color: #3f51b5;">BuildContext</span> <span style="color: #455A64;">context</span>) {
+  <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">Row</span>(
+    children: &lt;<span style="color: #3f51b5;">Widget</span>&gt;[
+      <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Select a station: '</span>),
+      <span style="color: #3f51b5;">Expanded</span>(
+        child: <span style="color: #3f51b5;">DropdownButton</span>&lt;<span style="color: #3f51b5;">String</span>&gt;(
+          value: settings.radioStation,
+          onChanged: (<span style="color: #3f51b5;">String</span>? <span style="color: #455A64;">path</span>) {
+            settings.updateRadioStation(path);
+            <span style="color: #bf360c;">if</span> (radio.isPlaying()) {
+              radio.stop();
+              radio.play();
+            }
+          },
+          isExpanded: <span style="color: #0288D1;">true</span>,
+          items: settings.radioStations.map&lt;<span style="color: #3f51b5;">DropdownMenuItem</span>&lt;<span style="color: #3f51b5;">String</span>&gt;&gt;(
+            (<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">station</span>) {
+              <span style="color: #bf360c;">return</span> <span style="color: #3f51b5;">DropdownMenuItem</span>(
+                value: station,
+                child: <span style="color: #3f51b5;">Text</span>(station),
+              );
+            },
+          ).toList(),
+        ),
+      ),
+      <span style="color: #3f51b5;">FilledButton</span>.tonal(
+        onPressed: settings.radioStation != <span style="color: #3f51b5;">SettingsController</span>.fallbackStation
+            ? () <span style="color: #bf360c;">async</span> {
+                <span style="color: #bf360c;">await</span> settings.removeRadioStation(settings.radioStation);
+                <span style="color: #bf360c;">if</span> (radio.isPlaying()) {
+                  radio.stop();
+                  radio.play();
+                }
+              }
+            : <span style="color: #0288D1;">null</span>,
+        child: <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">Text</span>(<span style="color: #6C3082;">'Remove'</span>),
+      ),
+    ],
+  );
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 59: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateRadioStation</span>(<span style="color: #3f51b5;">String</span>? newRadioStation) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (newRadioStation == <span style="color: #0288D1;">null</span>) <span style="color: #bf360c;">return</span>;
+  <span style="color: #bf360c;">if</span> (newRadioStation == _radioStation) <span style="color: #bf360c;">return</span>;
+
+  _radioStation = newRadioStation;
+  notifyListeners();
+  <span style="color: #bf360c;">await</span> _settingsService.updateRadioStation(newRadioStation);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 60: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">updateRadioStation</span>(<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">path</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">await</span> prefs.setString(<span style="color: #6C3082;">'radioStation'</span>, path);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 61: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">removeRadioStation</span>(<span style="color: #3f51b5;">String</span>? oldRadioStation) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">if</span> (oldRadioStation == <span style="color: #0288D1;">null</span>) <span style="color: #bf360c;">return</span>;
+
+  <span style="color: #bf360c;">await</span> _settingsService.removeRadioStation(oldRadioStation);
+  _radioStations = <span style="color: #bf360c;">await</span> _settingsService.radioStations();
+  <span style="color: #bf360c;">if</span> (_radioStation == oldRadioStation) {
+    <span style="color: #bf360c;">if</span> (_radioStations != <span style="color: #0288D1;">null</span>) {
+      _radioStation = _radioStations?.first;
+    } <span style="color: #bf360c;">else</span> {
+      _radioStation = <span style="color: #0288D1;">null</span>;
+    }
+    updateRadioStation(_radioStation);
+  }
+  notifyListeners();
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 62: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_service.dart">lib/src/settings/settings_service.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">Future</span>&lt;<span style="color: #3f51b5;">void</span>&gt; <span style="color: #388E3C;">removeRadioStation</span>(<span style="color: #3f51b5;">String</span> <span style="color: #455A64;">path</span>) <span style="color: #bf360c;">async</span> {
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">SharedPreferences</span> <span style="color: #455A64;">prefs</span> = <span style="color: #bf360c;">await</span> <span style="color: #3f51b5;">SharedPreferences</span>.getInstance();
+  <span style="color: #bf360c;">final</span> <span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">String</span>&gt;? paths = prefs.getStringList(<span style="color: #6C3082;">'radioStations'</span>);
+  <span style="color: #bf360c;">if</span> (paths == <span style="color: #0288D1;">null</span>) {
+    <span style="color: #bf360c;">return</span>;
+  } <span style="color: #bf360c;">else</span> {
+    paths.removeWhere((<span style="color: #455A64;">element</span>) =&gt; element == path);
+    <span style="color: #bf360c;">if</span> (paths.isEmpty) {
+      <span style="color: #bf360c;">await</span> prefs.remove(<span style="color: #6C3082;">'radioStations'</span>);
+      <span style="color: #bf360c;">await</span> prefs.remove(<span style="color: #6C3082;">'radioStation'</span>);
+      <span style="color: #bf360c;">return</span>;
+    } <span style="color: #bf360c;">else</span> {
+      <span style="color: #bf360c;">await</span> prefs.setStringList(<span style="color: #6C3082;">'radioStations'</span>, paths);
+      <span style="color: #bf360c;">return</span>;
+    }
+  }
+}
+</pre>
+</div>
+
+<p>
+When no radio stations are saved, <code>SettingsController.radioStation</code> and <code>.radioStations</code> return a fallback value <code>SettingsController.fallbackStation</code>.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 63: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #3f51b5;">String</span> <span style="color: #795548;">get</span> <span style="color: #455A64;">radioStation</span> =&gt; _radioStation ?? fallbackStation;
+<span style="color: #3f51b5;">List</span>&lt;<span style="color: #3f51b5;">String</span>&gt; <span style="color: #795548;">get</span> <span style="color: #455A64;">radioStations</span> =&gt; _radioStations ?? [fallbackStation];
+</pre>
+</div>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 64: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/settings/settings_controller.dart">lib/src/settings/settings_controller.dart</a></label><pre class="src src-dart"><span style="color: #795548;">static</span> <span style="color: #bf360c;">const</span> <span style="color: #3f51b5;">String</span> <span style="color: #455A64;">fallbackStation</span> =
+    kIsWeb ? <span style="color: #6C3082;">'assets/assets/sounds/ping.mp3'</span> : <span style="color: #6C3082;">'assets/sounds/ping.mp3'</span>;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1de41e1" class="outline-4">
+<h4 id="org1de41e1">User taps to play radio back in clock view</h4>
+<div class="outline-text-4" id="text-org1de41e1">
+<p>
+Tapping triggers <code>RadioController.toggle()</code>, which starts/stops <code>RadioService</code> and thus <code>Player</code> from <code>media_kit</code>.
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 65: </span><a href="https://github.com/tazca/clockradio/blob/main/lib/src/clock/clock_view.dart">lib/src/clock/clock_view.dart</a></label><pre class="src src-dart">onTap: () {
+  radio.toggle();
+},
+</pre>
+</div>
 </div>
 </div>
 </div>
@@ -1093,7 +2102,7 @@ Tapping triggers <code>RadioController.toggle()</code>, which starts/stops the u
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: tazca</p>
-<p class="date">Created: 2024-08-08 Thu 19:53</p>
+<p class="date">Created: 2024-09-16 Mon 17:56</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
