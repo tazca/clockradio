@@ -4,7 +4,7 @@ Run in browser at [clock.tazca.com](https://clock.tazca.com).
 
 ![app logo](./.github/logo.png)
 
-An app to replace a dead clock radio and retire a 1st gen iPhone SE with dignity. For details specific to this use case, you can check my [brief journal article](https://tazca.com/journal/2024-07-flutter.html#orgcc9dcc2). A narrative documentation covering the whole codebase can be found on this repository's [github.io page](https://tazca.github.io/clockradio).
+An app to replace a dead clock radio and retire a 1st gen iPhone SE with dignity. For details specific to this use case, you can check my [brief journal article](https://tazca.com/journal/2024-07-flutter.html#orgcc9dcc2). A narrative documentation covering the whole codebase can be found on this repository's [github.io page](https://tazca.github.io/s1335).
 
 # Screenshots
 
