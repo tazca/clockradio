@@ -1,16 +1,18 @@
 # S-1335 clock radio
 
+Run in browser at [clock.tazca.com](https://clock.tazca.com).
+
 ![app logo](./.github/logo.png)
+
+An app to replace a dead clock radio and retire a 1st gen iPhone SE with dignity. For details specific to this use case, you can check my [brief journal article](https://tazca.com/journal/2024-07-flutter.html#orgcc9dcc2). A narrative documentation covering the whole codebase can be found on this repository's [github.io page](https://tazca.github.io/clockradio).
+
+# Screenshots
 
 ![digital clock face](./assets/images/ledclock.png) ![solar clock face](./assets/images/solarclock.png)
 
 ![settings view](./.github/settings.png)
 
 ![radio view](./.github/radio.png)
-
-PWA is available at [clock.tazca.com](https://clock.tazca.com). No other builds available currently.
-
-An app to replace a dead clock radio and retire a 1st gen iPhone SE with dignity. For details specific to this use case, you can check my [brief journal article](https://tazca.com/journal/2024-07-flutter.html#orgcc9dcc2). A narrative documentation covering the whole codebase can be found on this repository's [github.io page](https://tazca.github.io/clockradio).
 
 # Known issues and limitations
 
@@ -24,7 +26,7 @@ Drag the clock face seen on startup left or right to see general settings and ra
 
 # Compilation
 
-I compile the project as shown in their [Getting started](https://docs.flutter.dev/get-started/install) section using (VSCodium)[https://vscodium.com] as IDE with its well integrated Dart/Flutter plugin. Android builds show just white screen and iOS requires payment, so those are personally off the table for now. Linux build works fine but I'd just use the PWA on desktops.
+I compile the project as shown in their [Getting started](https://docs.flutter.dev/get-started/install) section using [VSCodium](https://vscodium.com) as IDE with its well integrated Dart/Flutter plugin. Android builds show just white screen and iOS requires payment, so those are personally off the table for now.
 
 # Tests
 
