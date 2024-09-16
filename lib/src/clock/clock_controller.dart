@@ -61,7 +61,11 @@ class ClockController with ChangeNotifier {
   }
 
   void startClock() {
-    _clock = Clock.now(old: _clock);
+    if(_settings.alarmSet) {
+      _clock = Clock.now(old: _clock, alarm: _settings.alarm);
+    } else {
+      _clock = Clock.now(old: _clock);
+    }
 
     if (_clock.isAlarmRinging) {
       _alarmCallback();

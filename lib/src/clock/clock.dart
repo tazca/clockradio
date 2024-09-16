@@ -36,7 +36,7 @@ class Clock {
 
     return Clock(
       TimeOfDay.now(),
-      alarm ?? old?.alarm,
+      alarm,
       DateTime.now().timeZoneOffset,
       daysSinceJan1 + 1,
       userLatitude ?? old?.userLatitude ?? 0.0,
