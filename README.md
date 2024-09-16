@@ -8,7 +8,7 @@
 
 ![radio view](./.github/radio.png)
 
-PWA is available at [clock.tazca.com](https://clock.tazca.com). Linux and Android builds can be found in Releases.
+PWA is available at [clock.tazca.com](https://clock.tazca.com). No other builds available currently.
 
 An app to replace a dead clock radio and retire a 1st gen iPhone SE with dignity. For details specific to this use case, you can check my [brief journal article](https://tazca.com/journal/2024-07-flutter.html#orgcc9dcc2). A narrative documentation covering the whole codebase can be found on this repository's [github.io page](https://tazca.github.io/clockradio).
 
@@ -24,7 +24,7 @@ Drag the clock face seen on startup left or right to see general settings and ra
 
 # Compilation
 
-I compile the project as shown in their [Getting started](https://docs.flutter.dev/get-started/install) section using (VSCodium)[https://vscodium.com] as IDE with its well integrated Dart/Flutter plugin.
+I compile the project as shown in their [Getting started](https://docs.flutter.dev/get-started/install) section using (VSCodium)[https://vscodium.com] as IDE with its well integrated Dart/Flutter plugin. Android builds show just white screen and iOS requires payment, so those are personally off the table for now. Linux build works fine but I'd just use the PWA on desktops.
 
 # Tests
 
@@ -36,3 +36,4 @@ There are no tests currently, as most functionality and layouting is non-trivial
 - Show `media_kit` errors to user for diagnosing radio issues
 - Disentangle solar clock face's wireframe presentation from OLED burn-in prevention, and allow scheduling it for night time for displays that don't go very low on brightness.
 - Allow putting nicknames for radio station URLs.
+- Work out how to produce a usable build for obsolete Android devices (or for Android at all).
