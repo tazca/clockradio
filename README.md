@@ -14,6 +14,8 @@ An app to replace a dead clock radio and retire a 1st gen iPhone SE with dignity
 
 ![radio view](./.github/radio.png)
 
+![irl view](./.github/clockradio.webp)
+
 # Known issues and limitations
 
 - Digital clock face is blurred on mobile Safari. Safari has infamously poor SVG rendering, and the alternative CanvasKit renderer is not loading on my Apple setups at all.
