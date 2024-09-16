@@ -89,11 +89,11 @@ class LocationView extends StatelessWidget {
                 child: Material(
                   child: Stack(
                     children: <Widget>[
-                      LayoutBuilder(
-                        builder: (BuildContext context, BoxConstraints constraints) {
-                          return _userDot(constraints.maxWidth, constraints.maxHeight);
-                        }
-                      ),
+                      LayoutBuilder(builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        return _userDot(
+                            constraints.maxWidth, constraints.maxHeight);
+                      }),
                       Ink.image(
                         fit: BoxFit.fill,
                         image: platformAwareImageProvider(
@@ -101,10 +101,8 @@ class LocationView extends StatelessWidget {
                         child: InkWell(
                           onTapUp: (TapUpDetails details) {
                             _updateLocation(details, context.size);
-                            textLat.text =
-                                settings.latitude.toString();
-                            textLong.text =
-                                settings.longitude.toString();
+                            textLat.text = settings.latitude.toString();
+                            textLong.text = settings.longitude.toString();
                           },
                         ),
                       ),
@@ -142,8 +140,7 @@ class LocationView extends StatelessWidget {
           (initialLatitude / mapWidgetSize.height * 180 - 90) * (-1);
 
       settings.updateLatitude((latitude * 100).roundToDouble() / 100);
-      settings
-          .updateLongitude((longitude * 100).roundToDouble() / 100);
+      settings.updateLongitude((longitude * 100).roundToDouble() / 100);
     }
   }
 

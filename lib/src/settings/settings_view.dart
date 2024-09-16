@@ -40,18 +40,8 @@ class SettingsView extends StatelessWidget {
                         _alarm(context),
                       ],
                     ),
-                    // const Spacer(),
-                    /* const Align(
-                      alignment: Alignment.center,
-                      child: Text('Clock faces'),
-                    ), */
                     const Spacer(),
                     _clockFace(context),
-                    // const Spacer(),
-                    /* const Align(
-                      alignment: Alignment.center,
-                      child: Text('Miscellaneous'),
-                    ), */
                     const Spacer(),
                     Row(
                       children: <Widget>[
@@ -103,17 +93,6 @@ class SettingsView extends StatelessWidget {
     );
   }
 
-  Widget _location(BuildContext context) {
-    return FilledButton.tonal(
-      onPressed: (settings.clockFace == ClockFace.solar)
-          ? () {
-              Navigator.restorablePushNamed(context, LocationView.routeName);
-            }
-          : null,
-      child: const Text('Location'),
-    );
-  }
-
   Widget _clockFace(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,6 +137,17 @@ class SettingsView extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _location(BuildContext context) {
+    return FilledButton.tonal(
+      onPressed: (settings.clockFace == ClockFace.solar)
+          ? () {
+              Navigator.restorablePushNamed(context, LocationView.routeName);
+            }
+          : null,
+      child: const Text('Location'),
     );
   }
 
