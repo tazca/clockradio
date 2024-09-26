@@ -50,11 +50,13 @@ class SettingsController with ChangeNotifier {
   factory SettingsController.create() {
     return SettingsController(SettingsService());
   }
-
+  
   /// Load the user's settings from the SettingsService. It may load from a
   /// local database or the internet. The controller only knows it can load the
   /// settings from the service.
   Future<void> loadSettings() async {
+    await _settingsService.init();
+
     _radioStation = await _settingsService.radioStation();
     _radioStations = await _settingsService.radioStations();
     if (_radioStation == null ||

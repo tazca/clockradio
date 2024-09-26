@@ -4,25 +4,29 @@ import '/src/clock/clock_controller.dart' show ClockFace;
 
 /// A service that stores and retrieves user settings.
 class SettingsService {
+  SettingsService();
+
+  late final SharedPreferences prefs;
+
+  Future<void> init() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
   Future<String?> radioStation() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? path = prefs.getString('radioStation');
     return path;
   }
 
   Future<void> updateRadioStation(String path) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('radioStation', path);
   }
 
   Future<List<String>?> radioStations() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final List<String>? paths = prefs.getStringList('radioStations');
     return paths;
   }
 
   Future<void> addRadioStation(String path) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final List<String>? paths = prefs.getStringList('radioStations');
     if (paths == null) {
       await prefs.setStringList('radioStations', [path]);
@@ -37,7 +41,6 @@ class SettingsService {
   }
 
   Future<void> removeRadioStation(String path) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final List<String>? paths = prefs.getStringList('radioStations');
     if (paths == null) {
       return;
@@ -55,7 +58,6 @@ class SettingsService {
   }
 
   Future<ClockFace> clockFace() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? face = prefs.getString('clockFace');
     switch (face) {
       case 'led':
@@ -68,88 +70,71 @@ class SettingsService {
   }
 
   Future<void> updateClockFace(ClockFace face) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('clockFace', face.name);
   }
 
   Future<int> alarmH() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getInt('alarmH') ?? 0;
   }
 
   Future<void> updateAlarmH(int alarmH) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('alarmH', alarmH);
   }
 
   Future<int> alarmM() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getInt('alarmM') ?? 0;
   }
 
   Future<void> updateAlarmM(int alarmM) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('alarmM', alarmM);
   }
 
   Future<bool> alarmSet() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('alarmSet') ?? false;
   }
 
   Future<void> updateAlarmSet(bool alarmSet) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('alarmSet', alarmSet);
   }
 
   Future<double> latitude() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getDouble('latitude') ?? 0.0;
   }
 
   Future<void> updateLatitude(double latitude) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('latitude', latitude);
   }
 
   Future<double> longitude() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getDouble('longitude') ?? 0.0;
   }
 
   Future<void> updateLongitude(double longitude) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('longitude', longitude);
   }
 
   Future<bool> oled() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('oled') ?? false;
   }
 
   Future<void> updateOled(bool oled) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('oled', oled);
   }
 
   Future<bool> intro() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('intro') ?? true;
   }
 
   Future<void> updateIntro(bool intro) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('intro', intro);
   }
 
 
   Future<double?> uiScale() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getDouble('uiScale');
   }
 
   Future<void> updateUIScale(double newUIScale) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('uiScale', newUIScale);
   }
 }

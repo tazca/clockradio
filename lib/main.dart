@@ -8,6 +8,7 @@ import 'src/radio/radio_controller.dart';
 import 'src/clock/clock_controller.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final settings = SettingsController.create();
   await settings.loadSettings();
 
