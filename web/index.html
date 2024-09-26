@@ -34,6 +34,17 @@
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
   
   
+  
+  
+  <!-- * Safari Renderer * -->
+  <script src="platform.js"></script>
+  <script>
+    if (platform.name.toLowerCase() == "safari" && parseInt(platform.version.split(".")[0]) <= 15) {
+        window.flutterWebRenderer = "html";
+    } else {
+        window.flutterWebRenderer = "canvaskit";
+    }
+  </script>
   <style id="splash-screen-style">
     html {
       height: 100%
@@ -99,18 +110,10 @@
       document.body.style.background = "transparent";
     }
   </script>
-  <!-- * Safari Renderer * -->
-  <script src="platform.js"></script>
-  <script>
-    if (platform.name.toLowerCase() == "safari" && parseInt(platform.version.split(".")[0]) <= 15) {
-        window.flutterWebRenderer = "html";
-    } else {
-        window.flutterWebRenderer = "canvaskit";
-    }
-  </script>
 </head>
 <body>
   <script src="./flutter_bootstrap.js" async=""></script>
+
 
 
 

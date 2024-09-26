@@ -18,8 +18,7 @@ An app to replace a dead clock radio and retire a 1st gen iPhone SE with dignity
 
 # Known issues and limitations
 
-- Digital clock face is blurred on mobile Safari. Safari has infamously poor SVG rendering, and the alternative CanvasKit renderer is not loading on my Apple setups at all.
-- Mobile Safari may show black screen. Just add to home screen, start the app from there and it will load.
+- Digital clock face is blurred on iOS 15 and earlier in browser. Safari has infamously poor SVG rendering, and the better working CanvasKit renderer is not supported on older Safaris.
 - Digital clock face is 24h-only.
 
 # Usage
@@ -28,7 +27,7 @@ Drag the clock face seen on startup left or right to see general settings and ra
 
 # Compilation
 
-I compile the project as shown in their [Getting started](https://docs.flutter.dev/get-started/install) section using [VSCodium](https://vscodium.com) as IDE with its well integrated Dart/Flutter plugin. Android builds show just white screen and iOS requires payment, so those are personally off the table for now.
+I compile the project as shown in their [Getting started](https://docs.flutter.dev/get-started/install) section using [VSCodium](https://vscodium.com) as IDE with its well integrated Dart/Flutter plugin. iOS builds require paid developer account, so it's off the table for now.
 
 # Tests
 
@@ -40,4 +39,3 @@ There are no tests currently, as most functionality and layouting is non-trivial
 - Show `media_kit` errors to user for diagnosing radio issues
 - Disentangle solar clock face's wireframe presentation from OLED burn-in prevention, and allow scheduling it for night time for displays that don't go very low on brightness.
 - Allow putting nicknames for radio station URLs.
-- Work out how to produce a usable build for obsolete Android devices (or for Android at all).
