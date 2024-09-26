@@ -17,8 +17,7 @@ class SolarClock extends StatelessWidget {
     // Clockface is a square (for now)
     final double maximumSize = min(
         MediaQuery.sizeOf(context).height, MediaQuery.sizeOf(context).width);
-    final double optimumSize =
-        clock.uiScale * 96 * 2.5;
+    final double optimumSize = clock.uiScale * 96 * 2.5;
     final double clockSize =
         (maximumSize > optimumSize) ? optimumSize : maximumSize;
 
@@ -52,8 +51,8 @@ class SolarClock extends StatelessWidget {
       const double pi = 3.141592;
       const double jiggleRadius = 5.0;
       final double t = jiggle / (jiggleSpeed / (2 * pi));
-      final double x = jiggleRadius*cos(t);
-      final double y = jiggleRadius*sin(t);
+      final double x = jiggleRadius * cos(t);
+      final double y = jiggleRadius * sin(t);
 
       return SizedBox(
         height: clockSize + jiggleRadius * 2,
@@ -203,12 +202,13 @@ class SolarGraphic extends CustomPainter {
         ..color = daySideColor
         ..style = daySideFill,
     );
+
     final double ellipseHalfHeight = earthRadius * dayNightRatio;
     final bool dayIsLonger = sunDeclination >= 0.0 && _userLatitude >= 0.0 ||
-                  sunDeclination < 0.0 && _userLatitude < 0.0;
+        sunDeclination < 0.0 && _userLatitude < 0.0;
     final Rect ellipseRect =
-        Offset(earthMargin, earthMargin + (earthRadius - ellipseHalfHeight)) &
-            Size(earthRadius * 2, ellipseHalfHeight * 2);
+        Offset(earthMargin, earthMargin + (earthRadius - ellipseHalfHeight.abs())) &
+            Size(earthRadius * 2, ellipseHalfHeight.abs() * 2);
 
     if (_oledJiggle) {
       canvas.drawArc(
@@ -221,9 +221,7 @@ class SolarGraphic extends CustomPainter {
           ..style = PaintingStyle.stroke,
       );
     } else {
-      final Color ellipseColor = dayIsLonger
-              ? daySideColor
-              : Colors.black;
+      final Color ellipseColor = dayIsLonger ? daySideColor : Colors.black;
       canvas.drawOval(
         ellipseRect,
         Paint()
