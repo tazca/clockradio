@@ -20,13 +20,9 @@ class SettingsView extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minHeight: (settings.uiScale ?? 1.0) * 96 * 3.0,
-            maxHeight: (settings.uiScale ?? 1.0) * 96 * 3.0,
-            minWidth: (settings.uiScale ?? 1.0) * 96 * 4.8,
-            maxWidth: (settings.uiScale ?? 1.0) * 96 * 4.8,
-          ),
+        child: SizedBox(
+          height: 1.0 * 96 * 3.0,
+          width: 1.0 * 96 * 4.8,
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(8.0)),
             child: Material(
@@ -193,13 +189,13 @@ class SettingsView extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        const Text('Clock and menu scale'),
+        const Text('Clock size'),
         // Slider.adaptive is not showing up on mobile Safari 15
         Slider(
-          divisions: 10,
-          min: 1.0,
-          max: 2.0,
-          value: settings.uiScale ?? 1.0,
+          divisions: 25,
+          min: 0.5,
+          max: 3.0,
+          value: settings.uiScale,
           onChanged: (double x) => settings.updateUIScale(x),
         ),
       ],

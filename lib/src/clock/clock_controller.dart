@@ -49,7 +49,7 @@ class ClockController with ChangeNotifier {
   double get userLong => _userLongitude;
 
   bool get oledJiggle => _settings.oled;
-  double get uiScale => _settings.uiScale ?? 1.0;
+  double get uiScale => _settings.uiScale;
 
   StatelessWidget buildClock() {
     switch (_settings.clockFace) {

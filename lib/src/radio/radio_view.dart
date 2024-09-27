@@ -16,16 +16,15 @@ class RadioView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 2.0" x 3.5"
-    final double minHeight = (settings.uiScale ?? 1.0) * 96 * 2.0;
-    final double minWidth = (settings.uiScale ?? 1.0) * 96 * 3.5;
+    const double minHeight = 1.0 * 96 * 3.0;
+    const double minWidth = 1.0 * 96 * 4.8;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(
             minHeight: minHeight,
-            maxHeight: minHeight * 2,
+            maxHeight: minHeight,
             minWidth: minWidth,
             maxWidth: minWidth * 2,
           ),
@@ -47,6 +46,7 @@ class RadioView extends StatelessWidget {
                           padding: const EdgeInsets.all(8),
                           child: _selectFavoriteStation(context),
                         ),
+                        SizedBox(height: 16.0),
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: _addStation(context),
@@ -66,7 +66,8 @@ class RadioView extends StatelessWidget {
   Widget _selectFavoriteStation(BuildContext context) {
     return Row(
       children: <Widget>[
-        const Text('Select a station: '),
+        const Text('Play'),
+        SizedBox(width: 10.0),
         Expanded(
           child: DropdownButton<String>(
             value: settings.radioStation,
@@ -88,6 +89,7 @@ class RadioView extends StatelessWidget {
             ).toList(),
           ),
         ),
+        SizedBox(width: 8.0),
         FilledButton.tonal(
           onPressed: settings.radioStation != SettingsController.fallbackStation
               ? () async {
@@ -111,7 +113,8 @@ class RadioView extends StatelessWidget {
       children: <Widget>[
         Row(
           children: <Widget>[
-            const Text('Add a new station: '),
+            const Text('Add'),
+            SizedBox(width: 12.0),
             Expanded(
               child: DropdownButton<String>(
                 onChanged: (String? str) {},
@@ -119,15 +122,17 @@ class RadioView extends StatelessWidget {
                 isExpanded: true,
                 items: const <DropdownMenuItem<String>>[
                   DropdownMenuItem(
-                      value: 'Custom', child: Text('Radio station URL')),
+                      value: 'Custom', child: Text('radio station from URL')),
                 ],
               ),
             ),
+            SizedBox(width: 107.0),
           ],
         ),
         Row(
           children: <Widget>[
-            const Text('URL: '),
+            const Text('URL'),
+            SizedBox(width: 12.0),
             Expanded(
               child: TextField(
                 controller: addRadioController,
@@ -140,6 +145,7 @@ class RadioView extends StatelessWidget {
                 },
               ),
             ),
+            SizedBox(width: 16.0),
             FilledButton.tonal(
               onPressed: () {
                 if (addRadioController.text == '') {
@@ -150,6 +156,7 @@ class RadioView extends StatelessWidget {
               },
               child: const Text('Add'),
             ),
+            SizedBox(width: 18.0),
           ],
         ),
       ],

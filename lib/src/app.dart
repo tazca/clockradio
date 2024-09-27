@@ -37,11 +37,7 @@ class ClockRadio extends StatelessWidget {
         }
         clock.setLocation(
             settings.latitude, settings.longitude);
-
-        if (settings.uiScale == null) {
-          settings
-              .updateUIScale(MediaQuery.of(context).devicePixelRatio);
-        }
+            
         return MaterialApp(
           // Providing a restorationScopeId allows the Navigator built by the
           // MaterialApp to restore the navigation stack when a user leaves and

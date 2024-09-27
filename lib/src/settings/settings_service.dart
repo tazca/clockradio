@@ -130,8 +130,8 @@ class SettingsService {
   }
 
 
-  Future<double?> uiScale() async {
-    return prefs.getDouble('uiScale');
+  Future<double> uiScale() async {
+    return prefs.getDouble('uiScale') ?? 1.0;
   }
 
   Future<void> updateUIScale(double newUIScale) async {

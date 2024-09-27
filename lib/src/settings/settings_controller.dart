@@ -33,7 +33,7 @@ class SettingsController with ChangeNotifier {
   late bool _oled;
   late bool _intro;
 
-  late double? _uiScale;
+  late double _uiScale;
 
   // Allow Widgets to read the user's preferred ThemeMode.
   String get radioStation => _radioStation ?? fallbackStation;
@@ -45,7 +45,7 @@ class SettingsController with ChangeNotifier {
   double get longitude => _longitude;
   bool get oled => _oled;
   bool get intro => _intro;
-  double? get uiScale => _uiScale;
+  double get uiScale => _uiScale;
 
   factory SettingsController.create() {
     return SettingsController(SettingsService());
